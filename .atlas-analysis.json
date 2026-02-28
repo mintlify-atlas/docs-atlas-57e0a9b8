@@ -1,0 +1,216 @@
+{
+  "projectType": "frontend",
+  "projectName": "Kumo",
+  "projectDescription": "Cloudflare's component library for building modern, accessible web applications with React, Base UI, and Tailwind CSS.",
+  "theme": "palm",
+  "primaryColor": "#f6821f",
+  "lightColor": null,
+  "darkColor": null,
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": [
+              "introduction",
+              "installation",
+              "quickstart"
+            ]
+          },
+          {
+            "group": "Essentials",
+            "pages": [
+              "essentials/styling",
+              "essentials/theming",
+              "essentials/accessibility",
+              "essentials/tree-shaking"
+            ]
+          },
+          {
+            "group": "CLI",
+            "pages": [
+              "cli/overview",
+              "cli/commands",
+              "cli/blocks"
+            ]
+          },
+          {
+            "group": "Development",
+            "pages": [
+              "development/contributing",
+              "development/component-structure",
+              "development/testing"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Components",
+        "groups": [
+          {
+            "group": "Action",
+            "pages": [
+              "components/button",
+              "components/clipboard-text"
+            ]
+          },
+          {
+            "group": "Display",
+            "pages": [
+              "components/badge",
+              "components/breadcrumbs",
+              "components/code",
+              "components/empty",
+              "components/layer-card",
+              "components/meter",
+              "components/text"
+            ]
+          },
+          {
+            "group": "Feedback",
+            "pages": [
+              "components/banner",
+              "components/loader",
+              "components/toast"
+            ]
+          },
+          {
+            "group": "Input",
+            "pages": [
+              "components/checkbox",
+              "components/combobox",
+              "components/date-picker",
+              "components/field",
+              "components/input",
+              "components/radio",
+              "components/select",
+              "components/sensitive-input",
+              "components/switch"
+            ]
+          },
+          {
+            "group": "Layout",
+            "pages": [
+              "components/grid",
+              "components/surface"
+            ]
+          },
+          {
+            "group": "Navigation",
+            "pages": [
+              "components/command-palette",
+              "components/menubar",
+              "components/pagination",
+              "components/tabs"
+            ]
+          },
+          {
+            "group": "Overlay",
+            "pages": [
+              "components/dialog",
+              "components/dropdown-menu",
+              "components/popover",
+              "components/tooltip"
+            ]
+          },
+          {
+            "group": "Other",
+            "pages": [
+              "components/label",
+              "components/link",
+              "components/cloudflare-logo",
+              "components/collapsible",
+              "components/table"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Primitives",
+        "groups": [
+          {
+            "group": "Overview",
+            "pages": [
+              "primitives/introduction"
+            ]
+          },
+          {
+            "group": "Base UI Primitives",
+            "pages": [
+              "primitives/accordion",
+              "primitives/alert-dialog",
+              "primitives/autocomplete",
+              "primitives/avatar",
+              "primitives/checkbox",
+              "primitives/collapsible",
+              "primitives/combobox",
+              "primitives/dialog",
+              "primitives/field",
+              "primitives/menu",
+              "primitives/popover",
+              "primitives/select",
+              "primitives/slider",
+              "primitives/tabs",
+              "primitives/tooltip"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "35+ accessible React components built on Base UI",
+    "Semantic token-based theming system with automatic dark mode",
+    "Tree-shakeable per-component exports",
+    "CLI for querying documentation and installing blocks",
+    "TypeScript-first with full type definitions",
+    "Tailwind CSS v4 integration with custom semantic tokens",
+    "Compound components for complex UI patterns",
+    "Figma plugin for design-to-code workflow"
+  ],
+  "publicApiSurface": [
+    "Badge",
+    "Banner",
+    "Breadcrumbs",
+    "Button",
+    "RefreshButton",
+    "LinkButton",
+    "Checkbox",
+    "ClipboardText",
+    "CloudflareLogo",
+    "Code",
+    "CodeBlock",
+    "Collapsible",
+    "Combobox",
+    "CommandPalette",
+    "DatePicker",
+    "DateRangePicker",
+    "Dialog",
+    "DropdownMenu",
+    "Empty",
+    "Field",
+    "Grid",
+    "Input",
+    "InputArea",
+    "Label",
+    "LayerCard",
+    "Link",
+    "Loader",
+    "MenuBar",
+    "Meter",
+    "Pagination",
+    "Popover",
+    "Radio",
+    "Select",
+    "SensitiveInput",
+    "Surface",
+    "Switch",
+    "Table",
+    "Tabs",
+    "Text",
+    "Toast",
+    "Tooltip"
+  ]
+}
