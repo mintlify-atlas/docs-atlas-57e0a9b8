@@ -1,0 +1,51 @@
+---
+title: "Dialog"
+description: "Unstyled dialog primitive for modal overlays"
+---
+
+## Overview
+
+The Dialog primitive provides an accessible, unstyled modal dialog component for overlaying content on top of the main page.
+
+## Import
+
+```tsx
+import { Dialog } from '@cloudflare/kumo/primitives/dialog';
+```
+
+## About
+
+This is a re-export of the Base UI Dialog primitive. It handles:
+- Focus trapping and restoration
+- ARIA attributes for accessibility
+- Backdrop click and escape key dismissal
+- Controlled and uncontrolled modes
+- Portal rendering
+
+## Usage
+
+```tsx
+import { Dialog } from '@cloudflare/kumo/primitives/dialog';
+
+function MyDialog() {
+  return (
+    <Dialog.Root>
+      <Dialog.Trigger>Open Dialog</Dialog.Trigger>
+      <Dialog.Portal>
+        <Dialog.Backdrop />
+        <Dialog.Popup>
+          <Dialog.Title>Dialog Title</Dialog.Title>
+          <Dialog.Description>
+            Dialog content goes here
+          </Dialog.Description>
+          <Dialog.Close>Close</Dialog.Close>
+        </Dialog.Popup>
+      </Dialog.Portal>
+    </Dialog.Root>
+  );
+}
+```
+
+## Documentation
+
+For the complete API reference, props, and examples, see the [Base UI Dialog documentation](https://base-ui.com/react/components/dialog/).

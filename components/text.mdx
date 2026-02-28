@@ -1,0 +1,196 @@
+---
+title: Text
+description: Typography component for rendering text with consistent styling.
+---
+
+<ComponentDemo name="text-demo" />
+
+## Installation
+
+```bash
+npx @cloudflare/kumo add text
+```
+
+## Import
+
+```tsx
+import { Text } from "@cloudflare/kumo";
+```
+
+## Usage
+
+```tsx
+<Text variant="heading1">Dashboard</Text>
+<Text>Default body text</Text>
+```
+
+## Props
+
+<ParamField path="variant" type="enum" default="body">
+  Text style variant. Determines color, font, and weight.
+  
+  - `"heading1"` — Large page title (30px, semibold)
+  - `"heading2"` — Section title (24px, semibold)
+  - `"heading3"` — Subsection title (18px, semibold)
+  - `"body"` — Default body text
+  - `"secondary"` — Muted text for secondary information
+  - `"success"` — Success state text
+  - `"error"` — Error state text
+  - `"mono"` — Monospace text for code
+  - `"mono-secondary"` — Muted monospace text
+</ParamField>
+
+<ParamField path="size" type="enum" default="base">
+  Text size (only applies to body/secondary/success/error variants).
+  
+  - `"xs"` — 12px
+  - `"sm"` — 14px
+  - `"base"` — 16px
+  - `"lg"` — 18px
+</ParamField>
+
+<ParamField path="bold" type="boolean">
+  Whether to use bold font weight (only applies to body variants).
+</ParamField>
+
+<ParamField path="as" type="React.ElementType">
+  The HTML element type to render as (e.g. `"span"`, `"p"`, `"h1"`). Auto-selected based on variant if omitted.
+</ParamField>
+
+<ParamField path="children" type="ReactNode">
+  Text content.
+</ParamField>
+
+## Variants
+
+### Headings
+
+Headings automatically render as `<h1>`, `<h2>`, `<h3>` elements.
+
+```tsx
+<Text variant="heading1">Page Title</Text>      {/* h1, 30px, semibold */}
+<Text variant="heading2">Section Title</Text>  {/* h2, 24px, semibold */}
+<Text variant="heading3">Subsection</Text>     {/* h3, 18px, semibold */}
+```
+
+### Body Text
+
+Body text renders as `<p>` by default.
+
+```tsx
+<Text>Default paragraph</Text>                   {/* p, 16px, default color */}
+<Text bold>Bold paragraph</Text>                  {/* p, 16px, medium weight */}
+<Text variant="secondary">Muted text</Text>      {/* p, 16px, subtle color */}
+```
+
+### Semantic Colors
+
+```tsx
+<Text variant="success">Operation succeeded</Text>  {/* link color */}
+<Text variant="error">Something went wrong</Text>  {/* danger color */}
+```
+
+### Monospace
+
+Monospace text renders as `<span>` and is 1pt smaller to optically match body text.
+
+```tsx
+<Text variant="mono">console.log()</Text>              {/* span, 14px, mono font */}
+<Text variant="mono-secondary">// comment</Text>      {/* span, 14px, mono + subtle */}
+<Text variant="mono" size="lg">const x = 1;</Text>   {/* span, 16px, mono font */}
+```
+
+## Size Variants
+
+Size only affects body/secondary/success/error variants:
+
+```tsx
+<Text size="xs">Extra small (12px)</Text>
+<Text size="sm">Small (14px)</Text>
+<Text size="base">Base (16px)</Text>
+<Text size="lg">Large (18px)</Text>
+```
+
+## Custom Element
+
+Override the default HTML element:
+
+```tsx
+<Text variant="heading2" as="h1">H1 styled as H2</Text>
+<Text as="span">Inline text</Text>
+<Text as="div">Block container</Text>
+```
+
+## Examples
+
+### All Typography Variants
+
+```tsx
+<div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+  <div className="rounded-lg border border-kumo-line bg-kumo-base p-4">
+    <Text variant="heading1">Heading 1</Text>
+    <p className="font-mono text-xs text-kumo-subtle">text-3xl (30px)</p>
+  </div>
+  <div className="rounded-lg border border-kumo-line bg-kumo-base p-4">
+    <Text variant="heading2">Heading 2</Text>
+    <p className="font-mono text-xs text-kumo-subtle">text-2xl (24px)</p>
+  </div>
+  <div className="rounded-lg border border-kumo-line bg-kumo-base p-4">
+    <Text variant="heading3">Heading 3</Text>
+    <p className="font-mono text-xs text-kumo-subtle">text-lg (18px)</p>
+  </div>
+  <div className="rounded-lg border border-kumo-line bg-kumo-base p-4">
+    <Text>Body</Text>
+    <p className="font-mono text-xs text-kumo-subtle">text-base (16px)</p>
+  </div>
+  <div className="rounded-lg border border-kumo-line bg-kumo-base p-4">
+    <Text bold>Body bold</Text>
+    <p className="font-mono text-xs text-kumo-subtle">text-base (16px)</p>
+  </div>
+  <div className="rounded-lg border border-kumo-line bg-kumo-base p-4">
+    <Text variant="secondary">Secondary</Text>
+    <p className="font-mono text-xs text-kumo-subtle">text-base (16px)</p>
+  </div>
+  <div className="rounded-lg border border-kumo-line bg-kumo-base p-4">
+    <Text variant="mono">Monospace</Text>
+    <p className="font-mono text-xs text-kumo-subtle">text-sm (14px)</p>
+  </div>
+  <div className="rounded-lg border border-kumo-line bg-kumo-base p-4">
+    <Text variant="success">Success</Text>
+    <p className="font-mono text-xs text-kumo-subtle">text-base (16px)</p>
+  </div>
+  <div className="rounded-lg border border-kumo-line bg-kumo-base p-4">
+    <Text variant="error">Error</Text>
+    <p className="font-mono text-xs text-kumo-subtle">text-base (16px)</p>
+  </div>
+</div>
+```
+
+## Styling
+
+Text uses semantic tokens:
+
+- **Heading 1**: `text-3xl font-semibold`
+- **Heading 2**: `text-2xl font-semibold`
+- **Heading 3**: `text-lg font-semibold`
+- **Body**: `text-kumo-default`
+- **Secondary**: `text-kumo-subtle`
+- **Success**: `text-kumo-link`
+- **Error**: `text-kumo-danger`
+- **Mono**: `font-mono` (size reduced by 1pt)
+
+### Font Sizes
+
+- `xs`: 12px
+- `sm`: 14px
+- `base`: 16px
+- `lg`: 18px
+- `xl`: 20px
+- `2xl`: 24px
+- `3xl`: 30px
+
+### Font Weights
+
+- `normal`: 400
+- `medium`: 500 (bold prop)
+- `semibold`: 600 (headings)

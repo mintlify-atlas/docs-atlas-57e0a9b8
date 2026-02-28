@@ -1,0 +1,319 @@
+---
+title: Toast
+description: Toast notification system with provider, viewport, and customizable toasts.
+---
+
+## Description
+
+Toast notification system built on `@base-ui/react/toast`. Provides a provider component (`Toasty` or `ToastProvider`) and hooks for creating and managing toast notifications. Toasts stack in the bottom-right corner with smooth animations, swipe-to-dismiss, and expand-on-hover behavior.
+
+## Import
+
+```tsx
+import { Toasty, ToastProvider, useKumoToastManager, createKumoToastManager } from "@cloudflare/kumo";
+```
+
+## Components
+
+### Toasty (ToastProvider)
+
+Wrap your app with `<Toasty>` or `<ToastProvider>` to enable toast notifications. Both names refer to the same component.
+
+#### Props
+
+<ParamField path="children" type="ReactNode" required>
+  Application content. Toasts render via a portal above this.
+</ParamField>
+
+<ParamField path="variant" type="'default' | 'error' | 'warning'" default="'default'">
+  Default variant for toasts (can be overridden per toast).
+  - `"default"` — Default toast style
+  - `"error"` — Error toast for critical issues
+  - `"warning"` — Warning toast for cautionary messages
+</ParamField>
+
+#### Example
+
+```tsx
+import { Toasty } from "@cloudflare/kumo";
+
+function App() {
+  return (
+    <Toasty>
+      <YourApp />
+    </Toasty>
+  );
+}
+```
+
+## Hooks
+
+### useKumoToastManager
+
+Hook for creating and managing toasts from within React components.
+
+```tsx
+import { useKumoToastManager } from "@cloudflare/kumo";
+
+function MyComponent() {
+  const toasts = useKumoToastManager();
+
+  const handleClick = () => {
+    toasts.add({
+      title: "Success",
+      description: "Your changes have been saved.",
+      variant: "default",
+    });
+  };
+
+  return <button onClick={handleClick}>Save</button>;
+}
+```
+
+### createKumoToastManager
+
+Factory function for creating a toast manager outside of React components (e.g., in utility functions or event handlers).
+
+```tsx
+import { createKumoToastManager } from "@cloudflare/kumo";
+
+const toastManager = createKumoToastManager();
+
+toastManager.add({
+  title: "Upload complete",
+  description: "Your file has been uploaded successfully.",
+});
+```
+
+## Toast Manager Methods
+
+Both `useKumoToastManager` and `createKumoToastManager` return a manager object with the following methods:
+
+### add
+
+Create a new toast notification.
+
+```tsx
+toasts.add({
+  title: "Notification title",
+  description: "Additional details about the notification.",
+  variant: "default", // 'default' | 'error' | 'warning'
+  duration: 5000, // Auto-dismiss after 5 seconds (optional)
+});
+```
+
+#### Options
+
+<ParamField path="title" type="string">
+  Primary heading text for the toast.
+</ParamField>
+
+<ParamField path="description" type="string">
+  Secondary description text displayed below the title.
+</ParamField>
+
+<ParamField path="variant" type="'default' | 'error' | 'warning'" default="'default'">
+  Visual style of the toast.
+  - `"default"` — Standard toast
+  - `"error"` — Error toast with red icon and text
+  - `"warning"` — Warning toast with amber icon and text
+</ParamField>
+
+<ParamField path="content" type="ReactNode">
+  Custom React content to render instead of the default title/description layout.
+</ParamField>
+
+<ParamField path="actions" type="ButtonProps[]">
+  Array of button configurations to render as action buttons in the toast.
+</ParamField>
+
+<ParamField path="duration" type="number">
+  Auto-dismiss duration in milliseconds. Set to `Infinity` to prevent auto-dismiss.
+</ParamField>
+
+### update
+
+Update an existing toast by ID.
+
+```tsx
+const toastId = toasts.add({
+  title: "Uploading...",
+  description: "Please wait while we upload your file.",
+});
+
+// Later...
+toasts.update(toastId, {
+  title: "Upload complete",
+  description: "Your file has been uploaded successfully.",
+  variant: "default",
+});
+```
+
+### promise
+
+Display different toasts based on a promise's state (loading, success, error).
+
+```tsx
+const uploadPromise = uploadFile();
+
+toasts.promise(uploadPromise, {
+  loading: {
+    title: "Uploading...",
+    description: "Please wait while we upload your file.",
+  },
+  success: (data) => ({
+    title: "Upload complete",
+    description: `${data.fileName} has been uploaded successfully.`,
+  }),
+  error: (error) => ({
+    title: "Upload failed",
+    description: error.message,
+    variant: "error",
+  }),
+});
+```
+
+### remove
+
+Manually dismiss a toast by ID.
+
+```tsx
+const toastId = toasts.add({ title: "Notification" });
+
+// Dismiss after 2 seconds
+setTimeout(() => {
+  toasts.remove(toastId);
+}, 2000);
+```
+
+## Examples
+
+### Basic Toast
+
+```tsx
+const toasts = useKumoToastManager();
+
+toasts.add({
+  title: "Success",
+  description: "Your changes have been saved.",
+});
+```
+
+### Error Toast
+
+```tsx
+toasts.add({
+  title: "Save failed",
+  description: "We couldn't save your changes. Please try again.",
+  variant: "error",
+});
+```
+
+### Warning Toast
+
+```tsx
+toasts.add({
+  title: "Storage almost full",
+  description: "You're using 90% of your available storage.",
+  variant: "warning",
+});
+```
+
+### Toast with Actions
+
+```tsx
+toasts.add({
+  title: "New update available",
+  description: "Version 2.0 is ready to install.",
+  actions: [
+    {
+      variant: "primary",
+      children: "Update now",
+      onClick: () => {
+        // Handle update
+      },
+    },
+    {
+      variant: "ghost",
+      children: "Later",
+      onClick: () => {
+        toasts.remove(toastId);
+      },
+    },
+  ],
+});
+```
+
+### Custom Content
+
+```tsx
+toasts.add({
+  content: (
+    <div className="flex items-center gap-3">
+      <img src="/avatar.jpg" alt="User" className="h-10 w-10 rounded-full" />
+      <div>
+        <p className="font-medium">John Doe</p>
+        <p className="text-sm text-kumo-subtle">Sent you a message</p>
+      </div>
+    </div>
+  ),
+});
+```
+
+### Persistent Toast
+
+Prevent auto-dismiss by setting duration to `Infinity`.
+
+```tsx
+toasts.add({
+  title: "Action required",
+  description: "Please review and confirm your changes.",
+  duration: Infinity,
+});
+```
+
+## Variants
+
+### Default
+
+Standard toast with neutral styling.
+
+```tsx
+toasts.add({
+  title: "Notification",
+  description: "This is a default toast.",
+  variant: "default",
+});
+```
+
+### Error
+
+Error toast with red icon and text color.
+
+```tsx
+toasts.add({
+  title: "Error",
+  description: "Something went wrong.",
+  variant: "error",
+});
+```
+
+### Warning
+
+Warning toast with amber icon and text color.
+
+```tsx
+toasts.add({
+  title: "Warning",
+  description: "Please review your settings.",
+  variant: "warning",
+});
+```
+
+## Notes
+
+- Toasts automatically stack in the bottom-right corner
+- Swipe horizontally or vertically to dismiss
+- Hover over toasts to expand and pause auto-dismiss
+- Each toast has a close button for manual dismissal
+- Built on `@base-ui/react/toast` for accessibility and animations

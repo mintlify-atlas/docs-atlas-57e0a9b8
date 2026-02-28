@@ -1,0 +1,414 @@
+---
+title: CommandPalette
+description: Accessible command palette / spotlight search overlay with keyboard navigation
+importPath: "@cloudflare/kumo"
+category: Navigation
+---
+
+## Description
+
+CommandPalette — accessible command palette / spotlight search overlay.
+
+Compound component: `CommandPalette.Root` (or `.Dialog` + `.Panel`), `.Input`, `.List`, `.Results`, `.Items`, `.Group`, `.GroupLabel`, `.Item`, `.ResultItem`, `.HighlightedText`, `.Empty`, `.Loading`, `.Footer`.
+
+Built on `@base-ui/react/autocomplete` + `@base-ui/react/dialog`.
+
+## Import
+
+```tsx
+import { CommandPalette } from "@cloudflare/kumo";
+```
+
+## Props
+
+### CommandPalette.Root
+
+<ParamField path="open" type="boolean" required>
+  Whether the dialog is open
+</ParamField>
+
+<ParamField path="onOpenChange" type="(open: boolean) => void" required>
+  Callback when the open state changes
+</ParamField>
+
+<ParamField path="onBackdropClick" type="(e: React.MouseEvent) => void">
+  Optional callback when backdrop is clicked. Receives the mouse event for position tracking (e.g., for ripple effects). If not provided, backdrop click calls onOpenChange(false).
+</ParamField>
+
+<ParamField path="items" type="TGroup[]" required>
+  Items for the command palette. Enables keyboard navigation (arrow keys, Enter). Can be a flat array or grouped items - use with Autocomplete.List render function.
+</ParamField>
+
+<ParamField path="value" type="string">
+  Controlled input value for the search
+</ParamField>
+
+<ParamField path="onValueChange" type="(value: string) => void">
+  Callback when input value changes
+</ParamField>
+
+<ParamField path="onItemHighlighted" type="(item: TGroup | undefined, details: { reason: string; event: Event; index: number }) => void">
+  Callback when an item is highlighted (arrow keys or hover)
+</ParamField>
+
+<ParamField path="itemToStringValue" type="(item: TGroup) => string">
+  Convert item to display string. Required when items are objects. Used for accessibility and typeahead search.
+</ParamField>
+
+<ParamField path="filter" type="(item: TGroup, query: string) => boolean">
+  Custom filter function. Return true to include item in results. Defaults to showing all items (consumer handles filtering).
+</ParamField>
+
+<ParamField path="onSelect" type="(item: TItem, options: { newTab: boolean }) => void">
+  Callback when an item is selected via Cmd/Ctrl+Enter keyboard shortcut. Receives the selectable item (TItem type when using getSelectableItems). newTab is always true for this callback (Cmd/Ctrl+Enter).
+</ParamField>
+
+<ParamField path="getSelectableItems" type="(items: TGroup[]) => TItem[]">
+  Function to get the flat list of selectable items from the items array. Required when using grouped items (e.g., items is an array of groups). If not provided, assumes items is a flat array of selectable items.
+</ParamField>
+
+<ParamField path="children" type="ReactNode" required>
+  Child components (Input, List, Footer, etc.)
+</ParamField>
+
+### CommandPalette.Item
+
+<ParamField path="value" type="T" required>
+  The value associated with this item
+</ParamField>
+
+<ParamField path="disabled" type="boolean">
+  Whether the item is disabled
+</ParamField>
+
+<ParamField path="onClick" type="(e: React.MouseEvent) => void">
+  Click handler - use e.metaKey || e.ctrlKey to detect new tab intent
+</ParamField>
+
+<ParamField path="children" type="ReactNode" required>
+  Content to render inside the item
+</ParamField>
+
+### CommandPalette.ResultItem
+
+<ParamField path="title" type="string" required>
+  Item title text
+</ParamField>
+
+<ParamField path="breadcrumbs" type="string[]">
+  Optional breadcrumb path parts displayed before the title (e.g., ["Compute (Workers)"] for "Compute (Workers) > VPC")
+</ParamField>
+
+<ParamField path="titleHighlights" type="HighlightRange[]">
+  Highlight ranges for the title, from Fuse.js match indices
+</ParamField>
+
+<ParamField path="breadcrumbHighlights" type="HighlightRange[][]">
+  Highlight ranges for each breadcrumb, parallel array to breadcrumbs
+</ParamField>
+
+<ParamField path="description" type="string">
+  Optional description displayed after the title (for non-navigation items like search tips)
+</ParamField>
+
+<ParamField path="icon" type="ReactNode">
+  Optional icon to display before the title
+</ParamField>
+
+<ParamField path="value" type="T" required>
+  The value associated with this item (for Autocomplete)
+</ParamField>
+
+<ParamField path="onClick" type="(e: React.MouseEvent) => void" required>
+  Click handler - use e.metaKey || e.ctrlKey to detect new tab intent
+</ParamField>
+
+<ParamField path="showArrow" type="boolean" default="true">
+  Whether to show arrow indicator on highlight
+</ParamField>
+
+<ParamField path="external" type="boolean">
+  Whether this links to an external URL (shows external icon)
+</ParamField>
+
+<ParamField path="nonInteractive" type="boolean">
+  Whether this item is non-interactive (no hover/highlight)
+</ParamField>
+
+### CommandPalette.Panel
+
+Separate panel component for drill-down navigation patterns where the dialog stays open but content changes.
+
+<ParamField path="items" type="TGroup[]" required>
+  Items for the autocomplete
+</ParamField>
+
+<ParamField path="value" type="string">
+  Controlled input value
+</ParamField>
+
+<ParamField path="onValueChange" type="(value: string) => void">
+  Callback when input value changes
+</ParamField>
+
+<ParamField path="open" type="boolean" default="true">
+  Whether the panel is active/open (for autocomplete state)
+</ParamField>
+
+<ParamField path="className" type="string">
+  Optional className for the container
+</ParamField>
+
+<ParamField path="children" type="ReactNode" required>
+  Child components (Input, List, Footer, etc.)
+</ParamField>
+
+## Sub-components
+
+- `CommandPalette.Dialog` - Modal dialog wrapper - use with Panel for content that can swap
+- `CommandPalette.Root` - Dialog + Panel combined - for simple single-view command palettes
+- `CommandPalette.Panel` - Autocomplete panel without dialog - use inside Dialog for swappable content
+- `CommandPalette.Input` - Input for use inside Panel
+- `CommandPalette.List` - Scrollable results container
+- `CommandPalette.Group` - Category grouping
+- `CommandPalette.GroupLabel` - Section header text
+- `CommandPalette.Item` - Basic item
+- `CommandPalette.ResultItem` - Rich item with breadcrumbs, highlights, icons
+- `CommandPalette.HighlightedText` - Text with highlighted portions
+- `CommandPalette.Empty` - Empty state
+- `CommandPalette.Loading` - Loading state
+- `CommandPalette.Footer` - Footer for keyboard hints
+- `CommandPalette.Results` - Render prop iterator for groups
+- `CommandPalette.Items` - Render prop iterator for items within a group
+
+## Examples
+
+### Basic command palette
+
+```tsx
+<div className="flex flex-col items-start gap-4">
+  <Button onClick={() => setOpen(true)}>Open Command Palette</Button>
+  {selectedItem && (
+    <p className="text-sm text-kumo-subtle">
+      Last selected:{" "}
+      <span className="text-kumo-default">{selectedItem}</span>
+    </p>
+  )}
+
+  <CommandPalette.Root
+    open={open}
+    onOpenChange={setOpen}
+    items={sampleGroups}
+    value={search}
+    onValueChange={setSearch}
+    itemToStringValue={(group) => group.label}
+    onSelect={(item, { newTab }) => {
+      console.log("Selected:", item.title, newTab ? "(new tab)" : "");
+      handleSelect(item);
+    }}
+    getSelectableItems={getSelectableItems}
+  >
+    <CommandPalette.Input placeholder="Type a command or search..." />
+    <CommandPalette.List>
+      <CommandPalette.Results>
+        {(group: CommandGroup) => (
+          <CommandPalette.Group key={group.id}>
+            <CommandPalette.GroupLabel>
+              {group.label}
+            </CommandPalette.GroupLabel>
+            <CommandPalette.Items>
+              {(item: CommandItem) => (
+                <CommandPalette.Item
+                  key={item.id}
+                  value={item}
+                  onClick={() => handleSelect(item)}
+                >
+                  <span className="flex items-center gap-3">
+                    {item.icon && (
+                      <span className="text-kumo-subtle">{item.icon}</span>
+                    )}
+                    <span>{item.title}</span>
+                  </span>
+                </CommandPalette.Item>
+              )}
+            </CommandPalette.Items>
+          </CommandPalette.Group>
+        )}
+      </CommandPalette.Results>
+      <CommandPalette.Empty>No commands found</CommandPalette.Empty>
+    </CommandPalette.List>
+  </CommandPalette.Root>
+</div>
+```
+
+### Simple flat list
+
+```tsx
+<div>
+  <Button onClick={() => setOpen(true)}>Open Simple Palette</Button>
+
+  <CommandPalette.Root
+    open={open}
+    onOpenChange={setOpen}
+    items={simpleItems}
+    value={search}
+    onValueChange={setSearch}
+    itemToStringValue={(item) => item.title}
+    onSelect={(item) => {
+      console.log("Selected:", item.title);
+      setOpen(false);
+    }}
+    getSelectableItems={(items) => items}
+  >
+    <CommandPalette.Input placeholder="Search actions..." />
+    <CommandPalette.List>
+      <CommandPalette.Results>
+        {(item: SimpleItem) => (
+          <CommandPalette.Item
+            key={item.id}
+            value={item}
+            onClick={() => {
+              console.log("Clicked:", item.title);
+              setOpen(false);
+            }}
+          >
+            {item.title}
+          </CommandPalette.Item>
+        )}
+      </CommandPalette.Results>
+      <CommandPalette.Empty>No actions found</CommandPalette.Empty>
+    </CommandPalette.List>
+  </CommandPalette.Root>
+</div>
+```
+
+### With loading state
+
+```tsx
+<div>
+  <Button onClick={handleOpen}>Open with Loading</Button>
+
+  <CommandPalette.Root
+    open={open}
+    onOpenChange={setOpen}
+    items={loading ? [] : sampleGroups}
+    value={search}
+    onValueChange={setSearch}
+    itemToStringValue={(group) => group.label}
+    getSelectableItems={getSelectableItems}
+  >
+    <CommandPalette.Input placeholder="Search..." />
+    <CommandPalette.List>
+      {loading ? (
+        <CommandPalette.Loading />
+      ) : (
+        <>
+          <CommandPalette.Results>
+            {(group: CommandGroup) => (
+              <CommandPalette.Group key={group.id}>
+                <CommandPalette.GroupLabel>
+                  {group.label}
+                </CommandPalette.GroupLabel>
+                <CommandPalette.Items>
+                  {(item: CommandItem) => (
+                    <CommandPalette.Item
+                      key={item.id}
+                      value={item}
+                      onClick={() => setOpen(false)}
+                    >
+                      <span className="flex items-center gap-3">
+                        {item.icon && (
+                          <span className="text-kumo-subtle">
+                            {item.icon}
+                          </span>
+                        )}
+                        <span>{item.title}</span>
+                      </span>
+                    </CommandPalette.Item>
+                  )}
+                </CommandPalette.Items>
+              </CommandPalette.Group>
+            )}
+          </CommandPalette.Results>
+          <CommandPalette.Empty>No results found</CommandPalette.Empty>
+        </>
+      )}
+    </CommandPalette.List>
+  </CommandPalette.Root>
+</div>
+```
+
+### Rich result items with footer
+
+```tsx
+<div>
+  <Button onClick={() => setOpen(true)}>Open with ResultItem</Button>
+
+  <CommandPalette.Root
+    open={open}
+    onOpenChange={setOpen}
+    items={searchResults}
+    value={search}
+    onValueChange={setSearch}
+    itemToStringValue={(item) => item.title}
+    getSelectableItems={(items) => items}
+  >
+    <CommandPalette.Input placeholder="Search documentation..." />
+    <CommandPalette.List>
+      <CommandPalette.Results>
+        {(item: SearchResult) => (
+          <CommandPalette.ResultItem
+            key={item.id}
+            value={item}
+            title={item.title}
+            breadcrumbs={item.breadcrumbs}
+            icon={item.icon}
+            onClick={() => {
+              console.log("Navigate to:", item.title);
+              setOpen(false);
+            }}
+          />
+        )}
+      </CommandPalette.Results>
+      <CommandPalette.Empty>No pages found</CommandPalette.Empty>
+    </CommandPalette.List>
+    <CommandPalette.Footer>
+      <span className="flex items-center gap-2">
+        <kbd className="rounded border border-kumo-line bg-kumo-base px-1.5 py-0.5 text-[10px]">
+          ↑↓
+        </kbd>
+        <span>Navigate</span>
+      </span>
+      <span className="flex items-center gap-2">
+        <kbd className="rounded border border-kumo-line bg-kumo-base px-1.5 py-0.5 text-[10px]">
+          ⌘↵
+        </kbd>
+        <span>Open in new tab</span>
+      </span>
+    </CommandPalette.Footer>
+  </CommandPalette.Root>
+</div>
+```
+
+## Keyboard Navigation
+
+Keyboard navigation is built-in:
+
+- **Arrow keys** (up/down) - Move highlight between items
+- **Enter** - Select the highlighted item (calls onSelect with newTab: false)
+- **Cmd+Enter** (Mac) / **Ctrl+Enter** (Windows/Linux) - Select with newTab: true
+- **Escape** - Close the dialog
+- First item is auto-highlighted when results change
+
+## Colors
+
+The component uses the following semantic tokens:
+
+- `bg-kumo-base`
+- `bg-kumo-elevated`
+- `bg-kumo-overlay`
+- `bg-kumo-warning`
+- `ring-kumo-line`
+- `text-kumo-default`
+- `text-kumo-strong`
+- `text-kumo-subtle`

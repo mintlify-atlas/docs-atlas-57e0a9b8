@@ -1,0 +1,284 @@
+---
+title: Dialog
+description: Modal dialog overlay with backdrop for confirmations, forms, and complex interactions
+---
+
+Modal dialog overlay with backdrop. Compound component with `Dialog.Root`, `Dialog.Trigger`, `Dialog.Title`, `Dialog.Description`, and `Dialog.Close`.
+
+## Import
+
+```tsx
+import { Dialog } from "@cloudflare/kumo";
+```
+
+## Usage
+
+<CodeGroup>
+```tsx Basic Dialog
+<Dialog.Root>
+  <Dialog.Trigger render={(p) => <Button {...p}>Open Dialog</Button>} />
+  <Dialog className="p-8">
+    <Dialog.Title className="text-2xl font-semibold">
+      Modal Title
+    </Dialog.Title>
+    <Dialog.Description className="text-kumo-subtle">
+      This is the dialog description content.
+    </Dialog.Description>
+  </Dialog>
+</Dialog.Root>
+```
+
+```tsx With Actions
+<Dialog.Root>
+  <Dialog.Trigger render={(p) => <Button {...p}>Delete</Button>} />
+  <Dialog className="p-8">
+    <div className="mb-4 flex items-start justify-between gap-4">
+      <Dialog.Title className="text-2xl font-semibold">
+        Delete Item
+      </Dialog.Title>
+      <Dialog.Close
+        aria-label="Close"
+        render={(props) => (
+          <Button
+            {...props}
+            variant="secondary"
+            shape="square"
+            icon={<X />}
+          />
+        )}
+      />
+    </div>
+    <Dialog.Description className="text-kumo-subtle">
+      This action cannot be undone.
+    </Dialog.Description>
+    <div className="mt-8 flex justify-end gap-2">
+      <Dialog.Close
+        render={(props) => (
+          <Button variant="secondary" {...props}>
+            Cancel
+          </Button>
+        )}
+      />
+      <Dialog.Close
+        render={(props) => (
+          <Button variant="destructive" {...props}>
+            Delete
+          </Button>
+        )}
+      />
+    </div>
+  </Dialog>
+</Dialog.Root>
+```
+</CodeGroup>
+
+## Props
+
+### Dialog (Content)
+
+<ParamField path="size" type="'sm' | 'base' | 'lg' | 'xl'" default="'base'">
+  Dialog width:
+  - `"sm"` — Small (min 288px) for simple confirmations
+  - `"base"` — Default (min 384px)
+  - `"lg"` — Large (min 512px) for complex content
+  - `"xl"` — Extra large (min 768px) for detailed views
+</ParamField>
+
+<ParamField path="className" type="string">
+  Additional CSS classes merged via `cn()`.
+</ParamField>
+
+<ParamField path="children" type="ReactNode" required>
+  Dialog content (typically Title, Description, Close, and action buttons).
+</ParamField>
+
+<ParamField path="style" type="CSSProperties">
+  Inline styles.
+</ParamField>
+
+### Dialog.Root
+
+<ParamField path="open" type="boolean">
+  Controlled open state.
+</ParamField>
+
+<ParamField path="defaultOpen" type="boolean">
+  Default open state (uncontrolled).
+</ParamField>
+
+<ParamField path="onOpenChange" type="(open: boolean) => void">
+  Callback when open state changes.
+</ParamField>
+
+<ParamField path="disablePointerDismissal" type="boolean">
+  When true, prevents closing on outside click or Escape key.
+</ParamField>
+
+### Dialog.Trigger
+
+<ParamField path="render" type="ReactElement">
+  Render prop for custom trigger element. Use this to avoid nested button issues.
+</ParamField>
+
+### Dialog.Title
+
+Accepts all standard heading element props.
+
+### Dialog.Description
+
+Accepts all standard paragraph element props.
+
+### Dialog.Close
+
+<ParamField path="render" type="ReactElement">
+  Render prop for custom close button element.
+</ParamField>
+
+## Variants
+
+### Size
+
+<CodeGroup>
+```tsx Small
+<Dialog.Root>
+  <Dialog.Trigger render={(p) => <Button {...p}>Small</Button>} />
+  <Dialog size="sm" className="p-8">
+    <Dialog.Title>Small Dialog</Dialog.Title>
+    <Dialog.Description>
+      Compact dialog for simple confirmations.
+    </Dialog.Description>
+  </Dialog>
+</Dialog.Root>
+```
+
+```tsx Large
+<Dialog.Root>
+  <Dialog.Trigger render={(p) => <Button {...p}>Large</Button>} />
+  <Dialog size="lg" className="p-8">
+    <Dialog.Title>Large Dialog</Dialog.Title>
+    <Dialog.Description>
+      Spacious dialog for complex forms and content.
+    </Dialog.Description>
+  </Dialog>
+</Dialog.Root>
+```
+
+```tsx Extra Large
+<Dialog.Root>
+  <Dialog.Trigger render={(p) => <Button {...p}>Extra Large</Button>} />
+  <Dialog size="xl" className="p-8">
+    <Dialog.Title>Extra Large Dialog</Dialog.Title>
+    <Dialog.Description>
+      Maximum width dialog for detailed views and dashboards.
+    </Dialog.Description>
+  </Dialog>
+</Dialog.Root>
+```
+</CodeGroup>
+
+## Examples
+
+### Confirmation Dialog
+
+```tsx
+<Dialog.Root disablePointerDismissal>
+  <Dialog.Trigger
+    render={(p) => (
+      <Button {...p} variant="destructive">
+        Delete Project
+      </Button>
+    )}
+  />
+  <Dialog className="p-8">
+    <div className="mb-4 flex items-center gap-3">
+      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-kumo-danger/20">
+        <Warning size={20} className="text-kumo-danger" />
+      </div>
+      <Dialog.Title className="text-xl font-semibold">
+        Delete Project?
+      </Dialog.Title>
+    </div>
+    <Dialog.Description className="text-kumo-subtle">
+      This action cannot be undone. This will permanently delete the project
+      and all associated data.
+    </Dialog.Description>
+    <div className="mt-8 flex justify-end gap-2">
+      <Dialog.Close
+        render={(props) => (
+          <Button variant="secondary" {...props}>
+            Cancel
+          </Button>
+        )}
+      />
+      <Dialog.Close
+        render={(props) => (
+          <Button variant="destructive" {...props}>
+            Delete
+          </Button>
+        )}
+      />
+    </div>
+  </Dialog>
+</Dialog.Root>
+```
+
+### Form Dialog
+
+```tsx
+<Dialog.Root>
+  <Dialog.Trigger render={(p) => <Button {...p}>Create Resource</Button>} />
+  <Dialog className="p-8">
+    <div className="mb-4 flex items-start justify-between gap-4">
+      <Dialog.Title className="text-2xl font-semibold">
+        Create Resource
+      </Dialog.Title>
+      <Dialog.Close
+        aria-label="Close"
+        render={(props) => (
+          <Button
+            {...props}
+            variant="secondary"
+            shape="square"
+            icon={<X />}
+          />
+        )}
+      />
+    </div>
+    <Dialog.Description className="mb-4 text-kumo-subtle">
+      Select a region for your new resource.
+    </Dialog.Description>
+    <Select className="w-full" placeholder="Select region...">
+      <Select.Option value="us-east">US East</Select.Option>
+      <Select.Option value="us-west">US West</Select.Option>
+      <Select.Option value="eu-central">EU Central</Select.Option>
+    </Select>
+    <div className="mt-8 flex justify-end gap-2">
+      <Dialog.Close
+        render={(props) => (
+          <Button variant="secondary" {...props}>
+            Cancel
+          </Button>
+        )}
+      />
+      <Button variant="primary">Create</Button>
+    </div>
+  </Dialog>
+</Dialog.Root>
+```
+
+## Accessibility
+
+- Uses ARIA dialog role with proper labeling
+- Traps focus within the dialog when open
+- Closes on Escape key (unless `disablePointerDismissal` is true)
+- Backdrop click closes dialog (unless `disablePointerDismissal` is true)
+- Returns focus to trigger element when closed
+- Built on `@base-ui/react/dialog`
+
+## Notes
+
+- Always use `Dialog.Title` for accessibility
+- Use the `render` prop pattern to avoid nested button issues
+- The dialog backdrop dims at 80% opacity over `bg-kumo-overlay`
+- Dialogs animate with scale and fade transitions
+- Use `disablePointerDismissal` for critical confirmations that require explicit action

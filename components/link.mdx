@@ -1,0 +1,237 @@
+---
+title: Link
+description: Link component for consistent inline text links with framework routing support.
+---
+
+## Import
+
+```tsx
+import { Link } from "@cloudflare/kumo";
+```
+
+## Usage
+
+```tsx
+<Link href="/docs">Learn more</Link>
+```
+
+## Examples
+
+### Basic Link
+
+```tsx
+<Link href="/dashboard">Go to Dashboard</Link>
+```
+
+### External Link with Icon
+
+Use `Link.ExternalIcon` to indicate external navigation:
+
+```tsx
+<Link href="https://cloudflare.com" target="_blank" rel="noopener noreferrer">
+  Visit Cloudflare <Link.ExternalIcon />
+</Link>
+```
+
+### Link Variants
+
+```tsx
+<div className="flex flex-col gap-4">
+  <Link href="#" variant="inline">
+    Inline link (default)
+  </Link>
+  <Link href="#" variant="current">
+    Current link (inherits parent color)
+  </Link>
+  <Link href="#" variant="plain">
+    Plain link (no underline)
+  </Link>
+</div>
+```
+
+### Current Variant
+
+The `current` variant inherits the parent text color:
+
+```tsx
+<p className="text-kumo-danger">
+  This is an error message. <Link href="#" variant="current">Learn more</Link>
+</p>
+```
+
+### Framework Router Integration
+
+Use the `render` prop to compose with React Router or Next.js Link:
+
+```tsx
+import { Link as RouterLink } from "react-router-dom";
+
+<Link render={<RouterLink to="/dashboard" />} variant="inline">
+  Dashboard
+</Link>
+```
+
+### Global Link Provider
+
+Configure a default link component for your entire app:
+
+```tsx
+import { LinkProvider } from "@cloudflare/kumo";
+import { Link as NextLink } from "next/link";
+
+function App({ children }) {
+  return (
+    <LinkProvider component={NextLink}>
+      {children}
+    </LinkProvider>
+  );
+}
+
+// Now all Link components use NextLink by default
+<Link href="/dashboard">Dashboard</Link>
+```
+
+## Props
+
+<ParamField path="variant" type="'inline' | 'current' | 'plain'" default="inline">
+Visual style of the link:
+- `inline` — Inline text link that flows with content (underlined, primary color)
+- `current` — Link that inherits color from parent text (underlined)
+- `plain` — Link without underline decoration
+</ParamField>
+
+<ParamField path="href" type="string">
+Destination URL or path.
+</ParamField>
+
+<ParamField path="children" type="ReactNode">
+Link content.
+</ParamField>
+
+<ParamField path="className" type="string">
+Additional CSS classes.
+</ParamField>
+
+<ParamField path="render" type="ReactElement">
+Custom element to render (e.g., React Router Link). Props are merged onto this element.
+</ParamField>
+
+<ParamField path="target" type="string">
+Browser target context (e.g., `_blank` for new tab).
+</ParamField>
+
+<ParamField path="rel" type="string">
+Relationship attributes. Use `noopener noreferrer` with `target="_blank"` for security.
+</ParamField>
+
+## Variants
+
+### Inline (default)
+
+```tsx
+<Link href="#" variant="inline">Inline link</Link>
+```
+
+- Color: `text-primary`
+- Decoration: Underline with `underline-offset-[0.15em]` and `decoration-[0.0625em]`
+- Transition: `transition-colors`
+- Hover: Defined by `link-current` class
+
+### Current
+
+```tsx
+<Link href="#" variant="current">Current link</Link>
+```
+
+- Color: `text-current` (inherits parent)
+- Decoration: Same underline as inline
+- Transition: `transition-colors`
+
+### Plain
+
+```tsx
+<Link href="#" variant="plain">Plain link</Link>
+```
+
+- Color: `text-primary`
+- Decoration: None
+- Hover: `hover:text-primary/70`
+- Transition: `transition-colors`
+
+## Sub-Components
+
+### Link.ExternalIcon
+
+Visual indicator for external links:
+
+```tsx
+<Link href="https://example.com" target="_blank" rel="noopener noreferrer">
+  Visit Example <Link.ExternalIcon />
+</Link>
+```
+
+- Icon: External link arrow icon
+- Size: `1em` (inherits font size)
+- Position: Inline with gap spacing
+
+## Styling
+
+### Base Styles
+
+All variants include:
+- Display: `inline-flex items-center gap-[0.1875em]`
+- Group: `group/link` for descendant styling
+
+### Variant Classes
+
+| Variant | Classes |
+|---------|--------|
+| `inline` | `text-primary underline underline-offset-[0.15em] decoration-[0.0625em] link-current transition-colors` |
+| `current` | `text-current underline underline-offset-[0.15em] decoration-[0.0625em] link-current transition-colors` |
+| `plain` | `text-primary hover:text-primary/70 transition-colors` |
+
+## Accessibility
+
+- Uses semantic `<a>` element
+- Inherits all standard anchor attributes (href, target, rel, aria-label, etc.)
+- External links should include `target="_blank" rel="noopener noreferrer"`
+- External icon is `aria-hidden="true"` (decorative)
+
+## Framework Integration
+
+### React Router
+
+```tsx
+import { Link as RouterLink } from "react-router-dom";
+
+<Link render={<RouterLink to="/dashboard" />}>
+  Dashboard
+</Link>
+```
+
+### Next.js
+
+```tsx
+import NextLink from "next/link";
+
+<Link render={<NextLink href="/dashboard" />}>
+  Dashboard
+</Link>
+```
+
+### Remix
+
+```tsx
+import { Link as RemixLink } from "@remix-run/react";
+
+<Link render={<RemixLink to="/dashboard" />}>
+  Dashboard
+</Link>
+```
+
+## Notes
+
+- Link uses `useRender` from `@base-ui/react` for proper ref/event handling
+- Props are merged onto the render element using `mergeProps`
+- When no `render` prop is provided, uses `LinkProvider` context or default `<a>` element
+- The `link-current` class enables CSS custom properties for link colors

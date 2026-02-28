@@ -1,0 +1,373 @@
+---
+title: Button
+description: Primary action trigger with multiple variants, sizes, shapes, icons, and loading state
+---
+
+## Button
+
+Primary action trigger. Supports multiple variants, sizes, shapes, icons, and loading state.
+
+### Import
+
+```tsx
+import { Button, RefreshButton, LinkButton } from "@cloudflare/kumo";
+```
+
+### Props
+
+<ParamField path="variant" type="string" default="secondary">
+  Visual style of the button.
+  - `"primary"` — High-emphasis button for primary actions
+  - `"secondary"` — Default button style for most actions
+  - `"ghost"` — Minimal button with no background
+  - `"destructive"` — Danger button for destructive actions like delete
+  - `"secondary-destructive"` — Secondary button with destructive text for less prominent dangerous actions
+  - `"outline"` — Bordered button with transparent background
+</ParamField>
+
+<ParamField path="size" type="string" default="base">
+  Button size.
+  - `"xs"` — Extra small button for compact UIs
+  - `"sm"` — Small button for secondary actions
+  - `"base"` — Default button size
+  - `"lg"` — Large button for primary CTAs
+</ParamField>
+
+<ParamField path="shape" type="string" default="base">
+  Button shape.
+  - `"base"` — Default rectangular button shape
+  - `"square"` — Square button for icon-only actions
+  - `"circle"` — Circular button for icon-only actions
+</ParamField>
+
+<ParamField path="icon" type="ReactNode">
+  Icon from `@phosphor-icons/react` or a React element. Rendered before children.
+</ParamField>
+
+<ParamField path="loading" type="boolean">
+  Shows a loading spinner and disables interaction.
+</ParamField>
+
+<ParamField path="disabled" type="boolean">
+  Whether the button is disabled.
+</ParamField>
+
+<ParamField path="className" type="string">
+  Additional CSS classes merged via `cn()`.
+</ParamField>
+
+<ParamField path="children" type="ReactNode">
+  Content rendered inside the button.
+</ParamField>
+
+<ParamField path="type" type="string" default="button">
+  Button type: `"submit"` | `"reset"` | `"button"`
+</ParamField>
+
+<ParamField path="aria-label" type="string">
+  Required for icon-only buttons (`shape="square"` or `shape="circle"`) to provide accessible label for screen readers.
+</ParamField>
+
+### Variants
+
+#### Primary
+
+High-emphasis button for primary actions. Uses brand color with white text.
+
+```tsx
+<Button variant="primary">Primary</Button>
+```
+
+#### Secondary (Default)
+
+Default button style for most actions. Features a subtle border and background.
+
+```tsx
+<Button variant="secondary">Secondary</Button>
+```
+
+#### Ghost
+
+Minimal button with no background. Best for tertiary actions.
+
+```tsx
+<Button variant="ghost">Ghost</Button>
+```
+
+#### Destructive
+
+Danger button for destructive actions like delete. Red background with white text.
+
+```tsx
+<Button variant="destructive">Destructive</Button>
+```
+
+#### Secondary Destructive
+
+Secondary button with destructive text for less prominent dangerous actions.
+
+```tsx
+<Button variant="secondary-destructive">Secondary Destructive</Button>
+```
+
+#### Outline
+
+Bordered button with transparent background.
+
+```tsx
+<Button variant="outline">Outline</Button>
+```
+
+### Sizes
+
+```tsx
+<div className="flex flex-wrap items-center gap-3">
+  <Button size="xs" variant="secondary">
+    Extra Small
+  </Button>
+  <Button size="sm" variant="secondary">
+    Small
+  </Button>
+  <Button size="base" variant="secondary">
+    Base
+  </Button>
+  <Button size="lg" variant="secondary">
+    Large
+  </Button>
+</div>
+```
+
+### Shapes
+
+#### Base (Default)
+
+Default rectangular button shape.
+
+```tsx
+<Button variant="secondary">Button</Button>
+```
+
+#### Square
+
+Square button for icon-only actions. Requires `aria-label`.
+
+```tsx
+import { Plus } from "@phosphor-icons/react";
+
+<Button
+  variant="secondary"
+  shape="square"
+  icon={Plus}
+  aria-label="Add item"
+/>
+```
+
+#### Circle
+
+Circular button for icon-only actions. Requires `aria-label`.
+
+```tsx
+import { Plus } from "@phosphor-icons/react";
+
+<Button
+  variant="secondary"
+  shape="circle"
+  icon={Plus}
+  aria-label="Add item"
+/>
+```
+
+### Examples
+
+#### With Icon
+
+```tsx
+import { Plus } from "@phosphor-icons/react";
+
+<Button variant="secondary" icon={Plus}>
+  Create Worker
+</Button>
+```
+
+#### Loading State
+
+```tsx
+<Button variant="primary" loading>
+  Loading...
+</Button>
+```
+
+#### Disabled
+
+```tsx
+<Button variant="secondary" disabled>
+  Disabled
+</Button>
+```
+
+#### Icon-Only Buttons
+
+```tsx
+import { Plus } from "@phosphor-icons/react";
+
+<div className="flex flex-wrap items-center gap-3">
+  <Button
+    variant="secondary"
+    shape="square"
+    icon={Plus}
+    aria-label="Add item"
+  />
+  <Button
+    variant="secondary"
+    shape="circle"
+    icon={Plus}
+    aria-label="Add item"
+  />
+</div>
+```
+
+---
+
+## RefreshButton
+
+Square button with a rotating arrows icon, used to trigger data refresh actions.
+
+### Import
+
+```tsx
+import { RefreshButton } from "@cloudflare/kumo";
+```
+
+### Props
+
+Inherits all props from `Button` with `shape="square"` applied by default.
+
+<ParamField path="loading" type="boolean">
+  Shows rotating animation on the refresh icon when true.
+</ParamField>
+
+<ParamField path="aria-label" type="string" default="Refresh">
+  Accessible label for screen readers.
+</ParamField>
+
+### Example
+
+```tsx
+import { RefreshButton } from "@cloudflare/kumo";
+import { useState } from "react";
+
+function DataPanel() {
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    await fetchData();
+    setIsRefreshing(false);
+  };
+
+  return (
+    <div>
+      <RefreshButton loading={isRefreshing} onClick={handleRefresh} />
+    </div>
+  );
+}
+```
+
+---
+
+## LinkButton
+
+Anchor element styled as a button. Integrates with `LinkProvider` for framework routing (Next.js, Remix, etc.).
+
+### Import
+
+```tsx
+import { LinkButton } from "@cloudflare/kumo";
+```
+
+### Props
+
+Inherits all variant props from `Button` plus anchor-specific props:
+
+<ParamField path="href" type="string" required>
+  Link destination URL.
+</ParamField>
+
+<ParamField path="variant" type="string" default="ghost">
+  Visual style of the link button (same variants as Button).
+</ParamField>
+
+<ParamField path="size" type="string" default="base">
+  Size of the link button (same sizes as Button).
+</ParamField>
+
+<ParamField path="shape" type="string" default="base">
+  Shape of the link button (same shapes as Button).
+</ParamField>
+
+<ParamField path="icon" type="ReactNode">
+  Icon from `@phosphor-icons/react` or a React element.
+</ParamField>
+
+<ParamField path="external" type="boolean">
+  When `true`, opens in a new tab with `rel="noopener noreferrer"`.
+</ParamField>
+
+<ParamField path="className" type="string">
+  Additional CSS classes merged via `cn()`.
+</ParamField>
+
+<ParamField path="children" type="ReactNode">
+  Content rendered inside the link button.
+</ParamField>
+
+### Examples
+
+#### Basic Link Button
+
+```tsx
+import { LinkButton } from "@cloudflare/kumo";
+
+<LinkButton href="/settings" variant="ghost">
+  Settings
+</LinkButton>
+```
+
+#### With Icon
+
+```tsx
+import { LinkButton } from "@cloudflare/kumo";
+import { Book } from "@phosphor-icons/react";
+
+<LinkButton href="/docs" variant="ghost" icon={Book}>
+  Docs
+</LinkButton>
+```
+
+#### External Link
+
+```tsx
+import { LinkButton } from "@cloudflare/kumo";
+
+<LinkButton href="https://example.com" external>
+  Visit Site
+</LinkButton>
+```
+
+#### Different Variants
+
+```tsx
+import { LinkButton } from "@cloudflare/kumo";
+
+<div className="flex flex-wrap items-center gap-3">
+  <LinkButton href="/dashboard" variant="primary">
+    Dashboard
+  </LinkButton>
+  <LinkButton href="/settings" variant="secondary">
+    Settings
+  </LinkButton>
+  <LinkButton href="/docs" variant="ghost">
+    Docs
+  </LinkButton>
+</div>
+```

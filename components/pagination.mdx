@@ -1,0 +1,260 @@
+---
+title: Pagination
+description: Page navigation controls with page count display
+importPath: "@cloudflare/kumo"
+category: Navigation
+---
+
+## Description
+
+Page navigation controls with page count display.
+
+Supports both compound component and legacy patterns. Prefer compound components for new code.
+
+## Import
+
+```tsx
+import { Pagination } from "@cloudflare/kumo";
+```
+
+## Props
+
+<ParamField path="page" type="number" default="1">
+  Current page number (1-indexed).
+</ParamField>
+
+<ParamField path="setPage" type="(page: number) => void" required>
+  Callback fired when the current page changes.
+</ParamField>
+
+<ParamField path="perPage" type="number">
+  Number of items displayed per page.
+</ParamField>
+
+<ParamField path="totalCount" type="number">
+  Total number of items across all pages.
+</ParamField>
+
+<ParamField path="className" type="string">
+  Additional CSS classes for the container
+</ParamField>
+
+<ParamField path="children" type="ReactNode">
+  Compound component children for custom layouts. Use Pagination.Info, Pagination.PageSize, Pagination.Controls, and Pagination.Separator.
+</ParamField>
+
+<ParamField path="controls" type="'full' | 'simple'" default="full">
+  **Legacy API (deprecated).** Use compound components instead.
+  - `full` - Full pagination controls with first, previous, page input, next, and last buttons
+  - `simple` - Simple pagination controls with only previous and next buttons
+</ParamField>
+
+<ParamField path="text" type="(props: { page?: number; perPage?: number; totalCount?: number; pageShowingRange: string }) => ReactNode">
+  **Legacy API (deprecated).** Use Pagination.Info with children prop instead.
+</ParamField>
+
+## Variants
+
+### controls
+
+<ResponseField name="full" default>
+  Full pagination controls with first, previous, page input, next, and last buttons
+</ResponseField>
+
+<ResponseField name="simple">
+  Simple pagination controls with only previous and next buttons
+</ResponseField>
+
+## Sub-components
+
+### Pagination.Info
+
+Displays information about the current page and items.
+
+<ParamField path="children" type="(props: { page: number; perPage?: number; totalCount?: number; pageShowingRange: string }) => ReactNode">
+  Custom render function for the info text
+</ParamField>
+
+<ParamField path="className" type="string">
+  Additional CSS classes
+</ParamField>
+
+### Pagination.PageSize
+
+Selector for changing items per page.
+
+<ParamField path="value" type="number" required>
+  Current page size value
+</ParamField>
+
+<ParamField path="onChange" type="(size: number) => void" required>
+  Callback when page size changes
+</ParamField>
+
+<ParamField path="options" type="number[]" default="[25, 50, 100, 250]">
+  Available page size options
+</ParamField>
+
+<ParamField path="label" type="ReactNode" default="Per page:">
+  Label text shown before the selector
+</ParamField>
+
+<ParamField path="className" type="string">
+  Additional CSS classes
+</ParamField>
+
+### Pagination.Controls
+
+Navigation buttons (first, prev, page input, next, last).
+
+<ParamField path="controls" type="'full' | 'simple'" default="full">
+  Control variant
+</ParamField>
+
+<ParamField path="className" type="string">
+  Additional CSS classes
+</ParamField>
+
+### Pagination.Separator
+
+Visual separator between pagination elements.
+
+<ParamField path="className" type="string">
+  Additional CSS classes
+</ParamField>
+
+## Examples
+
+### Basic usage (legacy)
+
+```tsx
+<Pagination page={page} setPage={setPage} perPage={10} totalCount={100} />
+```
+
+### Simple controls (legacy)
+
+```tsx
+<Pagination
+  page={page}
+  setPage={setPage}
+  perPage={10}
+  totalCount={100}
+  controls="simple"
+/>
+```
+
+### Full controls (legacy)
+
+```tsx
+<Pagination
+  page={page}
+  setPage={setPage}
+  perPage={10}
+  totalCount={100}
+  controls="full"
+/>
+```
+
+### Compound components (recommended)
+
+```tsx
+<Pagination page={page} setPage={setPage} perPage={perPage} totalCount={500}>
+  <Pagination.Info />
+  <Pagination.Separator />
+  <Pagination.PageSize
+    value={perPage}
+    onChange={(size) => {
+      setPerPage(size);
+      setPage(1);
+    }}
+  />
+  <Pagination.Controls />
+</Pagination>
+```
+
+### Custom page size options
+
+```tsx
+<Pagination page={page} setPage={setPage} perPage={perPage} totalCount={200}>
+  <Pagination.Info />
+  <Pagination.Separator />
+  <Pagination.PageSize
+    value={perPage}
+    onChange={(size) => {
+      setPerPage(size);
+      setPage(1);
+    }}
+    options={[10, 20, 50]}
+  />
+  <Pagination.Controls />
+</Pagination>
+```
+
+### Custom info text
+
+```tsx
+<Pagination page={page} setPage={setPage} perPage={25} totalCount={100}>
+  <Pagination.Info>
+    {({ page, totalCount }) =>
+      `Page ${page} of ${Math.ceil((totalCount ?? 1) / 25)}`
+    }
+  </Pagination.Info>
+  <Pagination.Controls />
+</Pagination>
+```
+
+### Custom layout
+
+```tsx
+<Pagination
+  page={page}
+  setPage={setPage}
+  perPage={perPage}
+  totalCount={500}
+>
+  <Pagination.Info />
+  <div className="flex items-center gap-2">
+    <Pagination.Controls />
+    <Pagination.Separator />
+    <Pagination.PageSize
+      value={perPage}
+      onChange={(size) => {
+        setPerPage(size);
+        setPage(1);
+      }}
+    />
+  </div>
+</Pagination>
+```
+
+### Custom text (legacy)
+
+```tsx
+<Pagination
+  text={({ perPage }: { perPage?: number }) =>
+    `Page ${page} - showing ${perPage} per page`
+  }
+  page={page}
+  setPage={setPage}
+  perPage={25}
+  totalCount={100}
+/>
+```
+
+## Styling
+
+### Layout
+
+- Height: 36px
+- Button size: 36px
+- Input width: 50px
+- Icon size: 16px
+- Gap: 8px
+- Border radius: 6px
+
+## Colors
+
+The component uses the following semantic tokens:
+
+- `border-kumo-line`
+- `text-kumo-strong`

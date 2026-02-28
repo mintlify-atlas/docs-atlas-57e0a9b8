@@ -1,0 +1,159 @@
+---
+title: Label
+description: Label component for form fields with optional indicators and tooltips.
+---
+
+<Note>
+Label is typically used within form components. Most form controls (Input, Checkbox, Select, etc.) have built-in `label` props that handle Label rendering automatically.
+</Note>
+
+## Import
+
+```tsx
+import { Label } from "@cloudflare/kumo";
+```
+
+## Usage
+
+```tsx
+<Label>Email</Label>
+```
+
+## Examples
+
+### Basic Labels
+
+```tsx
+<div className="flex flex-col gap-4">
+  <Label>Default Label</Label>
+  <Label showOptional>Optional Label</Label>
+  <Label tooltip="More information about this field">
+    Label with Tooltip
+  </Label>
+</div>
+```
+
+### Optional Field Indicator
+
+When `showOptional={true}`, displays gray "(optional)" text after the label:
+
+```tsx
+<Input label="Phone Number" required={false} placeholder="+1 555-0000" />
+```
+
+### Label with Tooltip
+
+Provides contextual help via an info icon:
+
+```tsx
+<Input
+  label="API Key"
+  labelTooltip="Find this in your dashboard settings under API > Keys"
+  placeholder="sk_live_..."
+/>
+```
+
+### ReactNode Children
+
+Labels accept any React node as children:
+
+```tsx
+<Checkbox
+  label={
+    <span>
+      I agree to the <strong>Terms of Service</strong>
+    </span>
+  }
+/>
+```
+
+### Complete Form Example
+
+```tsx
+<div className="flex max-w-md flex-col gap-4">
+  <Input label="Full Name" placeholder="John Doe" />
+  <Input
+    label="Email"
+    labelTooltip="We'll send your receipt here"
+    placeholder="john@example.com"
+    type="email"
+  />
+  <Input label="Company" required={false} placeholder="Acme Inc." />
+  <Select label="Country" hideLabel={false} placeholder="Select a country">
+    <Select.Option value="us">United States</Select.Option>
+    <Select.Option value="uk">United Kingdom</Select.Option>
+    <Select.Option value="ca">Canada</Select.Option>
+  </Select>
+</div>
+```
+
+### Standalone Usage
+
+```tsx
+<div className="flex flex-col gap-3">
+  <Label>Default</Label>
+  <Label showOptional>Optional</Label>
+  <Label tooltip="Important field">With Tooltip</Label>
+</div>
+```
+
+## Props
+
+<ParamField path="children" type="ReactNode" required>
+The label content — can be a string or any React node.
+</ParamField>
+
+<ParamField path="showOptional" type="boolean" default={false}>
+When `true`, shows gray "(optional)" text after the label.
+</ParamField>
+
+<ParamField path="tooltip" type="ReactNode">
+Tooltip content displayed next to the label via an info icon.
+</ParamField>
+
+<ParamField path="className" type="string">
+Additional CSS classes merged via `cn()`.
+</ParamField>
+
+<ParamField path="htmlFor" type="string">
+The id of the form element this label is associated with.
+</ParamField>
+
+<ParamField path="asContent" type="boolean" default={false}>
+When true, only renders the inline content (indicators, tooltip) without the outer label element with font styling. Useful when composed inside another label element that already provides the text styling.
+</ParamField>
+
+## Styling
+
+### Base Styles
+
+When used standalone:
+- Font: `text-base font-medium`
+- Color: `text-kumo-default`
+- Layout: `inline-flex items-center gap-1`
+
+### Optional Indicator
+
+- Font: `font-normal`
+- Color: `text-kumo-strong`
+- Text: `(optional)`
+
+### Tooltip Icon
+
+- Icon: Info icon from `@phosphor-icons/react`
+- Size: `size-4`
+- Color: `text-kumo-strong`
+- Cursor: `cursor-help`
+
+## Accessibility
+
+- Uses semantic `<label>` element for proper form association
+- `htmlFor` attribute associates label with form control by ID
+- Tooltip icon includes `aria-label="More information"`
+- Info icon is `aria-hidden="true"` (decorative)
+
+## Notes
+
+- Most form components (Input, Checkbox, Select, etc.) have built-in `label` and `labelTooltip` props that render Label internally via the Field component
+- Direct Label usage is typically for custom form controls or specialized layouts
+- When `asContent={true}`, Label renders as a `<span>` for composition within another styled element

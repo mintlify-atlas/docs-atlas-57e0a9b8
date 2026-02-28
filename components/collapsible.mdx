@@ -1,0 +1,226 @@
+---
+title: Collapsible
+description: Collapsible component for showing/hiding content with animated indicator.
+---
+
+## Import
+
+```tsx
+import { Collapsible } from "@cloudflare/kumo";
+```
+
+## Usage
+
+```tsx
+const [open, setOpen] = useState(false);
+
+<Collapsible label="Show details" open={open} onOpenChange={setOpen}>
+  <Text>Hidden content revealed when expanded.</Text>
+</Collapsible>
+```
+
+## Examples
+
+### Basic Collapsible
+
+```tsx
+<div className="w-full">
+  <Collapsible label="What is Kumo?" open={isOpen} onOpenChange={setIsOpen}>
+    Kumo is Cloudflare's new design system.
+  </Collapsible>
+</div>
+```
+
+### Multiple Collapsibles
+
+```tsx
+<div className="w-full space-y-2">
+  <Collapsible label="What is Kumo?" open={open1} onOpenChange={setOpen1}>
+    Kumo is Cloudflare's new design system.
+  </Collapsible>
+  <Collapsible
+    label="How do I use it?"
+    open={open2}
+    onOpenChange={setOpen2}
+  >
+    Install the components and import them into your project.
+  </Collapsible>
+  <Collapsible
+    label="Is it open source?"
+    open={open3}
+    onOpenChange={setOpen3}
+  >
+    Check the repository for license information.
+  </Collapsible>
+</div>
+```
+
+### Controlled Accordion Pattern
+
+Only one section open at a time:
+
+```tsx
+const [activeIndex, setActiveIndex] = useState<number | null>(null);
+
+{items.map((item, i) => (
+  <Collapsible
+    key={i}
+    label={item.title}
+    open={activeIndex === i}
+    onOpenChange={(open) => setActiveIndex(open ? i : null)>
+  >
+    {item.content}
+  </Collapsible>
+))}
+```
+
+### Rich Content
+
+```tsx
+<Collapsible label="Advanced Configuration" open={open} onOpenChange={setOpen}>
+  <div className="space-y-2">
+    <Text bold>Environment Variables</Text>
+    <Code lang="bash" code="NODE_ENV=production" />
+    <Text variant="secondary">Set your environment to production mode.</Text>
+  </div>
+</Collapsible>
+```
+
+### Custom Content Panel Styling
+
+```tsx
+<Collapsible 
+  label="Custom Styling" 
+  open={open} 
+  onOpenChange={setOpen}
+  className="rounded-lg bg-kumo-elevated p-4"
+>
+  <Text>Content with custom background and padding.</Text>
+</Collapsible>
+```
+
+## Props
+
+<ParamField path="label" type="string" required>
+Text label displayed in the trigger button.
+</ParamField>
+
+<ParamField path="open" type="boolean">
+Whether the collapsible content is visible (controlled).
+</ParamField>
+
+<ParamField path="onOpenChange" type="(open: boolean) => void">
+Callback fired when the open state changes.
+</ParamField>
+
+<ParamField path="children" type="ReactNode">
+Content to show/hide when collapsible is toggled.
+</ParamField>
+
+<ParamField path="className" type="string">
+Additional CSS classes for the content panel (not the trigger).
+</ParamField>
+
+## Styling
+
+### Trigger Button
+
+The clickable label that toggles visibility:
+
+```tsx
+className="flex cursor-pointer items-center gap-1 text-sm text-kumo-link select-none"
+```
+
+- Display: `flex items-center gap-1`
+- Typography: `text-sm text-kumo-link`
+- Cursor: `cursor-pointer`
+- Selection: `select-none`
+
+### Chevron Icon
+
+Animated indicator from `@phosphor-icons/react`:
+
+```tsx
+<CaretDownIcon className={cn("h-4 w-4 transition-transform", open && "rotate-180")} />
+```
+
+- Size: `h-4 w-4`
+- Transition: `transition-transform`
+- State: Rotates 180° when `open={true}`
+
+### Content Panel
+
+The expandable/collapsible area:
+
+```tsx
+className="my-2 space-y-4 border-l-2 border-kumo-fill pl-4"
+```
+
+- Margin: `my-2` (top and bottom)
+- Spacing: `space-y-4` (between children)
+- Border: `border-l-2 border-kumo-fill` (left accent)
+- Padding: `pl-4` (left)
+
+You can override these with the `className` prop:
+
+```tsx
+<Collapsible className="border-l-4 border-kumo-brand pl-6" />
+```
+
+## Accessibility
+
+### ARIA Attributes
+
+- Trigger has `aria-expanded={open}` to indicate state
+- Content has unique `id` generated via `useId()`
+- Trigger has `aria-controls={contentId}` linking to content
+
+### Keyboard Support
+
+- Trigger is a `<button type="button">`
+- Enter/Space toggles expansion
+- Click toggles expansion
+
+### Screen Reader Behavior
+
+- State announced via `aria-expanded`
+- Collapsed content is hidden from DOM (not just visually)
+
+## Implementation Details
+
+### Controlled Component
+
+Collapsible is fully controlled — you must manage the `open` state:
+
+```tsx
+const [open, setOpen] = useState(false);
+
+<Collapsible label="Details" open={open} onOpenChange={setOpen}>
+  Content
+</Collapsible>
+```
+
+### Content Visibility
+
+Content is conditionally rendered (unmounted when closed):
+
+```tsx
+{open && (
+  <div id={contentId}>
+    {children}
+  </div>
+)}
+```
+
+This means:
+- Content is removed from DOM when closed
+- State inside content is reset when collapsed
+- Use parent component state if you need to preserve data
+
+## Notes
+
+- No variant system — Collapsible has a single appearance
+- No built-in animation — content appears/disappears immediately
+- Chevron icon rotation is the only animated element
+- For accordion behavior (one open at a time), manage state in parent component
+- Content panel `className` applies to the wrapper div, not individual children

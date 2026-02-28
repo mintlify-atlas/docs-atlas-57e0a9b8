@@ -1,0 +1,51 @@
+---
+title: "Select"
+description: "Unstyled select primitive for dropdown selections"
+---
+
+## Overview
+
+The Select primitive provides an accessible, unstyled select component for choosing from a list of options.
+
+## Import
+
+```tsx
+import { Select } from '@cloudflare/kumo/primitives/select';
+```
+
+## About
+
+This is a re-export of the Base UI Select primitive. It handles:
+- Keyboard navigation and selection
+- ARIA attributes for accessibility
+- Single and multi-select modes
+- Controlled and uncontrolled modes
+
+## Usage
+
+```tsx
+import { Select } from '@cloudflare/kumo/primitives/select';
+
+function MySelect() {
+  return (
+    <Select.Root>
+      <Select.Trigger>
+        <Select.Value placeholder="Select option..." />
+      </Select.Trigger>
+      <Select.Portal>
+        <Select.Positioner>
+          <Select.Popup>
+            <Select.Option value="option1">Option 1</Select.Option>
+            <Select.Option value="option2">Option 2</Select.Option>
+            <Select.Option value="option3">Option 3</Select.Option>
+          </Select.Popup>
+        </Select.Positioner>
+      </Select.Portal>
+    </Select.Root>
+  );
+}
+```
+
+## Documentation
+
+For the complete API reference, props, and examples, see the [Base UI Select documentation](https://base-ui.com/react/components/select/).

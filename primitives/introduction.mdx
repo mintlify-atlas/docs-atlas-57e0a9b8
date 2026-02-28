@@ -1,0 +1,75 @@
+---
+title: "Primitives Overview"
+description: "Unstyled, accessible React primitives re-exported from Base UI"
+---
+
+## What are Primitives?
+
+Kumo provides access to **unstyled, accessible primitives** from [Base UI](https://base-ui.com/) - a headless component library built by the MUI team. These primitives give you complete control over styling while handling complex accessibility and behavior logic.
+
+### Primitives vs Components
+
+**Primitives** are low-level, unstyled building blocks that:
+- Handle accessibility (ARIA attributes, keyboard navigation, focus management)
+- Manage complex component state and behavior
+- Provide full styling control
+- Require you to apply your own styles
+
+**Components** (like Kumo's styled components) are:
+- Pre-styled with Kumo's design system
+- Built on top of primitives or native elements
+- Ready to use out of the box
+- Customizable via variants and props
+
+## Import Path
+
+All primitives are available under the `@cloudflare/kumo/primitives/` namespace:
+
+```tsx
+import { Accordion } from '@cloudflare/kumo/primitives/accordion';
+import { Dialog } from '@cloudflare/kumo/primitives/dialog';
+import { Tooltip } from '@cloudflare/kumo/primitives/tooltip';
+```
+
+You can also import multiple primitives from the barrel export:
+
+```tsx
+import { Popover, Slider, Tooltip } from '@cloudflare/kumo/primitives';
+```
+
+## Available Primitives
+
+Kumo re-exports the following Base UI primitives:
+
+- [Accordion](/primitives/accordion)
+- [Alert Dialog](/primitives/alert-dialog)
+- [Autocomplete](/primitives/autocomplete)
+- [Avatar](/primitives/avatar)
+- [Checkbox](/primitives/checkbox)
+- [Collapsible](/primitives/collapsible)
+- [Combobox](/primitives/combobox)
+- [Dialog](/primitives/dialog)
+- [Field](/primitives/field)
+- [Menu](/primitives/menu)
+- [Popover](/primitives/popover)
+- [Select](/primitives/select)
+- [Slider](/primitives/slider)
+- [Tabs](/primitives/tabs)
+- [Tooltip](/primitives/tooltip)
+
+## Official Documentation
+
+For complete API documentation, examples, and guides, refer to the [Base UI documentation](https://base-ui.com/react/components/).
+
+## When to Use Primitives
+
+Use primitives when:
+- You need complete control over styling
+- You're building custom components with specific designs
+- Kumo's styled components don't fit your use case
+- You want to create your own component library on top of Kumo
+
+Use Kumo's styled components when:
+- You want to ship faster with pre-built designs
+- You're following Cloudflare's design system
+- You need consistent styling across your application

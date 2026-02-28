@@ -1,0 +1,255 @@
+---
+title: Styling
+description: Learn how to style Kumo components using semantic tokens and the cn() utility
+icon: palette
+---
+
+Kumo uses a semantic token system built on Tailwind CSS v4 that automatically adapts to light and dark modes without requiring `dark:` variants.
+
+## Semantic Token System
+
+All Kumo components use semantic tokens that automatically respond to color mode changes. These tokens are defined in `scripts/theme-generator/config.ts` and generate CSS custom properties using Tailwind's `light-dark()` function.
+
+### Color Tokens
+
+Use these tokens for backgrounds, borders, and other color properties:
+
+```tsx
+import { Button } from '@cloudflare/kumo/components/button';
+
+// Surface hierarchy
+<div className="bg-kumo-base">       {/* Base surface */}
+  <div className="bg-kumo-elevated">  {/* Elevated surface */}
+    <div className="bg-kumo-recessed"> {/* Recessed surface */}
+    </div>
+  </div>
+</div>
+
+// Interactive states
+<button className="bg-kumo-control hover:bg-kumo-interact border-kumo-line">
+  Interactive Element
+</button>
+
+// Brand colors
+<div className="bg-kumo-brand text-white">Primary Action</div>
+<div className="bg-kumo-brand-hover">Hover State</div>
+```
+
+#### Available Color Tokens
+
+| Token | Purpose | Usage |
+|-------|---------|-------|
+| `kumo-base` | Base background | `bg-kumo-base` |
+| `kumo-elevated` | Elevated surfaces (cards, modals) | `bg-kumo-elevated` |
+| `kumo-recessed` | Recessed backgrounds | `bg-kumo-recessed` |
+| `kumo-overlay` | Overlay backgrounds | `bg-kumo-overlay` |
+| `kumo-contrast` | High contrast backgrounds | `bg-kumo-contrast` |
+| `kumo-control` | Form controls | `bg-kumo-control` |
+| `kumo-tint` | Subtle backgrounds | `bg-kumo-tint` |
+| `kumo-interact` | Interactive states | `bg-kumo-interact` |
+| `kumo-fill` | Fill backgrounds | `bg-kumo-fill` |
+| `kumo-fill-hover` | Fill hover states | `bg-kumo-fill-hover` |
+| `kumo-brand` | Primary brand color | `bg-kumo-brand` |
+| `kumo-brand-hover` | Brand hover state | `bg-kumo-brand-hover` |
+| `kumo-line` | Borders and dividers | `border-kumo-line` |
+| `kumo-ring` | Focus rings | `ring-kumo-ring` |
+
+### Text Color Tokens
+
+Use these tokens for text and foreground colors:
+
+```tsx
+// Text hierarchy
+<h1 className="text-kumo-default">Default text</h1>
+<p className="text-kumo-subtle">Subtle text</p>
+<span className="text-kumo-inactive">Inactive text</span>
+
+// Semantic colors
+<a href="#" className="text-kumo-link">Link text</a>
+<span className="text-kumo-brand">Brand text</span>
+<span className="text-kumo-success">Success message</span>
+<span className="text-kumo-danger">Error message</span>
+<span className="text-kumo-warning">Warning text</span>
+```
+
+#### Available Text Tokens
+
+| Token | Purpose | Usage |
+|-------|---------|-------|
+| `kumo-default` | Default text color | `text-kumo-default` |
+| `kumo-inverse` | Inverse text (e.g., on dark backgrounds) | `text-kumo-inverse` |
+| `kumo-strong` | Strong emphasis | `text-kumo-strong` |
+| `kumo-subtle` | De-emphasized text | `text-kumo-subtle` |
+| `kumo-inactive` | Disabled/inactive text | `text-kumo-inactive` |
+| `kumo-brand` | Brand-colored text | `text-kumo-brand` |
+| `kumo-link` | Link text | `text-kumo-link` |
+| `kumo-success` | Success messages | `text-kumo-success` |
+| `kumo-danger` | Error messages | `text-kumo-danger` |
+| `kumo-warning` | Warning messages | `text-kumo-warning` |
+
+### State Colors
+
+Kumo provides semantic state colors for feedback:
+
+```tsx
+// Info state
+<div className="bg-kumo-info-tint border-kumo-info text-kumo-default">
+  <span className="text-kumo-link">Information message</span>
+</div>
+
+// Success state
+<div className="bg-kumo-success-tint border-kumo-success">
+  <span className="text-kumo-success">Success message</span>
+</div>
+
+// Warning state
+<div className="bg-kumo-warning-tint border-kumo-warning">
+  <span className="text-kumo-warning">Warning message</span>
+</div>
+
+// Danger state
+<div className="bg-kumo-danger-tint border-kumo-danger">
+  <span className="text-kumo-danger">Error message</span>
+</div>
+```
+
+## The cn() Utility
+
+Kumo exports a `cn()` utility function that combines `clsx` and `tailwind-merge` for composing class names safely:
+
+```tsx
+import { cn } from '@cloudflare/kumo/utils';
+
+function MyComponent({ className, variant }) {
+  return (
+    <div
+      className={cn(
+        // Base styles
+        'rounded-lg p-4 bg-kumo-base',
+        // Conditional styles
+        variant === 'primary' && 'bg-kumo-brand text-white',
+        variant === 'secondary' && 'bg-kumo-control text-kumo-default',
+        // User-provided className
+        className
+      )}
+    >
+      Content
+    </div>
+  );
+}
+```
+
+### Why cn()?
+
+The `cn()` utility:
+- **Merges classes intelligently**: Resolves conflicts when the same property is set multiple times
+- **Handles conditionals**: Works with `&&`, ternaries, and null/undefined values
+- **Prevents duplicates**: Removes duplicate class names
+- **Type-safe**: Accepts strings, arrays, objects, and conditional values
+
+```tsx
+// Without cn() - conflicting classes aren't resolved
+className="p-4 p-2" // Both apply, result is unpredictable
+
+// With cn() - last one wins
+cn('p-4', 'p-2') // Returns 'p-2'
+```
+
+## Dark Mode Rules
+
+<Warning>
+  **Never use `dark:` variants.** All semantic tokens automatically adapt to color mode using CSS `light-dark()` under the hood.
+</Warning>
+
+```tsx
+// ❌ DON'T: Manual dark mode variants
+<div className="bg-white dark:bg-black text-gray-900 dark:text-gray-100">
+
+// ✅ DO: Use semantic tokens
+<div className="bg-kumo-base text-kumo-default">
+```
+
+Color mode is controlled by the `data-mode` attribute on a parent element (see [Theming](/essentials/theming)).
+
+## Token Exceptions
+
+The only raw color values allowed are:
+- `bg-white`, `bg-black`
+- `text-white`, `text-black`
+- `transparent`
+
+These are enforced by custom oxlint rules that will fail your build if you use raw Tailwind color values like `bg-blue-500` or `text-gray-900`.
+
+## Component Styling Pattern
+
+Kumo components follow a consistent pattern:
+
+1. Export variant definitions with `KUMO_{NAME}_VARIANTS`
+2. Use `cn()` for className composition
+3. Apply semantic tokens exclusively
+4. Set `displayName` on forwarded refs
+
+```tsx /home/daytona/workspace/source/packages/kumo/src/components/button/button.tsx
+import React from 'react';
+import { cn } from '@cloudflare/kumo/utils';
+
+export const KUMO_BUTTON_VARIANTS = {
+  variant: {
+    primary: {
+      classes: 'bg-kumo-brand !text-white hover:bg-kumo-brand-hover',
+      description: 'High-emphasis button for primary actions',
+    },
+    secondary: {
+      classes: 'bg-kumo-control !text-kumo-default ring ring-kumo-line hover:bg-kumo-control',
+      description: 'Default button style',
+    },
+  },
+  size: {
+    sm: { classes: 'h-6.5 gap-1 rounded-md px-2 text-xs' },
+    base: { classes: 'h-9 gap-1.5 rounded-lg px-3 text-base' },
+    lg: { classes: 'h-10 gap-2 rounded-lg px-4 text-base' },
+  },
+} as const;
+
+export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ className, variant = 'secondary', size = 'base', ...props }, ref) => {
+    return (
+      <button
+        ref={ref}
+        className={cn(
+          'flex items-center font-medium select-none cursor-pointer',
+          KUMO_BUTTON_VARIANTS.variant[variant].classes,
+          KUMO_BUTTON_VARIANTS.size[size].classes,
+          className,
+        )}
+        {...props}
+      />
+    );
+  }
+);
+
+Button.displayName = 'Button';
+```
+
+## Typography Tokens
+
+Kumo provides semantic font sizes with corresponding line heights:
+
+```tsx
+<p className="text-xs">Extra small text (12px)</p>
+<p className="text-sm">Small text (13px)</p>
+<p className="text-base">Base text (14px)</p>
+<p className="text-lg">Large text (16px)</p>
+```
+
+Line heights are automatically applied and defined as CSS custom properties (`--text-xs--line-height`, etc.).
+
+## Customizing Tokens
+
+To customize or add tokens, edit `scripts/theme-generator/config.ts` and run:
+
+```bash
+pnpm --filter @cloudflare/kumo codegen:themes
+```
+
+See [Theming](/essentials/theming) for detailed customization instructions.

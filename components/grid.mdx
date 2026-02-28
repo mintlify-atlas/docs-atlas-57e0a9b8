@@ -1,0 +1,379 @@
+---
+title: Grid
+description: Responsive CSS grid layout container with preset column configurations.
+group: Layout
+---
+
+## Import
+
+```tsx
+import { Grid, GridItem } from '@cloudflare/kumo';
+```
+
+## Description
+
+The Grid component provides a responsive CSS grid layout container with preset column configurations. It includes a companion GridItem component for grid cells. The Grid component supports multiple layout variants that automatically adapt to different screen sizes, along with customizable gap sizes and optional mobile dividers.
+
+## Components
+
+### Grid
+
+The main container component that establishes the grid layout.
+
+### GridItem
+
+A single cell within a Grid. GridItem automatically inherits context from its parent Grid (variant and mobileDivider settings).
+
+## Props
+
+### Grid Props
+
+<ParamField path="variant" type="string">
+  Responsive column layout variant.
+  
+  **Options:**
+  - `"2up"` — 1 col → 2 cols at md (Grid items stack on small screens, display side-by-side on medium screens and up)
+  - `"side-by-side"` — Always 2 cols (Grid items always displayed side-by-side)
+  - `"2-1"` — 66%/33% split at md (Two-thirds / one-third split on medium screens and up)
+  - `"1-2"` — 33%/66% split at md (One-third / two-thirds split on medium screens and up)
+  - `"1-3up"` — 1 → 3 cols at lg (Grid items stack on small screens, expand to 3 across on large screens)
+  - `"3up"` — 1 → 2 → 3 cols (Grid items stack on small screens, 2 across on medium, 3 across on large)
+  - `"4up"` — 1 → 2 → 3 → 4 cols (Grid items stack on small screens, progressively increase columns at larger breakpoints)
+  - `"6up"` — 2 → 3 → 4 → 6 cols (Grid items start at 2 across, expand to 6 across on XL)
+  - `"1-2-4up"` — 1 → 2 → 4 cols (Grid items stack on small screens, 2 across on medium, 4 across on large)
+</ParamField>
+
+<ParamField path="gap" type="string" default="base">
+  Gap size between grid items.
+  
+  **Options:**
+  - `"none"` — No gap between grid items
+  - `"sm"` — Small gap between grid items (12px)
+  - `"base"` — Default responsive gap between grid items (8px → 24px → 32px)
+  - `"lg"` — Large gap between grid items (32px)
+</ParamField>
+
+<ParamField path="mobileDivider" type="boolean">
+  Show dividers between grid items on mobile. Only works with `"4up"` variant.
+</ParamField>
+
+<ParamField path="className" type="string">
+  Additional CSS classes merged via `cn()`.
+</ParamField>
+
+<ParamField path="children" type="ReactNode">
+  Grid items to render.
+</ParamField>
+
+### GridItem Props
+
+<ParamField path="children" type="ReactNode">
+  Content for this grid cell.
+</ParamField>
+
+<ParamField path="className" type="string">
+  Additional CSS classes merged via `cn()`.
+</ParamField>
+
+## Variants
+
+### Layout Variants
+
+The Grid component supports multiple responsive layout patterns:
+
+**Two Column Layouts:**
+```tsx
+<Grid variant="2up">        {/* 1 col → 2 cols at md */}
+<Grid variant="side-by-side"> {/* Always 2 cols */}
+<Grid variant="2-1">        {/* 66%/33% split */}
+<Grid variant="1-2">        {/* 33%/66% split */}
+```
+
+**Multi Column Layouts:**
+```tsx
+<Grid variant="3up">        {/* 1 → 2 → 3 cols */}
+<Grid variant="4up">        {/* 1 → 2 → 3 → 4 cols */}
+<Grid variant="6up">        {/* 2 → 3 → 4 → 6 cols */}
+<Grid variant="1-2-4up">    {/* 1 → 2 → 4 cols */}
+```
+
+### Gap Variants
+
+Control spacing between grid items:
+
+```tsx
+<Grid gap="none">  {/* No gap */}
+<Grid gap="sm">    {/* 12px gap */}
+<Grid gap="base">  {/* Responsive: 8px → 24px → 32px */}
+<Grid gap="lg">    {/* 32px gap */}
+```
+
+## Examples
+
+### Basic Grid
+
+```tsx
+<Grid variant="2up" gap="base">
+  <GridItem>
+    <Surface className="rounded-lg p-4">
+      <Text bold>Item 1</Text>
+      <div className="mt-1">
+        <Text variant="secondary">First grid item</Text>
+      </div>
+    </Surface>
+  </GridItem>
+  <GridItem>
+    <Surface className="rounded-lg p-4">
+      <Text bold>Item 2</Text>
+      <div className="mt-1">
+        <Text variant="secondary">Second grid item</Text>
+      </div>
+    </Surface>
+  </GridItem>
+</Grid>
+```
+
+### Responsive Variants
+
+```tsx
+<div className="flex flex-col gap-8">
+  <div>
+    <p className="mb-2 text-kumo-subtle">variant="2up"</p>
+    <Grid variant="2up" gap="sm">
+      <GridItem>
+        <Surface className="rounded-lg p-4 text-center">
+          <Text>1</Text>
+        </Surface>
+      </GridItem>
+      <GridItem>
+        <Surface className="rounded-lg p-4 text-center">
+          <Text>2</Text>
+        </Surface>
+      </GridItem>
+    </Grid>
+  </div>
+
+  <div>
+    <p className="mb-2 text-kumo-subtle">variant="3up"</p>
+    <Grid variant="3up" gap="sm">
+      <GridItem>
+        <Surface className="rounded-lg p-4 text-center">
+          <Text>1</Text>
+        </Surface>
+      </GridItem>
+      <GridItem>
+        <Surface className="rounded-lg p-4 text-center">
+          <Text>2</Text>
+        </Surface>
+      </GridItem>
+      <GridItem>
+        <Surface className="rounded-lg p-4 text-center">
+          <Text>3</Text>
+        </Surface>
+      </GridItem>
+    </Grid>
+  </div>
+
+  <div>
+    <p className="mb-2 text-kumo-subtle">variant="4up"</p>
+    <Grid variant="4up" gap="sm">
+      <GridItem>
+        <Surface className="rounded-lg p-4 text-center">
+          <Text>1</Text>
+        </Surface>
+      </GridItem>
+      <GridItem>
+        <Surface className="rounded-lg p-4 text-center">
+          <Text>2</Text>
+        </Surface>
+      </GridItem>
+      <GridItem>
+        <Surface className="rounded-lg p-4 text-center">
+          <Text>3</Text>
+        </Surface>
+      </GridItem>
+      <GridItem>
+        <Surface className="rounded-lg p-4 text-center">
+          <Text>4</Text>
+        </Surface>
+      </GridItem>
+    </Grid>
+  </div>
+</div>
+```
+
+### Asymmetric Layouts
+
+```tsx
+<div className="flex flex-col gap-8">
+  <div>
+    <p className="mb-2 text-kumo-subtle">variant="2-1" (66% / 33%)</p>
+    <Grid variant="2-1" gap="sm">
+      <GridItem>
+        <Surface className="rounded-lg p-4">
+          <Text bold>Main Content</Text>
+          <div className="mt-1">
+            <Text variant="secondary">Two-thirds width</Text>
+          </div>
+        </Surface>
+      </GridItem>
+      <GridItem>
+        <Surface className="rounded-lg p-4">
+          <Text bold>Sidebar</Text>
+          <div className="mt-1">
+            <Text variant="secondary">One-third width</Text>
+          </div>
+        </Surface>
+      </GridItem>
+    </Grid>
+  </div>
+
+  <div>
+    <p className="mb-2 text-kumo-subtle">variant="1-2" (33% / 66%)</p>
+    <Grid variant="1-2" gap="sm">
+      <GridItem>
+        <Surface className="rounded-lg p-4">
+          <Text bold>Sidebar</Text>
+          <div className="mt-1">
+            <Text variant="secondary">One-third width</Text>
+          </div>
+        </Surface>
+      </GridItem>
+      <GridItem>
+        <Surface className="rounded-lg p-4">
+          <Text bold>Main Content</Text>
+          <div className="mt-1">
+            <Text variant="secondary">Two-thirds width</Text>
+          </div>
+        </Surface>
+      </GridItem>
+    </Grid>
+  </div>
+</div>
+```
+
+### Gap Sizes
+
+```tsx
+<div className="flex flex-col gap-8">
+  <div>
+    <p className="mb-2 text-kumo-subtle">gap="none"</p>
+    <Grid variant="side-by-side" gap="none">
+      <GridItem>
+        <Surface className="rounded-lg p-4 text-center">
+          <Text>1</Text>
+        </Surface>
+      </GridItem>
+      <GridItem>
+        <Surface className="rounded-lg p-4 text-center">
+          <Text>2</Text>
+        </Surface>
+      </GridItem>
+    </Grid>
+  </div>
+
+  <div>
+    <p className="mb-2 text-kumo-subtle">gap="sm"</p>
+    <Grid variant="side-by-side" gap="sm">
+      <GridItem>
+        <Surface className="rounded-lg p-4 text-center">
+          <Text>1</Text>
+        </Surface>
+      </GridItem>
+      <GridItem>
+        <Surface className="rounded-lg p-4 text-center">
+          <Text>2</Text>
+        </Surface>
+      </GridItem>
+    </Grid>
+  </div>
+
+  <div>
+    <p className="mb-2 text-kumo-subtle">gap="base" (default, responsive)</p>
+    <Grid variant="side-by-side" gap="base">
+      <GridItem>
+        <Surface className="rounded-lg p-4 text-center">
+          <Text>1</Text>
+        </Surface>
+      </GridItem>
+      <GridItem>
+        <Surface className="rounded-lg p-4 text-center">
+          <Text>2</Text>
+        </Surface>
+      </GridItem>
+    </Grid>
+  </div>
+
+  <div>
+    <p className="mb-2 text-kumo-subtle">gap="lg"</p>
+    <Grid variant="side-by-side" gap="lg">
+      <GridItem>
+        <Surface className="rounded-lg p-4 text-center">
+          <Text>1</Text>
+        </Surface>
+      </GridItem>
+      <GridItem>
+        <Surface className="rounded-lg p-4 text-center">
+          <Text>2</Text>
+        </Surface>
+      </GridItem>
+    </Grid>
+  </div>
+</div>
+```
+
+### Mobile Divider
+
+```tsx
+<Grid variant="4up" gap="base" mobileDivider>
+  <GridItem>
+    <Surface className="rounded-lg p-4">
+      <Text bold>Item 1</Text>
+      <div className="mt-1">
+        <Text variant="secondary">Has divider on mobile</Text>
+      </div>
+    </Surface>
+  </GridItem>
+  <GridItem>
+    <Surface className="rounded-lg p-4">
+      <Text bold>Item 2</Text>
+      <div className="mt-1">
+        <Text variant="secondary">Has divider on mobile</Text>
+      </div>
+    </Surface>
+  </GridItem>
+  <GridItem>
+    <Surface className="rounded-lg p-4">
+      <Text bold>Item 3</Text>
+      <div className="mt-1">
+        <Text variant="secondary">Has divider on mobile</Text>
+      </div>
+    </Surface>
+  </GridItem>
+  <GridItem>
+    <Surface className="rounded-lg p-4">
+      <Text bold>Item 4</Text>
+      <div className="mt-1">
+        <Text variant="secondary">Has divider on mobile</Text>
+      </div>
+    </Surface>
+  </GridItem>
+</Grid>
+```
+
+## Implementation Details
+
+### Context
+
+The Grid component uses React Context to pass variant and mobileDivider settings to GridItem children, enabling automatic styling coordination.
+
+### Responsive Breakpoints
+
+- **sm**: < 640px
+- **md**: ≥ 768px
+- **lg**: ≥ 1024px
+- **xl**: ≥ 1280px
+
+### Colors Used
+
+- `border-kumo-line` — Used for mobile dividers when `mobileDivider` is enabled

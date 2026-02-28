@@ -1,0 +1,51 @@
+---
+title: "Alert Dialog"
+description: "Unstyled alert dialog primitive for critical confirmations"
+---
+
+## Overview
+
+The Alert Dialog primitive provides an accessible, unstyled modal dialog component for interrupting user workflows with important messages or confirmations.
+
+## Import
+
+```tsx
+import { AlertDialog } from '@cloudflare/kumo/primitives/alert-dialog';
+```
+
+## About
+
+This is a re-export of the Base UI Alert Dialog primitive. It handles:
+- Focus trapping and restoration
+- ARIA attributes for accessibility
+- Backdrop click and escape key dismissal
+- Controlled and uncontrolled modes
+
+## Usage
+
+```tsx
+import { AlertDialog } from '@cloudflare/kumo/primitives/alert-dialog';
+
+function MyAlertDialog() {
+  return (
+    <AlertDialog.Root>
+      <AlertDialog.Trigger>Delete Account</AlertDialog.Trigger>
+      <AlertDialog.Portal>
+        <AlertDialog.Backdrop />
+        <AlertDialog.Popup>
+          <AlertDialog.Title>Are you sure?</AlertDialog.Title>
+          <AlertDialog.Description>
+            This action cannot be undone.
+          </AlertDialog.Description>
+          <AlertDialog.Close>Cancel</AlertDialog.Close>
+          <button>Delete</button>
+        </AlertDialog.Popup>
+      </AlertDialog.Portal>
+    </AlertDialog.Root>
+  );
+}
+```
+
+## Documentation
+
+For the complete API reference, props, and examples, see the [Base UI Alert Dialog documentation](https://base-ui.com/react/components/alert-dialog/).

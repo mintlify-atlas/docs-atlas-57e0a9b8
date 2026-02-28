@@ -1,0 +1,53 @@
+---
+title: "Tabs"
+description: "Unstyled tabs primitive for tabbed content navigation"
+---
+
+## Overview
+
+The Tabs primitive provides an accessible, unstyled tabs component for organizing content into multiple panels.
+
+## Import
+
+```tsx
+import { Tabs } from '@cloudflare/kumo/primitives/tabs';
+```
+
+## About
+
+This is a re-export of the Base UI Tabs primitive. It handles:
+- Keyboard navigation (Arrow keys, Home, End)
+- ARIA attributes for accessibility
+- Automatic and manual activation
+- Controlled and uncontrolled modes
+
+## Usage
+
+```tsx
+import { Tabs } from '@cloudflare/kumo/primitives/tabs';
+
+function MyTabs() {
+  return (
+    <Tabs.Root defaultValue="tab1">
+      <Tabs.List>
+        <Tabs.Tab value="tab1">Tab 1</Tabs.Tab>
+        <Tabs.Tab value="tab2">Tab 2</Tabs.Tab>
+        <Tabs.Tab value="tab3">Tab 3</Tabs.Tab>
+      </Tabs.List>
+      <Tabs.Panel value="tab1">
+        Content for Tab 1
+      </Tabs.Panel>
+      <Tabs.Panel value="tab2">
+        Content for Tab 2
+      </Tabs.Panel>
+      <Tabs.Panel value="tab3">
+        Content for Tab 3
+      </Tabs.Panel>
+    </Tabs.Root>
+  );
+}
+```
+
+## Documentation
+
+For the complete API reference, props, and examples, see the [Base UI Tabs documentation](https://base-ui.com/react/components/tabs/).

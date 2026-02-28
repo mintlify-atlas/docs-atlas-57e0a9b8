@@ -1,0 +1,138 @@
+---
+title: Banner
+description: Full-width message bar for informational, warning, or error notices.
+---
+
+## Description
+
+Full-width message bar for informational, warning, or error notices. Supports structured title/description for i18n, or simple children for basic usage.
+
+## Import
+
+```tsx
+import { Banner } from "@cloudflare/kumo";
+```
+
+## Props
+
+<ParamField path="variant" type="'default' | 'alert' | 'error'" default="'default'">
+  Visual style of the banner.
+  - `"default"` — Informational blue banner for general messages
+  - `"alert"` — Warning yellow banner for cautionary messages
+  - `"error"` — Error red banner for critical issues
+</ParamField>
+
+<ParamField path="icon" type="ReactNode">
+  Icon element rendered before the banner content (e.g. from `@phosphor-icons/react`).
+</ParamField>
+
+<ParamField path="title" type="string">
+  Primary heading text for the banner. Use for i18n string injection.
+</ParamField>
+
+<ParamField path="description" type="ReactNode">
+  Secondary description text displayed below the title. Use for i18n string injection.
+</ParamField>
+
+<ParamField path="className" type="string">
+  Additional CSS classes merged via `cn()`.
+</ParamField>
+
+## Variants
+
+### Default (Informational)
+
+Informational banner for general messages.
+
+```tsx
+<Banner
+  icon={<Info weight="fill" />}
+  title="Update available"
+  description="A new version is ready to install."
+/>
+```
+
+### Alert (Warning)
+
+Warning banner for cautionary messages.
+
+```tsx
+<Banner
+  icon={<Warning weight="fill" />}
+  variant="alert"
+  title="Session expiring"
+  description="Your session will expire in 5 minutes."
+/>
+```
+
+### Error
+
+Error banner for critical issues.
+
+```tsx
+<Banner
+  icon={<WarningCircle weight="fill" />}
+  variant="error"
+  title="Save failed"
+  description="We couldn't save your changes. Please try again."
+/>
+```
+
+## Examples
+
+### All Variants
+
+```tsx
+<div className="space-y-3">
+  <Banner
+    icon={<Info weight="fill" />}
+    title="Update available"
+    description="A new version is ready to install."
+  />
+  <Banner
+    icon={<Warning weight="fill" />}
+    variant="alert"
+    title="Session expiring"
+    description="Your session will expire in 5 minutes."
+  />
+  <Banner
+    icon={<WarningCircle weight="fill" />}
+    variant="error"
+    title="Save failed"
+    description="We couldn't save your changes. Please try again."
+  />
+</div>
+```
+
+### With Custom Content
+
+Banners support custom React nodes in the description for rich formatting.
+
+```tsx
+<Banner
+  icon={<Info weight="fill" />}
+  title="Custom content supported"
+  description={
+    <Text DANGEROUS_className="text-inherit">
+      This banner supports <strong>custom content</strong> with Text.
+    </Text>
+  }
+/>
+```
+
+### Title Only
+
+```tsx
+<Banner
+  icon={<Info weight="fill" />}
+  title="Your changes have been saved."
+/>
+```
+
+### Simple Usage (Legacy)
+
+For backwards compatibility, banners support simple children instead of structured title/description.
+
+```tsx
+<Banner icon={<Info />}>This is a simple banner using children.</Banner>
+```

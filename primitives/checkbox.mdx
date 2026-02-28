@@ -1,0 +1,43 @@
+---
+title: "Checkbox"
+description: "Unstyled checkbox primitive for binary selections"
+---
+
+## Overview
+
+The Checkbox primitive provides an accessible, unstyled checkbox component with support for indeterminate states.
+
+## Import
+
+```tsx
+import { Checkbox } from '@cloudflare/kumo/primitives/checkbox';
+```
+
+## About
+
+This is a re-export of the Base UI Checkbox primitive. It handles:
+- ARIA attributes for accessibility
+- Indeterminate state support
+- Keyboard interaction (Space)
+- Controlled and uncontrolled modes
+
+## Usage
+
+```tsx
+import { Checkbox } from '@cloudflare/kumo/primitives/checkbox';
+import { useState } from 'react';
+
+function MyCheckbox() {
+  const [checked, setChecked] = useState(false);
+  
+  return (
+    <Checkbox.Root checked={checked} onCheckedChange={setChecked}>
+      <Checkbox.Indicator />
+    </Checkbox.Root>
+  );
+}
+```
+
+## Documentation
+
+For the complete API reference, props, and examples, see the [Base UI Checkbox documentation](https://base-ui.com/react/components/checkbox/).

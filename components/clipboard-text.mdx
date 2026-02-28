@@ -1,0 +1,209 @@
+---
+title: ClipboardText
+description: Read-only text field with a one-click copy-to-clipboard button
+---
+
+Read-only text field with a one-click copy-to-clipboard button.
+
+## Import
+
+```tsx
+import { ClipboardText } from "@cloudflare/kumo";
+```
+
+## Props
+
+<ParamField path="text" type="string" required>
+  The text to display and copy to clipboard.
+</ParamField>
+
+<ParamField path="size" type="string" default="lg">
+  Size of the clipboard text field.
+  - `"sm"` — Small clipboard text for compact UIs
+  - `"base"` — Default clipboard text size
+  - `"lg"` — Large clipboard text for prominent display
+</ParamField>
+
+<ParamField path="className" type="string">
+  Additional CSS classes merged via `cn()`.
+</ParamField>
+
+<ParamField path="onCopy" type="() => void">
+  Callback fired after text is copied to clipboard.
+</ParamField>
+
+<ParamField path="tooltip" type="object">
+  Tooltip config. Shows tooltip on hover, anchored toast on click.
+  
+  Properties:
+  - `text?: string` — Text shown in tooltip on hover (default: `"Copy"`)
+  - `copiedText?: string` — Text shown in toast after copying (default: `"Copied"`)
+  - `side?: "top" | "bottom" | "left" | "right"` — Tooltip/toast placement (default: `"top"`)
+</ParamField>
+
+<ParamField path="labels" type="object">
+  Accessible labels for i18n.
+  
+  Properties:
+  - `copyAction?: string` — Accessible label for copy button (default: `"Copy to clipboard"`)
+</ParamField>
+
+## Sizes
+
+### Small
+
+Small clipboard text for compact UIs. Uses `text-xs` with a small button.
+
+```tsx
+<ClipboardText text="abc123" size="sm" />
+```
+
+### Base
+
+Default clipboard text size. Uses `text-sm` with a base-sized button.
+
+```tsx
+<ClipboardText text="abc123" size="base" />
+```
+
+### Large (Default)
+
+Large clipboard text for prominent display. Uses `text-sm` with a large button.
+
+```tsx
+<ClipboardText text="0c239dd2" />
+```
+
+## Examples
+
+### Basic Usage
+
+```tsx
+<ClipboardText text="0c239dd2" />
+```
+
+### API Key
+
+```tsx
+<ClipboardText text="sk_live_51H8..." />
+```
+
+### Long URL
+
+```tsx
+<ClipboardText text="https://example.com/very/long/url/path" />
+```
+
+### With Tooltip
+
+```tsx
+<ClipboardText
+  text="npx kumo add button"
+  tooltip={{ text: "Copy", copiedText: "Copied!", side: "top" }}
+/>
+```
+
+### With Copy Callback
+
+```tsx
+import { ClipboardText } from "@cloudflare/kumo";
+
+function ApiKeyDisplay() {
+  const handleCopy = () => {
+    console.log("API key copied");
+    // Track analytics, show notification, etc.
+  };
+
+  return (
+    <ClipboardText
+      text="sk_live_51H8..."
+      onCopy={handleCopy}
+    />
+  );
+}
+```
+
+### Custom Tooltip Placement
+
+```tsx
+<div className="flex flex-col gap-3">
+  <ClipboardText
+    text="top placement"
+    tooltip={{ side: "top" }}
+  />
+  <ClipboardText
+    text="bottom placement"
+    tooltip={{ side: "bottom" }}
+  />
+  <ClipboardText
+    text="left placement"
+    tooltip={{ side: "left" }}
+  />
+  <ClipboardText
+    text="right placement"
+    tooltip={{ side: "right" }}
+  />
+</div>
+```
+
+### Custom Labels for i18n
+
+```tsx
+<ClipboardText
+  text="abc123"
+  labels={{ copyAction: "Copier dans le presse-papiers" }}
+  tooltip={{ text: "Copier", copiedText: "Copié!" }}
+/>
+```
+
+### Different Sizes
+
+```tsx
+<div className="flex flex-col gap-3">
+  <ClipboardText text="Small size" size="sm" />
+  <ClipboardText text="Base size" size="base" />
+  <ClipboardText text="Large size" size="lg" />
+</div>
+```
+
+## Features
+
+### Copy Mechanism
+
+ClipboardText uses the modern Clipboard API (`navigator.clipboard.writeText`) with a fallback to `document.execCommand('copy')` for older browsers.
+
+### Visual Feedback
+
+The copy button shows an animated transition from a copy icon to a check icon when clicked:
+
+- **Before copy**: Copy icon (default state)
+- **After copy**: Check icon with slide animation
+- **Auto-reset**: Returns to copy icon after 1.5 seconds
+
+### Tooltip & Toast
+
+When the `tooltip` prop is provided:
+
+- **Hover**: Shows tooltip with custom text
+- **Click**: Shows anchored toast notification positioned relative to the button
+- **Duration**: Toast auto-dismisses after 1.5 seconds
+
+### Accessibility
+
+- Uses `aria-label` on the copy button for screen readers
+- Includes `sr-only` live region that announces "Copied" to screen readers
+- Fully keyboard accessible
+
+## Implementation Notes
+
+### Monospace Font
+
+The text content uses `font-mono` for better readability of codes, IDs, and technical strings.
+
+### Text Truncation
+
+Long text is automatically truncated with ellipsis using `truncate` utility class. The full text is still copied to clipboard.
+
+### Browser Support
+
+Clipboard API is supported in all modern browsers. The fallback mechanism ensures compatibility with older browsers that don't support `navigator.clipboard`.

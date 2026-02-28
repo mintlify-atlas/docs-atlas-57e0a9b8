@@ -1,0 +1,86 @@
+---
+title: Introduction
+description: Kumo is Cloudflare's component library for building modern web applications with React, Base UI, and Tailwind CSS.
+---
+
+# Introduction to Kumo
+
+Kumo is Cloudflare's component library for building modern web applications. Built on React, Base UI, and Tailwind CSS v4, it provides a comprehensive set of accessible, themeable UI components.
+
+## What is Kumo?
+
+Kumo is a production-ready React component library designed for building modern web applications. It combines the accessibility primitives of Base UI with Cloudflare's design system, offering 35+ components that work seamlessly together.
+
+<CardGroup cols={2}>
+  <Card title="Quick Start" icon="rocket" href="/quickstart">
+    Get up and running with Kumo in minutes
+  </Card>
+  <Card title="Installation" icon="download" href="/installation">
+    Install Kumo and configure your project
+  </Card>
+  <Card title="Components" icon="cube" href="/components/button">
+    Explore the full component library
+  </Card>
+  <Card title="GitHub" icon="github" href="https://github.com/cloudflare/kumo">
+    View source code and contribute
+  </Card>
+</CardGroup>
+
+## Key Features
+
+### Accessible by Default
+
+Built on [Base UI](https://base-ui.com) primitives, Kumo components follow WAI-ARIA guidelines and are keyboard navigable out of the box.
+
+### Themeable
+
+Kumo uses semantic design tokens that automatically adapt to light and dark modes. Customize the entire theme with CSS custom properties or use the built-in FedRAMP theme.
+
+### Tree-Shakeable
+
+Every component is available as a granular import for optimal bundle size:
+
+```tsx
+// Import only what you need
+import { Button } from "@cloudflare/kumo/components/button";
+```
+
+### TypeScript First
+
+Fully typed with TypeScript, providing excellent autocomplete and type safety for all component props.
+
+### Flexible Styling
+
+Works with Tailwind CSS v4 or as a standalone package with pre-compiled styles. No Tailwind configuration required if you prefer the standalone build.
+
+## Component Categories
+
+Kumo includes components for:
+
+- **Actions** — Buttons, links, dropdowns, menus
+- **Forms** — Inputs, selects, checkboxes, switches, date pickers
+- **Data Display** — Tables, badges, tooltips, code blocks
+- **Feedback** — Toasts, dialogs, loaders, empty states
+- **Layout** — Surfaces, grids, tabs, collapsibles
+- **Navigation** — Breadcrumbs, pagination, command palette
+
+## Built-in CLI
+
+Kumo includes a command-line interface for quick component reference:
+
+```bash
+npx @cloudflare/kumo ls         # List all components
+npx @cloudflare/kumo doc Button # Get component documentation
+npx @cloudflare/kumo blocks     # Browse installable blocks
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Install Kumo" icon="download" href="/installation">
+    Set up Kumo in your project
+  </Card>
+  <Card title="Quick Start Guide" icon="play" href="/quickstart">
+    Build your first component
+  </Card>
+</CardGroup>

@@ -1,0 +1,40 @@
+---
+title: "Avatar"
+description: "Unstyled avatar primitive for user profile images"
+---
+
+## Overview
+
+The Avatar primitive provides an accessible, unstyled avatar component with fallback support for missing or loading images.
+
+## Import
+
+```tsx
+import { Avatar } from '@cloudflare/kumo/primitives/avatar';
+```
+
+## About
+
+This is a re-export of the Base UI Avatar primitive. It handles:
+- Image loading states
+- Fallback content display
+- Alt text for accessibility
+
+## Usage
+
+```tsx
+import { Avatar } from '@cloudflare/kumo/primitives/avatar';
+
+function MyAvatar() {
+  return (
+    <Avatar.Root>
+      <Avatar.Image src="/user-photo.jpg" alt="User Name" />
+      <Avatar.Fallback>UN</Avatar.Fallback>
+    </Avatar.Root>
+  );
+}
+```
+
+## Documentation
+
+For the complete API reference, props, and examples, see the [Base UI Avatar documentation](https://base-ui.com/react/components/avatar/).

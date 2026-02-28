@@ -1,0 +1,355 @@
+---
+title: DropdownMenu
+description: Accessible dropdown menu anchored to a trigger with support for items, links, checkboxes, radio groups, and submenus
+---
+
+Accessible dropdown menu anchored to a trigger. Supports various item types including actions, navigation links, checkboxes, radio groups, and nested submenus.
+
+## Import
+
+```tsx
+import { DropdownMenu } from "@cloudflare/kumo";
+```
+
+## Usage
+
+<CodeGroup>
+```tsx Basic Menu
+<DropdownMenu>
+  <DropdownMenu.Trigger>
+    <Button>Actions</Button>
+  </DropdownMenu.Trigger>
+  <DropdownMenu.Content>
+    <DropdownMenu.Item>Edit</DropdownMenu.Item>
+    <DropdownMenu.Item icon={CopyIcon}>Duplicate</DropdownMenu.Item>
+    <DropdownMenu.Separator />
+    <DropdownMenu.Item variant="danger">Delete</DropdownMenu.Item>
+  </DropdownMenu.Content>
+</DropdownMenu>
+```
+
+```tsx With Links
+<DropdownMenu>
+  <DropdownMenu.Trigger>
+    <Button>Menu</Button>
+  </DropdownMenu.Trigger>
+  <DropdownMenu.Content>
+    <DropdownMenu.Item icon={EditIcon}>Edit</DropdownMenu.Item>
+    <DropdownMenu.LinkItem href="/settings" icon={GearIcon}>
+      Settings
+    </DropdownMenu.LinkItem>
+    <DropdownMenu.LinkItem
+      href="https://docs.example.com"
+      target="_blank"
+      icon={BookIcon}
+    >
+      Documentation
+    </DropdownMenu.LinkItem>
+    <DropdownMenu.Separator />
+    <DropdownMenu.Item variant="danger" icon={TrashIcon}>
+      Delete
+    </DropdownMenu.Item>
+  </DropdownMenu.Content>
+</DropdownMenu>
+```
+</CodeGroup>
+
+## Props
+
+### DropdownMenu (Root)
+
+<ParamField path="open" type="boolean">
+  Controlled open state.
+</ParamField>
+
+<ParamField path="defaultOpen" type="boolean">
+  Default open state (uncontrolled).
+</ParamField>
+
+<ParamField path="onOpenChange" type="(open: boolean) => void">
+  Callback when open state changes.
+</ParamField>
+
+### DropdownMenu.Trigger
+
+<ParamField path="children" type="ReactElement" required>
+  Trigger element (typically a Button). Automatically converted to render prop.
+</ParamField>
+
+<ParamField path="render" type="ReactElement">
+  Render prop for custom trigger element.
+</ParamField>
+
+### DropdownMenu.Content
+
+<ParamField path="side" type="'top' | 'right' | 'bottom' | 'left'" default="'bottom'">
+  Which side of the trigger to position the menu.
+</ParamField>
+
+<ParamField path="sideOffset" type="number" default="8">
+  Distance in pixels from the trigger.
+</ParamField>
+
+<ParamField path="align" type="'start' | 'center' | 'end'" default="'start'">
+  Alignment relative to the trigger.
+</ParamField>
+
+<ParamField path="className" type="string">
+  Additional CSS classes.
+</ParamField>
+
+### DropdownMenu.Item
+
+<ParamField path="variant" type="'default' | 'danger'" default="'default'">
+  Visual style:
+  - `"default"` — Standard item appearance
+  - `"danger"` — Destructive action with red text
+</ParamField>
+
+<ParamField path="icon" type="Icon | ReactNode">
+  Icon from `@phosphor-icons/react` or React element displayed before the label.
+</ParamField>
+
+<ParamField path="selected" type="boolean">
+  Shows a checkmark indicator when true.
+</ParamField>
+
+<ParamField path="disabled" type="boolean">
+  Whether the item is disabled.
+</ParamField>
+
+<ParamField path="onSelect" type="() => void">
+  Callback when item is selected.
+</ParamField>
+
+### DropdownMenu.LinkItem
+
+<ParamField path="href" type="string" required>
+  URL for navigation. External links (http/https) open in new tab.
+</ParamField>
+
+<ParamField path="variant" type="'default' | 'danger'" default="'default'">
+  Visual style (same as Item).
+</ParamField>
+
+<ParamField path="icon" type="Icon | ReactNode">
+  Icon displayed before the label.
+</ParamField>
+
+<ParamField path="target" type="string">
+  Link target attribute.
+</ParamField>
+
+<ParamField path="rel" type="string">
+  Link relationship attribute.
+</ParamField>
+
+### DropdownMenu.CheckboxItem
+
+<ParamField path="checked" type="boolean">
+  Controlled checked state.
+</ParamField>
+
+<ParamField path="onCheckedChange" type="(checked: boolean) => void">
+  Callback when checked state changes.
+</ParamField>
+
+### DropdownMenu.RadioGroup
+
+<ParamField path="value" type="string">
+  Currently selected radio value.
+</ParamField>
+
+<ParamField path="onValueChange" type="(value: string) => void">
+  Callback when selection changes.
+</ParamField>
+
+### DropdownMenu.RadioItem
+
+<ParamField path="value" type="string" required>
+  Value for this radio option.
+</ParamField>
+
+<ParamField path="icon" type="Icon | ReactNode">
+  Icon displayed before the label.
+</ParamField>
+
+### DropdownMenu.Sub
+
+Accepts same props as DropdownMenu root for controlling open state.
+
+### DropdownMenu.SubTrigger
+
+<ParamField path="icon" type="Icon | ReactNode">
+  Icon displayed before the label.
+</ParamField>
+
+<ParamField path="inset" type="boolean">
+  Adds left padding to align with items that have icons.
+</ParamField>
+
+## Variants
+
+### Danger Items
+
+```tsx
+<DropdownMenu>
+  <DropdownMenu.Trigger>
+    <Button>File Menu</Button>
+  </DropdownMenu.Trigger>
+  <DropdownMenu.Content>
+    <DropdownMenu.Item icon={FileIcon}>New File</DropdownMenu.Item>
+    <DropdownMenu.Item icon={FolderIcon}>Open</DropdownMenu.Item>
+    <DropdownMenu.Separator />
+    <DropdownMenu.Item variant="danger" icon={TrashIcon}>
+      Delete File
+    </DropdownMenu.Item>
+  </DropdownMenu.Content>
+</DropdownMenu>
+```
+
+## Examples
+
+### With Checkboxes
+
+```tsx
+<DropdownMenu>
+  <DropdownMenu.Trigger>
+    <Button>View Options</Button>
+  </DropdownMenu.Trigger>
+  <DropdownMenu.Content>
+    <DropdownMenu.CheckboxItem
+      checked={showPanel}
+      onCheckedChange={setShowPanel}
+    >
+      Show Side Panel
+    </DropdownMenu.CheckboxItem>
+    <DropdownMenu.CheckboxItem
+      checked={showToolbar}
+      onCheckedChange={setShowToolbar}
+    >
+      Show Toolbar
+    </DropdownMenu.CheckboxItem>
+  </DropdownMenu.Content>
+</DropdownMenu>
+```
+
+### With Radio Group
+
+```tsx
+<DropdownMenu>
+  <DropdownMenu.Trigger>
+    <Button>Text Size</Button>
+  </DropdownMenu.Trigger>
+  <DropdownMenu.Content>
+    <DropdownMenu.RadioGroup value={size} onValueChange={setSize}>
+      <DropdownMenu.RadioItem value="sm">
+        Small
+        <DropdownMenu.RadioItemIndicator />
+      </DropdownMenu.RadioItem>
+      <DropdownMenu.RadioItem value="md">
+        Medium
+        <DropdownMenu.RadioItemIndicator />
+      </DropdownMenu.RadioItem>
+      <DropdownMenu.RadioItem value="lg">
+        Large
+        <DropdownMenu.RadioItemIndicator />
+      </DropdownMenu.RadioItem>
+    </DropdownMenu.RadioGroup>
+  </DropdownMenu.Content>
+</DropdownMenu>
+```
+
+### With Submenu
+
+```tsx
+<DropdownMenu>
+  <DropdownMenu.Trigger>
+    <Button>Edit Menu</Button>
+  </DropdownMenu.Trigger>
+  <DropdownMenu.Content>
+    <DropdownMenu.Item icon={CopyIcon}>Copy</DropdownMenu.Item>
+    <DropdownMenu.Item icon={PasteIcon}>Paste</DropdownMenu.Item>
+    <DropdownMenu.Separator />
+    <DropdownMenu.Sub>
+      <DropdownMenu.SubTrigger icon={TextIcon}>
+        Transform
+      </DropdownMenu.SubTrigger>
+      <DropdownMenu.SubContent>
+        <DropdownMenu.Item>Uppercase</DropdownMenu.Item>
+        <DropdownMenu.Item>Lowercase</DropdownMenu.Item>
+        <DropdownMenu.Item>Title Case</DropdownMenu.Item>
+      </DropdownMenu.SubContent>
+    </DropdownMenu.Sub>
+  </DropdownMenu.Content>
+</DropdownMenu>
+```
+
+### With Labels and Groups
+
+```tsx
+<DropdownMenu>
+  <DropdownMenu.Trigger>
+    <Button>Options</Button>
+  </DropdownMenu.Trigger>
+  <DropdownMenu.Content>
+    <DropdownMenu.Label>Account</DropdownMenu.Label>
+    <DropdownMenu.Group>
+      <DropdownMenu.Item icon={UserIcon}>Profile</DropdownMenu.Item>
+      <DropdownMenu.Item icon={GearIcon}>Settings</DropdownMenu.Item>
+    </DropdownMenu.Group>
+    <DropdownMenu.Separator />
+    <DropdownMenu.Label>Help</DropdownMenu.Label>
+    <DropdownMenu.Group>
+      <DropdownMenu.LinkItem href="/docs" icon={BookIcon}>
+        Documentation
+      </DropdownMenu.LinkItem>
+      <DropdownMenu.LinkItem href="/support" icon={ChatIcon}>
+        Support
+      </DropdownMenu.LinkItem>
+    </DropdownMenu.Group>
+  </DropdownMenu.Content>
+</DropdownMenu>
+```
+
+### With Keyboard Shortcuts
+
+```tsx
+<DropdownMenu>
+  <DropdownMenu.Trigger>
+    <Button>File</Button>
+  </DropdownMenu.Trigger>
+  <DropdownMenu.Content>
+    <DropdownMenu.Item icon={FileIcon}>
+      New File
+      <DropdownMenu.Shortcut>⌘N</DropdownMenu.Shortcut>
+    </DropdownMenu.Item>
+    <DropdownMenu.Item icon={FolderIcon}>
+      Open
+      <DropdownMenu.Shortcut>⌘O</DropdownMenu.Shortcut>
+    </DropdownMenu.Item>
+    <DropdownMenu.Item icon={SaveIcon}>
+      Save
+      <DropdownMenu.Shortcut>⌘S</DropdownMenu.Shortcut>
+    </DropdownMenu.Item>
+  </DropdownMenu.Content>
+</DropdownMenu>
+```
+
+## Accessibility
+
+- Keyboard navigation with arrow keys
+- Automatic focus management
+- Closes on Escape key
+- Screen reader announcements
+- ARIA menu role with proper labeling
+- Built on `@base-ui/react/menu`
+
+## Notes
+
+- Use `DropdownMenu.LinkItem` for navigation instead of `Item` with `href` (deprecated pattern)
+- External links (http/https) automatically open in new tab
+- The trigger automatically uses the render prop pattern to avoid nested button issues
+- Menu closes automatically when an item is selected (unless disabled)
+- Radio items require explicit `RadioItemIndicator` to show selection
+- Checkbox items show built-in checkbox indicators

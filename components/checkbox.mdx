@@ -1,0 +1,190 @@
+---
+title: Checkbox
+description: Checkbox component for multi-select form inputs with built-in label and error state support.
+---
+
+## Description
+
+Checkbox component for selecting multiple options. Supports single checkboxes with labels, indeterminate state, and checkbox groups via the `Checkbox.Group` compound component.
+
+## Import
+
+```tsx
+import { Checkbox } from "@cloudflare/kumo";
+```
+
+## Props
+
+<ParamField path="label" type="ReactNode" optional>
+  Label content for the checkbox (enables built-in Field wrapper) - can be a string or any React node
+</ParamField>
+
+<ParamField path="variant" type="enum" default="default" optional>
+  Visual variant: "default" or "error" for validation failures (visual only, no error text)
+  
+  - `default` — Default checkbox appearance
+  - `error` — Error state for validation failures
+</ParamField>
+
+<ParamField path="checked" type="boolean" optional>
+  Whether the checkbox is checked (controlled)
+</ParamField>
+
+<ParamField path="indeterminate" type="boolean" optional>
+  Whether the checkbox is in indeterminate state
+</ParamField>
+
+<ParamField path="disabled" type="boolean" optional>
+  Whether the checkbox is disabled
+</ParamField>
+
+<ParamField path="labelTooltip" type="ReactNode" optional>
+  Tooltip content to display next to the label via an info icon
+</ParamField>
+
+<ParamField path="controlFirst" type="boolean" optional>
+  When true (default), checkbox appears before label. When false, label appears before checkbox.
+</ParamField>
+
+<ParamField path="name" type="string" optional>
+  Name for form submission
+</ParamField>
+
+<ParamField path="required" type="boolean" optional>
+  Whether the field is required
+</ParamField>
+
+<ParamField path="className" type="string" optional>
+  Additional class name
+</ParamField>
+
+<ParamField path="onValueChange" type="(checked: boolean) => void">
+  Callback when checkbox value changes
+</ParamField>
+
+## Examples
+
+### Basic Checkbox
+
+```tsx
+<Checkbox
+  label="Accept terms and conditions"
+  checked={checked}
+  onCheckedChange={setChecked}
+/>
+```
+
+### Indeterminate State
+
+```tsx
+<Checkbox
+  label="Select all"
+  indeterminate={indeterminate}
+  onCheckedChange={setIndeterminate}
+/>
+```
+
+### Label Position
+
+```tsx
+<Checkbox
+  label="Remember me"
+  controlFirst={false}
+  checked={checked}
+  onCheckedChange={setChecked}
+/>
+```
+
+### Disabled
+
+```tsx
+<Checkbox label="Disabled option" disabled />
+```
+
+### Error State
+
+```tsx
+<Checkbox label="Invalid option" variant="error" />
+```
+
+## Checkbox Group
+
+Use `Checkbox.Group` to create a group of checkboxes with a shared legend and error state.
+
+### Basic Group
+
+```tsx
+<Checkbox.Group
+  legend="Email preferences"
+  description="Choose how you'd like to receive updates"
+  value={preferences}
+  onValueChange={setPreferences}
+>
+  <Checkbox.Item value="email" label="Email notifications" />
+  <Checkbox.Item value="sms" label="SMS notifications" />
+  <Checkbox.Item value="push" label="Push notifications" />
+</Checkbox.Group>
+```
+
+### Group with Error
+
+```tsx
+<Checkbox.Group
+  legend="Required preferences"
+  error="Please select at least one notification method"
+  value={[]}
+  onValueChange={() => {}}
+>
+  <Checkbox.Item value="email" label="Email" variant="error" />
+  <Checkbox.Item value="sms" label="SMS" variant="error" />
+</Checkbox.Group>
+```
+
+## Styling
+
+Checkbox uses semantic Kumo tokens:
+
+- **Dimensions**: `h-4 w-4`
+- **Border radius**: `rounded-sm`
+- **Base**: `bg-kumo-base`, `ring-kumo-line`
+- **Checked**: `bg-kumo-contrast`, `text-kumo-inverse`
+- **Error**: `ring-kumo-danger`
+- **Hover/Focus**: `ring-kumo-ring`
+
+## Sub-components
+
+### Checkbox.Group
+
+Container for multiple checkboxes with shared legend and validation.
+
+<ParamField path="legend" type="string" required>
+  Legend text for the group
+</ParamField>
+
+<ParamField path="value" type="string[]" optional>
+  Array of checked values
+</ParamField>
+
+<ParamField path="onValueChange" type="(value: string[]) => void">
+  Callback when selection changes
+</ParamField>
+
+<ParamField path="error" type="string" optional>
+  Error message for the group
+</ParamField>
+
+<ParamField path="description" type="ReactNode" optional>
+  Helper text for the group
+</ParamField>
+
+<ParamField path="disabled" type="boolean" optional>
+  Disable all checkboxes in the group
+</ParamField>
+
+<ParamField path="controlFirst" type="boolean" optional>
+  Position of checkbox controls relative to labels
+</ParamField>
+
+### Checkbox.Item
+
+Individual checkbox within a group. Inherits props from parent Checkbox component.

@@ -1,0 +1,233 @@
+---
+title: Radio
+description: Radio button group for single-select choices with built-in fieldset and validation.
+---
+
+## Description
+
+Radio — radio button group for single-select choices. Use when the user must choose exactly one option from a list.
+
+Compound component: `Radio.Group` (with built-in Fieldset) and `Radio.Item`. Built on `@base-ui/react/radio-group` + `@base-ui/react/radio`.
+
+## Import
+
+```tsx
+import { Radio } from "@cloudflare/kumo";
+```
+
+## Props
+
+### Radio.Group
+
+<ParamField path="legend" type="string" required>
+  Legend text for the group (required for accessibility)
+</ParamField>
+
+<ParamField path="value" type="string" optional>
+  Value of the radio that should be selected (controlled)
+</ParamField>
+
+<ParamField path="defaultValue" type="string" optional>
+  Initial value for uncontrolled mode
+</ParamField>
+
+<ParamField path="onValueChange" type="(value: string) => void">
+  Callback when selection changes
+</ParamField>
+
+<ParamField path="orientation" type="'vertical' | 'horizontal'" optional>
+  Layout direction of the radio items
+</ParamField>
+
+<ParamField path="description" type="ReactNode" optional>
+  Helper text for the group
+</ParamField>
+
+<ParamField path="error" type="string" optional>
+  Error message for the group
+</ParamField>
+
+<ParamField path="disabled" type="boolean" optional>
+  Whether all radios in the group are disabled
+</ParamField>
+
+<ParamField path="controlPosition" type="'start' | 'end'" optional>
+  Position of radio control relative to label: "start" (default) puts radio before label, "end" puts label before radio
+</ParamField>
+
+<ParamField path="name" type="string" optional>
+  Form submission name for the radio group
+</ParamField>
+
+<ParamField path="className" type="string" optional>
+  Additional CSS classes
+</ParamField>
+
+<ParamField path="children" type="ReactNode" optional>
+  Child Radio.Item components
+</ParamField>
+
+### Radio.Item
+
+<ParamField path="label" type="string" required>
+  Label text for this radio option
+</ParamField>
+
+<ParamField path="value" type="string" required>
+  The value this radio represents
+</ParamField>
+
+<ParamField path="disabled" type="boolean" optional>
+  Whether this specific radio is disabled
+</ParamField>
+
+<ParamField path="variant" type="'default' | 'error'" optional>
+  Visual variant for error states
+</ParamField>
+
+## Examples
+
+### Basic Radio Group
+
+```tsx
+<Radio.Group
+  legend="Notification preference"
+  value={value}
+  onValueChange={setValue}
+>
+  <Radio.Item label="Email" value="email" />
+  <Radio.Item label="SMS" value="sms" />
+  <Radio.Item label="Push notification" value="push" />
+</Radio.Group>
+```
+
+### Uncontrolled with Default Value
+
+```tsx
+<Radio.Group legend="Account type" defaultValue="personal">
+  <Radio.Item label="Personal" value="personal" />
+  <Radio.Item label="Business" value="business" />
+  <Radio.Item label="Enterprise" value="enterprise" />
+</Radio.Group>
+```
+
+### Horizontal Layout
+
+```tsx
+<Radio.Group
+  legend="Size"
+  orientation="horizontal"
+  value={value}
+  onValueChange={setValue}
+>
+  <Radio.Item label="Small" value="sm" />
+  <Radio.Item label="Medium" value="md" />
+  <Radio.Item label="Large" value="lg" />
+</Radio.Group>
+```
+
+### With Description
+
+```tsx
+<Radio.Group
+  legend="Shipping method"
+  description="Choose how you'd like to receive your order"
+  value={value}
+  onValueChange={setValue}
+>
+  <Radio.Item label="Standard (5-7 days)" value="standard" />
+  <Radio.Item label="Express (2-3 days)" value="express" />
+  <Radio.Item label="Overnight" value="overnight" />
+</Radio.Group>
+```
+
+### Error State
+
+```tsx
+<Radio.Group
+  legend="Payment method"
+  error="Please select a payment method to continue"
+>
+  <Radio.Item label="Credit Card" value="card" variant="error" />
+  <Radio.Item label="PayPal" value="paypal" variant="error" />
+  <Radio.Item label="Bank Transfer" value="bank" variant="error" />
+</Radio.Group>
+```
+
+### Disabled States
+
+```tsx
+<div className="flex flex-col gap-6">
+  {/* Entire group disabled */}
+  <Radio.Group legend="Disabled group" disabled defaultValue="a">
+    <Radio.Item label="Option A" value="a" />
+    <Radio.Item label="Option B" value="b" />
+  </Radio.Group>
+  
+  {/* Individual item disabled */}
+  <Radio.Group legend="Individual disabled" defaultValue="available">
+    <Radio.Item label="Available" value="available" />
+    <Radio.Item label="Unavailable" value="unavailable" disabled />
+  </Radio.Group>
+</div>
+```
+
+### Control Position
+
+```tsx
+<Radio.Group legend="Preferences" controlPosition="end" defaultValue="a">
+  <Radio.Item label="Label before radio" value="a" />
+  <Radio.Item label="Another option" value="b" />
+</Radio.Group>
+```
+
+## Styling
+
+Radio uses semantic Kumo tokens:
+
+- **Base**: `bg-kumo-base`, `ring-kumo-line`
+- **Selected**: `bg-kumo-contrast` (with inner dot)
+- **Error**: `ring-kumo-danger`
+- **Hover/Focus**: `ring-kumo-ring`
+- **Text**: `text-kumo-default`
+- **Description**: `text-kumo-subtle`
+
+### Radio Dimensions
+
+- **Radio button**: 16px circle
+- **Inner dot**: 8px circle (when selected)
+- **Ring width**: 1px (2px on focus)
+
+## Accessibility
+
+- Built on Base UI Radio primitives for full accessibility
+- Uses semantic `<fieldset>` and `<legend>` elements
+- Keyboard navigation: Arrow keys to move between options, Space to select
+- Proper ARIA roles and attributes
+- Required `legend` prop ensures screen reader users understand the group's purpose
+
+## When to Use
+
+### Use Radio when:
+- User must select exactly one option
+- Options are mutually exclusive
+- All options should be visible at once (typically 2-7 options)
+- You want to make the available choices obvious
+
+### Use Select instead when:
+- You have many options (8+)
+- Space is limited
+- Options can be searched/filtered
+
+### Use Checkbox instead when:
+- User can select multiple options
+- User can select zero or one option
+- Options are independent of each other
+
+## Related Components
+
+- **Checkbox** — For multiple selections
+- **Switch** — For binary on/off states
+- **Select** — For single selection from many options
+- **Combobox** — For searchable single/multiple selection
+- **Field** — Standalone field wrapper

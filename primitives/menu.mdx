@@ -1,0 +1,50 @@
+---
+title: "Menu"
+description: "Unstyled menu primitive for dropdown menus and context menus"
+---
+
+## Overview
+
+The Menu primitive provides an accessible, unstyled menu component for creating dropdown menus and context menus.
+
+## Import
+
+```tsx
+import { Menu } from '@cloudflare/kumo/primitives/menu';
+```
+
+## About
+
+This is a re-export of the Base UI Menu primitive. It handles:
+- Keyboard navigation (Arrow keys, Enter, Escape)
+- ARIA attributes for accessibility
+- Nested submenus
+- Item selection and disabled states
+
+## Usage
+
+```tsx
+import { Menu } from '@cloudflare/kumo/primitives/menu';
+
+function MyMenu() {
+  return (
+    <Menu.Root>
+      <Menu.Trigger>Options</Menu.Trigger>
+      <Menu.Portal>
+        <Menu.Positioner>
+          <Menu.Popup>
+            <Menu.Item>Edit</Menu.Item>
+            <Menu.Item>Duplicate</Menu.Item>
+            <Menu.Separator />
+            <Menu.Item>Delete</Menu.Item>
+          </Menu.Popup>
+        </Menu.Positioner>
+      </Menu.Portal>
+    </Menu.Root>
+  );
+}
+```
+
+## Documentation
+
+For the complete API reference, props, and examples, see the [Base UI Menu documentation](https://base-ui.com/react/components/menu/).

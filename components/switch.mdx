@@ -1,0 +1,218 @@
+---
+title: Switch
+description: Toggle switch component for binary on/off states with label and error support.
+---
+
+## Description
+
+Toggle switch component for binary on/off states. Use for settings, preferences, and feature toggles. Supports labels, sizes, and error states.
+
+## Import
+
+```tsx
+import { Switch } from "@cloudflare/kumo";
+```
+
+## Props
+
+<ParamField path="checked" type="boolean" optional>
+  Whether the switch is checked (controlled)
+</ParamField>
+
+<ParamField path="defaultChecked" type="boolean" optional>
+  Initial checked state for uncontrolled mode
+</ParamField>
+
+<ParamField path="onCheckedChange" type="(checked: boolean) => void">
+  Callback when switch state changes
+</ParamField>
+
+<ParamField path="label" type="ReactNode" optional>
+  Label content for the switch (Field wrapper is built-in) - can be a string or any React node. Optional when used standalone for visual-only purposes.
+</ParamField>
+
+<ParamField path="labelTooltip" type="ReactNode" optional>
+  Tooltip content to display next to the label via an info icon
+</ParamField>
+
+<ParamField path="controlFirst" type="boolean" optional>
+  When true (default), switch appears before label. When false, label appears before switch.
+</ParamField>
+
+<ParamField path="size" type="enum" default="base" optional>
+  Size of the switch.
+  
+  - `sm` — Small switch for compact UIs (22px × 34px)
+  - `base` — Default switch size (26px × 42px)
+  - `lg` — Large switch for prominent toggles (30px × 50px)
+</ParamField>
+
+<ParamField path="variant" type="enum" default="default" optional>
+  Visual variant: "default" or "error" for validation failures (visual only, no error text)
+  
+  - `default` — Default switch appearance
+  - `error` — Error state for validation failures
+</ParamField>
+
+<ParamField path="required" type="boolean" optional>
+  Whether the switch is required. When explicitly false, shows "(optional)" text after the label.
+</ParamField>
+
+<ParamField path="disabled" type="boolean" optional>
+  Whether the switch is disabled
+</ParamField>
+
+<ParamField path="name" type="string" optional>
+  Name for form submission
+</ParamField>
+
+<ParamField path="value" type="string | string[] | number" optional>
+  Value for form submission
+</ParamField>
+
+<ParamField path="className" type="string" optional>
+  Additional CSS classes
+</ParamField>
+
+## Examples
+
+### Basic Switch
+
+```tsx
+<Switch label="Enable notifications" checked={checked} onCheckedChange={setChecked} />
+```
+
+### Unchecked State
+
+```tsx
+<Switch label="Switch" checked={false} onCheckedChange={() => {}} />
+```
+
+### Checked State
+
+```tsx
+<Switch label="Switch" checked={true} onCheckedChange={() => {}} />
+```
+
+### Disabled
+
+```tsx
+<Switch label="Disabled" checked={false} disabled />
+```
+
+### Sizes
+
+```tsx
+<div className="flex flex-col gap-4">
+  <Switch size="sm" label="Small switch" />
+  <Switch size="base" label="Default switch" />
+  <Switch size="lg" label="Large switch" />
+</div>
+```
+
+### Label Position
+
+```tsx
+<div className="flex flex-col gap-4">
+  <Switch label="Switch before label" controlFirst={true} />
+  <Switch label="Label before switch" controlFirst={false} />
+</div>
+```
+
+### With Tooltip
+
+```tsx
+<Switch
+  label="Two-factor authentication"
+  labelTooltip="Adds an extra layer of security to your account"
+  checked={checked}
+  onCheckedChange={setChecked}
+/>
+```
+
+### Error State
+
+```tsx
+<Switch
+  label="Accept terms"
+  variant="error"
+  checked={false}
+  onCheckedChange={() => {}}
+/>
+```
+
+## Switch Groups
+
+Use `Switch.Group` to create a group of switches with a shared legend and error state.
+
+```tsx
+<Switch.Group
+  legend="Privacy Settings"
+  description="Control who can see your information"
+>
+  <Switch.Item label="Show email" />
+  <Switch.Item label="Show phone number" />
+  <Switch.Item label="Show address" />
+</Switch.Group>
+```
+
+### Group with Error
+
+```tsx
+<Switch.Group
+  legend="Required Settings"
+  error="You must enable at least one notification method"
+>
+  <Switch.Item label="Email notifications" variant="error" />
+  <Switch.Item label="SMS notifications" variant="error" />
+</Switch.Group>
+```
+
+## Styling
+
+Switch uses semantic Kumo tokens:
+
+- **Unchecked track**: `bg-kumo-recessed`
+- **Checked track**: `bg-kumo-brand`, hover: `bg-kumo-brand-hover`
+- **Thumb**: `bg-kumo-interact` (unchecked), moves right when checked
+- **Error**: `ring-kumo-danger`
+- **Border**: `border-kumo-line`
+
+### Size Dimensions
+
+- **sm**: 22px height × 34px width
+- **base**: 26px height × 42px width
+- **lg**: 30px height × 50px width
+
+## Accessibility
+
+- Built on Base UI Switch primitives
+- Uses semantic `role="switch"` with proper ARIA attributes
+- Keyboard accessible: Space to toggle, Tab to navigate
+- Label association for screen readers
+- Visual and programmatic indication of state
+
+## When to Use
+
+### Use Switch for:
+- Binary on/off states
+- Settings and preferences
+- Feature toggles that take effect immediately
+- Enabling/disabling functionality
+
+### Use Checkbox instead for:
+- Multiple independent selections
+- Selections in forms that require submission
+- When you need visual consistency with other form controls
+- Lists of options where multiple can be selected
+
+### Use Radio instead for:
+- Mutually exclusive options
+- When you need more than two states
+- Choices that require labels for each option
+
+## Related Components
+
+- **Checkbox** — For multiple selections
+- **Radio** — For single selection from multiple options
+- **Field** — Standalone field wrapper

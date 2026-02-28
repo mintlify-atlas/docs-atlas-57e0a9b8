@@ -1,0 +1,134 @@
+---
+title: Loader
+description: Animated circular spinner for indicating loading states.
+---
+
+## Description
+
+Animated circular spinner for indicating loading states. Supports preset sizes or custom pixel values.
+
+## Import
+
+```tsx
+import { Loader, SkeletonLine } from "@cloudflare/kumo";
+```
+
+## Loader
+
+### Props
+
+<ParamField path="size" type="'sm' | 'base' | 'lg' | number" default="'base'">
+  Size of the spinner. Use a preset name or a custom pixel number.
+  - `"sm"` — 16px, for inline use
+  - `"base"` — 24px, default size
+  - `"lg"` — 32px, for prominent loading states
+</ParamField>
+
+<ParamField path="className" type="string">
+  Additional CSS classes merged via `cn()`.
+</ParamField>
+
+### Examples
+
+#### Default
+
+```tsx
+<Loader />
+```
+
+#### All Sizes
+
+```tsx
+<div className="flex items-center gap-4">
+  <Loader size="sm" />
+  <Loader size="base" />
+  <Loader size="lg" />
+</div>
+```
+
+#### Custom Size
+
+You can pass a custom pixel value for precise sizing.
+
+```tsx
+<Loader size={24} />
+```
+
+## SkeletonLine
+
+### Description
+
+A skeleton loading placeholder with randomized width and shimmer animation. Used to indicate content is loading.
+
+### Props
+
+<ParamField path="minWidth" type="number" default="30">
+  Minimum width percentage (0-100).
+</ParamField>
+
+<ParamField path="maxWidth" type="number" default="100">
+  Maximum width percentage (0-100).
+</ParamField>
+
+<ParamField path="minDuration" type="number" default="1.3">
+  Minimum animation duration in seconds.
+</ParamField>
+
+<ParamField path="maxDuration" type="number" default="1.7">
+  Maximum animation duration in seconds.
+</ParamField>
+
+<ParamField path="minDelay" type="number" default="0">
+  Minimum animation delay in seconds.
+</ParamField>
+
+<ParamField path="maxDelay" type="number" default="0.5">
+  Maximum animation delay in seconds.
+</ParamField>
+
+<ParamField path="className" type="string">
+  Additional CSS classes merged via `cn()`.
+</ParamField>
+
+### Examples
+
+#### Basic Usage
+
+```tsx
+<SkeletonLine />
+```
+
+#### Multiple Lines
+
+Create a skeleton loading state with multiple lines of varying widths.
+
+```tsx
+<div className="space-y-2">
+  <SkeletonLine />
+  <SkeletonLine />
+  <SkeletonLine maxWidth={80} />
+</div>
+```
+
+#### Custom Width Range
+
+```tsx
+<SkeletonLine minWidth={50} maxWidth={90} />
+```
+
+#### Custom Animation Timing
+
+```tsx
+<SkeletonLine
+  minDuration={1.0}
+  maxDuration={2.0}
+  minDelay={0}
+  maxDelay={1.0}
+/>
+```
+
+### Notes
+
+- Each `SkeletonLine` generates a random width within the specified range on mount
+- Animation duration and delay are also randomized for a more natural loading effect
+- Uses CSS custom properties internally for animation control

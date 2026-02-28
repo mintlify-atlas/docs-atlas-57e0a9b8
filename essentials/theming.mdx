@@ -1,0 +1,309 @@
+---
+title: Theming
+description: Customize Kumo's appearance with themes and color modes
+icon: swatches
+---
+
+Kumo supports theming through CSS custom properties that can be customized per theme. Themes automatically adapt to light and dark color modes.
+
+## Color Modes
+
+Kumo responds to the `data-mode` attribute to switch between light and dark modes:
+
+```tsx
+// Light mode
+<div data-mode="light">
+  <App />
+</div>
+
+// Dark mode
+<div data-mode="dark">
+  <App />
+</div>
+
+// System preference
+<div data-mode={window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'}>
+  <App />
+</div>
+```
+
+All semantic tokens automatically adapt to the current mode using CSS `light-dark()` values.
+
+## Built-in Themes
+
+Kumo ships with two themes:
+
+### Default Theme (kumo)
+
+The standard Cloudflare design system theme:
+
+```tsx
+<div data-theme="kumo">
+  <App />
+</div>
+```
+
+### FedRAMP Theme
+
+A high-contrast theme designed for accessibility compliance:
+
+```tsx
+<div data-theme="fedramp">
+  <App />
+</div>
+```
+
+The FedRAMP theme overrides specific tokens for enhanced contrast:
+
+```tsx /home/daytona/workspace/source/packages/kumo/scripts/theme-generator/config.ts
+export const THEME_CONFIG: ThemeConfig = {
+  color: {
+    "kumo-base": {
+      theme: {
+        kumo: {
+          light: "var(--color-white, #fff)",
+          dark: "var(--color-black, #000)",
+        },
+        fedramp: {
+          light: "#5b697c",
+          dark: "#5b697c",
+        },
+      },
+    },
+    "kumo-ring": {
+      theme: {
+        kumo: {
+          light: "var(--color-neutral-400, oklch(70.8% 0 0))",
+          dark: "var(--color-neutral-600, oklch(43.9% 0 0))",
+        },
+        fedramp: {
+          light: "#c8d4e5",
+          dark: "#c8d4e5",
+        },
+      },
+    },
+  },
+};
+```
+
+## Combining Mode and Theme
+
+You can combine `data-mode` and `data-theme` on the same element or nest them:
+
+```tsx
+// Apply both at the root
+<div data-mode="dark" data-theme="fedramp">
+  <App />
+</div>
+
+// Override theme in a subtree
+<div data-mode="light" data-theme="kumo">
+  <Navigation />
+  
+  <div data-theme="fedramp">
+    <HighContrastSection />
+  </div>
+</div>
+```
+
+## Creating Custom Themes
+
+To create a new theme, edit `scripts/theme-generator/config.ts` and add your theme values:
+
+### 1. Define Theme Values
+
+```typescript /home/daytona/workspace/source/packages/kumo/scripts/theme-generator/config.ts
+export const THEME_CONFIG: ThemeConfig = {
+  text: {
+    "kumo-default": {
+      newName: "",
+      theme: {
+        kumo: {
+          light: "var(--color-neutral-900, oklch(21% 0.006 285.885))",
+          dark: "var(--color-neutral-100, oklch(97% 0 0))",
+        },
+        // Add your custom theme
+        mytheme: {
+          light: "#1a1a1a",
+          dark: "#f5f5f5",
+        },
+      },
+    },
+  },
+  color: {
+    "kumo-brand": {
+      newName: "",
+      theme: {
+        kumo: {
+          light: "oklch(0.5772 0.2324 260)",
+          dark: "oklch(0.5772 0.2324 260)",
+        },
+        mytheme: {
+          light: "#ff6b35",
+          dark: "#ff6b35",
+        },
+      },
+    },
+  },
+};
+
+// Register the new theme
+export const AVAILABLE_THEMES = ["kumo", "fedramp", "mytheme"] as const;
+```
+
+### 2. Generate Theme CSS
+
+Run the theme generator to create the CSS file:
+
+```bash
+pnpm --filter @cloudflare/kumo codegen:themes
+```
+
+This generates `src/styles/theme-mytheme.css` with your theme values.
+
+### 3. Use Your Theme
+
+```tsx
+<div data-theme="mytheme" data-mode="light">
+  <App />
+</div>
+```
+
+## Token Architecture
+
+Kumo's theming system is built on three layers:
+
+### Layer 1: Theme Configuration
+
+Source of truth in TypeScript:
+
+```typescript /home/daytona/workspace/source/packages/kumo/scripts/theme-generator/config.ts
+export const THEME_CONFIG: ThemeConfig = {
+  text: { /* text color tokens */ },
+  color: { /* bg/border/ring tokens */ },
+  typography: { /* font sizes */ },
+};
+```
+
+### Layer 2: Generated CSS
+
+Auto-generated CSS custom properties:
+
+```css /home/daytona/workspace/source/packages/kumo/src/styles/theme-kumo.css
+@theme {
+  --text-color-kumo-default: light-dark(
+    var(--color-neutral-900, oklch(21% 0.006 285.885)),
+    var(--color-neutral-100, oklch(97% 0 0))
+  );
+  
+  --color-kumo-brand: light-dark(
+    oklch(0.5772 0.2324 260),
+    oklch(0.5772 0.2324 260)
+  );
+}
+```
+
+### Layer 3: Tailwind Utilities
+
+Tailwind CSS v4 maps these to utility classes:
+
+```tsx
+<div className="bg-kumo-brand text-kumo-default">
+  {/* Uses --color-kumo-brand and --text-color-kumo-default */}
+</div>
+```
+
+## Theme File Structure
+
+```
+packages/kumo/
+├── scripts/theme-generator/
+│   ├── config.ts              # Source of truth
+│   ├── types.ts               # TypeScript types
+│   ├── generate-css.ts        # CSS generation logic
+│   ├── index.ts               # Main generator
+│   └── migrate.ts             # Token migration tool
+└── src/styles/
+    ├── theme-kumo.css         # Generated base theme
+    ├── theme-fedramp.css      # Generated FedRAMP theme
+    └── kumo.css               # Main stylesheet
+```
+
+## Partial Theme Overrides
+
+You don't need to define every token in your theme. Only specify the tokens you want to override:
+
+```typescript
+export const THEME_CONFIG: ThemeConfig = {
+  color: {
+    "kumo-brand": {
+      theme: {
+        kumo: { light: "blue", dark: "lightblue" },
+        // Only override brand color, inherit everything else
+        mytheme: { light: "red", dark: "pink" },
+      },
+    },
+  },
+};
+```
+
+Tokens not defined for a theme will fall back to the `kumo` theme values.
+
+## Runtime Theme Switching
+
+Implement theme switching in your app:
+
+```tsx
+import { useState, useEffect } from 'react';
+
+function ThemeProvider({ children }) {
+  const [theme, setTheme] = useState('kumo');
+  const [mode, setMode] = useState<'light' | 'dark'>('light');
+
+  useEffect(() => {
+    // Listen to system preference changes
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const handleChange = (e: MediaQueryListEvent) => {
+      setMode(e.matches ? 'dark' : 'light');
+    };
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, []);
+
+  return (
+    <div data-theme={theme} data-mode={mode}>
+      {children}
+      
+      <button onClick={() => setMode(mode === 'light' ? 'dark' : 'light')}>
+        Toggle {mode === 'light' ? 'Dark' : 'Light'} Mode
+      </button>
+      
+      <select value={theme} onChange={(e) => setTheme(e.target.value)}>
+        <option value="kumo">Kumo</option>
+        <option value="fedramp">FedRAMP</option>
+      </select>
+    </div>
+  );
+}
+```
+
+## Exporting Theme Configuration
+
+The theme configuration is exported from the package:
+
+```tsx
+import { THEME_CONFIG, AVAILABLE_THEMES } from '@cloudflare/kumo/scripts/theme-generator/config';
+import type { ThemeConfig } from '@cloudflare/kumo/scripts/theme-generator/types';
+
+console.log(AVAILABLE_THEMES); // ['kumo', 'fedramp']
+```
+
+## Migration Tool
+
+Kumo includes a token migration tool for updating token names in your codebase:
+
+```bash
+pnpm --filter @cloudflare/kumo migrate:tokens
+```
+
+This uses the `newName` field from token definitions to rename tokens across your codebase.

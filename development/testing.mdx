@@ -1,0 +1,460 @@
+---
+title: Testing
+description: Learn how to test Kumo components using Vitest with happy-dom, path aliases, and structural validation
+---
+
+# Testing
+
+Kumo uses [Vitest](https://vitest.dev/) for testing with `happy-dom` as the DOM environment. Tests emphasize **structural validation** (ensuring all exports work) over comprehensive unit tests.
+
+## Test Setup
+
+### Vitest Configuration
+
+Kumo's test configuration is defined in `packages/kumo/vitest.config.ts`:
+
+```ts title="vitest.config.ts"
+import { defineConfig } from "vitest/config";
+import { resolve, dirname } from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+export default defineConfig({
+  resolve: {
+    alias: {
+      "@": resolve(__dirname, "src"),
+      "@cloudflare/kumo": resolve(__dirname, "src/index.ts"),
+    },
+  },
+  test: {
+    coverage: {
+      provider: "v8",
+      reporter: ["text", "json", "html"],
+      include: ["src/**/*.{ts,tsx}"],
+      exclude: [
+        "**/*.test.{ts,tsx}",
+        "**/*.stories.{ts,tsx}",
+        "**/index.ts",
+      ],
+    },
+    projects: [
+      {
+        test: {
+          name: "unit",
+          environment: "happy-dom",
+          include: [
+            "src/**/*.{test,spec}.{ts,tsx}",
+            "scripts/**/*.{test,spec}.ts",
+            "tests/**/*.{test,spec}.ts",
+          ],
+          setupFiles: ["./tests/setup.ts"],
+          globals: true,
+        },
+      },
+    ],
+  },
+});
+```
+
+### Key Configuration
+
+- **Environment**: `happy-dom` — lightweight DOM implementation for Node.js
+- **Globals**: `true` — no need to import `describe`, `it`, `expect`
+- **Coverage**: v8 provider with text, JSON, and HTML reporters
+- **Path aliases**: `@/` maps to `src/`, `@cloudflare/kumo` maps to `src/index.ts`
+- **Setup file**: `tests/setup.ts` runs before all tests
+
+### Setup File
+
+The setup file at `tests/setup.ts` is minimal:
+
+```ts title="tests/setup.ts"
+import { expect } from "vitest";
+
+// Add custom matchers if needed
+expect.extend({
+  // Custom matchers can be added here
+});
+```
+
+## Running Tests
+
+### Basic Commands
+
+```bash
+# Run all tests once
+pnpm test
+
+# Run tests in watch mode
+pnpm test:watch
+
+# Run tests with UI
+pnpm --filter @cloudflare/kumo test:ui
+
+# Generate coverage report
+pnpm --filter @cloudflare/kumo test:coverage
+```
+
+### Project-Specific Tests
+
+```bash
+# Run only unit tests
+pnpm --filter @cloudflare/kumo test:unit
+
+# Run export validation tests
+pnpm --filter @cloudflare/kumo test:exports
+```
+
+### CI Mode
+
+In CI, tests run with the `CI=true` environment variable:
+
+```bash
+CI=true vitest run --project=unit
+```
+
+This disables watch mode and ensures tests exit after completion.
+
+## Writing Component Tests
+
+Kumo's component tests are intentionally sparse — only 3 of 35 components have unit tests. The focus is on **structural validation** rather than exhaustive coverage.
+
+### Basic Component Test
+
+```tsx title="src/components/button/button.test.tsx"
+import { describe, it, expect } from "vitest";
+import { createElement } from "react";
+import { Button, KUMO_BUTTON_VARIANTS } from "./button";
+
+describe("Button", () => {
+  it("should be defined", () => {
+    expect(Button).toBeDefined();
+  });
+
+  it("should render with default props", () => {
+    expect(() =>
+      createElement(Button, { children: "Click me" })
+    ).not.toThrow();
+  });
+
+  it("should apply primary variant classes", () => {
+    expect(KUMO_BUTTON_VARIANTS.variant.primary.classes)
+      .toContain("bg-kumo-brand");
+  });
+
+  it("should accept className prop", () => {
+    expect(() =>
+      createElement(Button, {
+        className: "custom-class",
+        children: "Button",
+      })
+    ).not.toThrow();
+  });
+});
+```
+
+### Testing Variants
+
+Validate that variant constants contain expected classes:
+
+```tsx
+import { KUMO_LINK_VARIANTS, linkVariants } from "./link";
+
+describe("Link variants", () => {
+  it("should apply inline variant classes", () => {
+    expect(KUMO_LINK_VARIANTS.variant.inline.classes)
+      .toContain("text-primary");
+    expect(KUMO_LINK_VARIANTS.variant.inline.classes)
+      .toContain("underline");
+  });
+
+  it("should generate variant classes via helper", () => {
+    expect(linkVariants({ variant: "inline" }))
+      .toContain("text-primary");
+    expect(linkVariants({ variant: "plain" }))
+      .not.toContain("underline");
+  });
+});
+```
+
+### Testing Compound Components
+
+```tsx
+import { Link } from "./link";
+
+describe("Link compound components", () => {
+  it("should have ExternalIcon subcomponent", () => {
+    expect(Link.ExternalIcon).toBeDefined();
+  });
+
+  it("should render with ExternalIcon as child", () => {
+    const props = {
+      href: "https://cloudflare.com",
+      target: "_blank",
+      children: [
+        "Visit",
+        createElement(Link.ExternalIcon, { key: "icon" }),
+      ],
+    };
+    expect(() => createElement(Link, props)).not.toThrow();
+  });
+});
+```
+
+## Structural Tests
+
+Structural tests validate the build output and export integrity. These tests are critical for ensuring the package works correctly when published.
+
+### Export Path Validation
+
+```tsx title="tests/imports/export-path-validation.test.ts"
+import { describe, it, expect } from "vitest";
+import fs from "fs";
+import path from "path";
+
+const isBuilt = fs.existsSync(path.resolve(__dirname, "../../dist"));
+
+describe.skipIf(!isBuilt)("Export path validation", () => {
+  it("should export Button from main entry", async () => {
+    const { Button } = await import("@cloudflare/kumo");
+    expect(Button).toBeDefined();
+  });
+
+  it("should export Button from component entry", async () => {
+    const { Button } = await import("@cloudflare/kumo/components/button");
+    expect(Button).toBeDefined();
+  });
+});
+```
+
+These tests use `describe.skipIf(!isBuilt)` to gracefully skip when the `dist/` directory doesn't exist (e.g., during development).
+
+### Package.json Validation
+
+Validate that `package.json` exports match the build output:
+
+```tsx title="tests/imports/package-json-validation.test.ts"
+import { describe, it, expect } from "vitest";
+import pkg from "../../package.json";
+
+describe("Package.json validation", () => {
+  it("should have exports field", () => {
+    expect(pkg.exports).toBeDefined();
+  });
+
+  it("should export main entry", () => {
+    expect(pkg.exports["."].import).toBe("./dist/index.js");
+    expect(pkg.exports["."].types).toBe("./dist/src/index.d.ts");
+  });
+});
+```
+
+### Running Structural Tests
+
+Run structural tests after building:
+
+```bash
+# Build first
+pnpm --filter @cloudflare/kumo build
+
+# Run export validation
+pnpm --filter @cloudflare/kumo test:exports
+```
+
+## Path Aliases
+
+Kumo's test configuration includes path aliases for cleaner imports:
+
+```tsx
+// With aliases
+import { Button } from "@cloudflare/kumo";
+import { cn } from "@/utils/cn";
+
+// Without aliases (don't do this)
+import { Button } from "../../src/components/button/button";
+import { cn } from "../../src/utils/cn";
+```
+
+## Testing with React Testing Library
+
+While most tests use simple `createElement` checks, you can use React Testing Library for more complex interactions:
+
+```tsx
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { Button } from "./button";
+
+describe("Button interactions", () => {
+  it("should call onClick when clicked", async () => {
+    const handleClick = vi.fn();
+    render(<Button onClick={handleClick}>Click me</Button>);
+    
+    const button = screen.getByRole("button", { name: /click me/i });
+    await userEvent.click(button);
+    
+    expect(handleClick).toHaveBeenCalledTimes(1);
+  });
+});
+```
+
+## Coverage Reports
+
+Generate coverage reports with:
+
+```bash
+pnpm --filter @cloudflare/kumo test:coverage
+```
+
+Coverage configuration:
+- **Provider**: v8
+- **Reporters**: text (terminal), JSON, HTML
+- **Include**: `src/**/*.{ts,tsx}`
+- **Exclude**: Test files, stories, index files
+
+Coverage reports are written to `coverage/` directory.
+
+## Testing Best Practices
+
+### Focus on API Contracts
+
+Test the public API and exported types, not internal implementation:
+
+```tsx
+// ✅ Good - tests public API
+it("should accept variant prop", () => {
+  expect(() =>
+    createElement(Button, { variant: "primary", children: "Save" })
+  ).not.toThrow();
+});
+
+// ❌ Bad - tests internal implementation
+it("should call internal handleButtonClick function", () => {
+  // Don't test private functions
+});
+```
+
+### Use TypeScript for Type Testing
+
+Let TypeScript catch type errors instead of writing runtime tests:
+
+```tsx
+// ✅ Good - TypeScript will catch this
+const button = <Button variant="invalid">Click</Button>;
+//                              ^^^^^^^^^ Type error!
+
+// ❌ Bad - don't test types at runtime
+it("should reject invalid variant", () => {
+  expect(() =>
+    createElement(Button, { variant: "invalid" as any })
+  ).toThrow();
+});
+```
+
+### Test Exports, Not Internals
+
+Ensure components are properly exported and can be imported:
+
+```tsx
+// ✅ Good
+it("should export Button from main entry", async () => {
+  const { Button } = await import("@cloudflare/kumo");
+  expect(Button).toBeDefined();
+});
+
+// ❌ Bad - don't import from internal paths
+import { Button } from "../../src/components/button/button";
+```
+
+## Test Structure
+
+Organize tests by feature or component area:
+
+```
+tests/
+├── imports/              # Structural validation
+│   ├── export-path-validation.test.ts
+│   ├── package-json-validation.test.ts
+│   └── primitives.test.ts
+├── lint/                 # Custom lint rule tests
+│   └── no-cross-package-imports.test.ts
+└── setup.ts              # Global test setup
+
+src/
+├── components/
+│   ├── button/
+│   │   ├── button.tsx
+│   │   └── button.test.tsx    # Co-located with component
+│   └── link/
+│       ├── link.tsx
+│       └── link.test.tsx
+└── catalog/
+    ├── catalog.ts
+    └── catalog.test.ts        # Co-located with module
+```
+
+## CI Integration
+
+In CI pipelines, tests run with:
+
+```bash
+CI=true vitest run --project=unit
+```
+
+This ensures:
+- Tests run once and exit (no watch mode)
+- Failures cause non-zero exit codes
+- Coverage reports are generated
+
+## Testing Checklist
+
+Before submitting a PR:
+
+- [ ] Tests pass locally: `pnpm test`
+- [ ] No TypeScript errors: `pnpm typecheck`
+- [ ] No lint errors: `pnpm lint`
+- [ ] Structural tests pass after build: `pnpm build && pnpm test:exports`
+- [ ] New components have at least basic tests (optional but recommended)
+- [ ] Variants are validated if component has variants
+
+## Debugging Tests
+
+### Run Specific Tests
+
+```bash
+# Run tests in a specific file
+pnpm --filter @cloudflare/kumo test button.test.tsx
+
+# Run tests matching a pattern
+pnpm --filter @cloudflare/kumo test -t "should render"
+```
+
+### Use Vitest UI
+
+Launch the interactive UI for debugging:
+
+```bash
+pnpm --filter @cloudflare/kumo test:ui
+```
+
+This opens a browser-based UI for exploring tests, coverage, and results.
+
+### Enable Debug Mode
+
+Use `console.log` or `debug` statements in tests:
+
+```tsx
+import { debug } from "@testing-library/react";
+
+it("should render correctly", () => {
+  const { container } = render(<Button>Click</Button>);
+  debug(container); // Prints DOM to console
+});
+```
+
+## Additional Resources
+
+- [Vitest Documentation](https://vitest.dev/)
+- [happy-dom Documentation](https://github.com/capricorn86/happy-dom)
+- [React Testing Library](https://testing-library.com/docs/react-testing-library/intro/)

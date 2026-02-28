@@ -1,0 +1,426 @@
+---
+title: Command Reference
+description: Complete reference for all Kumo CLI commands
+icon: 'list-check'
+---
+
+The Kumo CLI provides commands for component discovery, block installation, and migration assistance.
+
+## General Commands
+
+### `kumo help`
+
+Display help information with all available commands.
+
+```bash
+kumo help
+```
+
+**Aliases:** `kumo --help`, `kumo -h`, or run `kumo` with no arguments
+
+## Component Registry Commands
+
+### `kumo ls`
+
+List all Kumo components grouped by category.
+
+```bash
+kumo ls
+```
+
+**Example output:**
+
+```
+Kumo Components (35 total)
+
+Buttons:
+  Button - Clickable button element with multiple variants
+  IconButton - Button with icon-only display
+
+Data Display:
+  Badge - Status indicator with color variants
+  DataTable - Advanced table with sorting, filtering, and pagination
+  Table - Basic data table component
+
+Feedback:
+  Banner - Informational banner with variant styles
+  LoadingSpinner - Animated loading indicator
+  Toast - Temporary notification message
+
+Forms:
+  Checkbox - Checkbox input with label
+  Input - Text input field
+  Select - Dropdown selection component
+  ...
+```
+
+**Implementation:** `ls.ts:1`
+
+**Data source:** Reads from `ai/component-registry.json`
+
+### `kumo doc <name>`
+
+Get detailed documentation for a specific component.
+
+```bash
+kumo doc Button
+```
+
+**Example output:**
+
+```markdown
+# Button
+
+Clickable button element with multiple variants for different use cases
+
+**Import:** `import { Button } from "@cloudflare/kumo";`
+
+**Category:** Buttons
+
+## Props
+
+  variant: "primary" | "secondary" | "tertiary" | "ghost" | "destructive" [default: primary]
+    Visual style variant
+    - "primary": High emphasis action button
+    - "secondary": Medium emphasis action
+    - "tertiary": Low emphasis action
+    - "ghost": Minimal emphasis, transparent background
+    - "destructive": Dangerous or irreversible actions
+
+  size: "xs" | "sm" | "base" | "lg" [default: base]
+    Button size
+
+  loading: boolean
+    Show loading spinner
+
+  disabled: boolean
+    Disable the button
+
+## Examples
+
+```tsx
+<Button variant="primary">Save Changes</Button>
+```
+
+```tsx
+<Button variant="destructive" loading={isDeleting}>
+  Delete Resource
+</Button>
+```
+
+## Semantic Tokens Used
+
+bg-kumo-brand, text-kumo-white, border-kumo-line, ...
+```
+
+**Arguments:**
+- `<name>` - Component name (case-insensitive)
+
+**Features:**
+- Fuzzy matching with suggestions if component not found
+- Displays props with types, defaults, and descriptions
+- Shows variant options with detailed descriptions
+- Includes code examples from the component registry
+- Lists semantic tokens used by the component
+
+**Implementation:** `doc.ts:1`
+
+### `kumo docs`
+
+Generate documentation for all components.
+
+```bash
+kumo docs
+```
+
+Outputs complete documentation for every component in the registry. Useful for:
+- Generating offline documentation
+- Piping to files or documentation generators
+- AI/LLM context preparation
+
+```bash
+# Save all docs to a file
+kumo docs > kumo-components.md
+```
+
+**Implementation:** `doc.ts:204`
+
+## Blocks Commands
+
+### `kumo init`
+
+Initialize `kumo.json` configuration file.
+
+```bash
+kumo init
+```
+
+**Interactive prompts:**
+
+```
+🚀 Initializing Kumo configuration...
+
+Where should blocks be installed? (src/blocks): 
+
+✅ Created kumo.json with the following configuration:
+   📁 Blocks directory: src/blocks
+
+Next steps:
+  • Run `kumo blocks` to see available blocks
+  • Run `kumo add <block>` to install a block
+```
+
+**Features:**
+- Creates `kumo.json` in current directory
+- Prompts for blocks directory (default: `src/blocks`)
+- Checks for existing config and confirms overwrite
+- Required before using `kumo add`
+
+**Configuration created:**
+
+```json
+{
+  "blocksDir": "src/blocks",
+  "version": "1.0.0"
+}
+```
+
+**Implementation:** `init.ts:1`
+
+### `kumo blocks`
+
+List all available blocks for CLI installation.
+
+```bash
+kumo blocks
+```
+
+**Example output:**
+
+```
+Kumo Blocks (3 total)
+
+Layouts:
+  PageHeader - Page header with breadcrumbs, title, tabs, and actions
+  ResourceListPage - Full-page layout for resource list pages
+
+Patterns:
+  DeleteResource - Confirmation dialog for resource deletion
+
+To install a block, run:
+  kumo add <block-name>
+
+Example:
+  kumo add PageHeader
+```
+
+**Implementation:** `blocks.ts:1`
+
+**Data source:** Reads from `ai/component-registry.json` (blocks section)
+
+### `kumo add <block>`
+
+Install a block to your project.
+
+```bash
+kumo add PageHeader
+```
+
+**Example output:**
+
+```
+📦 Installing block: PageHeader
+  ✅ page-header/index.ts
+  ✅ page-header/page-header.tsx
+
+📚 This block depends on the following Kumo components:
+
+  - Tabs (from @cloudflare/kumo)
+
+Make sure @cloudflare/kumo is installed in your project:
+  pnpm add @cloudflare/kumo
+
+🎉 Successfully installed PageHeader!
+
+You can now import it in your project:
+
+  import { PageHeader } from "src/blocks/page-header";
+```
+
+**Arguments:**
+- `<block>` - Block name (case-sensitive)
+
+**Requirements:**
+- `kumo.json` must exist (run `kumo init` first)
+- Block must be available in the registry
+
+**Behavior:**
+- Copies block files from package to your project
+- Transforms imports from relative paths to `@cloudflare/kumo`
+- Creates target directory if needed
+- Prompts before overwriting existing files
+- Shows component dependencies
+- Validates paths to prevent directory traversal attacks
+
+**Implementation:** `add.ts:1`
+
+## Migration Commands
+
+### `kumo migrate`
+
+Export token rename map for codebase migration.
+
+```bash
+kumo migrate
+```
+
+**Default output (JSON):**
+
+```json
+{
+  "meta": {
+    "description": "Kumo token class name migration map",
+    "direction": "to-new",
+    "generatedAt": "2026-02-28T10:30:00.000Z"
+  },
+  "tokens": {
+    "text": {},
+    "color": {}
+  },
+  "classes": {}
+}
+```
+
+If no migrations are pending:
+
+```
+No pending token migrations.
+
+Your codebase is up to date with the current Kumo version.
+Token migrations are only needed when upgrading to versions
+that include breaking changes to token names.
+```
+
+### `kumo migrate --classes`
+
+Output class-level mappings for find-and-replace tools.
+
+```bash
+kumo migrate --classes
+```
+
+**Example output:**
+
+```
+# Kumo Token Migration (to-new)
+# 42 class mappings
+
+bg-old-token       -> bg-new-token
+text-old-token     -> text-new-token
+border-old-token   -> border-new-token
+ring-old-token     -> ring-new-token
+...
+```
+
+**Use with sed:**
+
+```bash
+kumo migrate --classes | grep "^bg-\\|^text-" | \
+  while IFS= read -r line; do
+    old=$(echo "$line" | awk '{print $1}')
+    new=$(echo "$line" | awk '{print $3}')
+    find src -name '*.tsx' -exec sed -i '' "s/\\b$old\\b/$new/g" {} +
+  done
+```
+
+### `kumo migrate --to-old`
+
+Reverse migration mapping (new names to old names).
+
+```bash
+kumo migrate --to-old
+```
+
+Useful for:
+- Rolling back migrations
+- Maintaining compatibility with older Kumo versions
+- Testing migration scripts
+
+### `kumo migrate --help`
+
+Display detailed migration help and usage examples.
+
+```bash
+kumo migrate --help
+```
+
+**Implementation:** `migrate.ts:1`
+
+**Migration data:** Embedded at build time from `scripts/theme-generator/config.ts`
+
+## AI Command
+
+### `kumo ai`
+
+Print the AI usage guide (component API reference).
+
+```bash
+kumo ai
+```
+
+Outputs the contents of `ai/USAGE.md`, which contains:
+- Component API reference for AI/LLM consumption
+- Styling guidelines and semantic tokens
+- Usage patterns and best practices
+- Component composition examples
+
+**Use cases:**
+- Providing context to AI coding assistants
+- Feeding documentation to LLM tools
+- Quick reference for component APIs
+
+**Implementation:** `ai.ts:1`
+
+**Data source:** Reads from `ai/USAGE.md`
+
+## Error Handling
+
+All commands provide helpful error messages:
+
+**Component not found:**
+
+```
+Component "Buttom" not found.
+
+Did you mean: Button, Bottom?
+
+Run "kumo ls" to see all available components.
+```
+
+**Missing configuration:**
+
+```
+Error: kumo.json not found. Run 'kumo init' first to initialize the configuration.
+```
+
+**Missing registry:**
+
+```
+Error: Component registry not found. Run `pnpm codegen:registry` first.
+```
+
+## Exit Codes
+
+- `0` - Success
+- `1` - Error (missing config, component not found, etc.)
+
+## Related Documentation
+
+<CardGroup cols={2}>
+  <Card title="CLI Overview" icon="terminal" href="/cli/overview">
+    Learn about CLI capabilities and installation
+  </Card>
+  <Card title="Blocks System" icon="cube" href="/cli/blocks">
+    Detailed guide to working with blocks
+  </Card>
+</CardGroup>

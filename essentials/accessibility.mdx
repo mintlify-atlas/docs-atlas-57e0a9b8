@@ -1,0 +1,382 @@
+---
+title: Accessibility
+description: Kumo's accessibility features and best practices for building inclusive UIs
+icon: universal-access
+---
+
+Kumo is built on Base UI primitives from MUI, which provide robust accessibility features out of the box. All interactive components follow WAI-ARIA patterns and support keyboard navigation.
+
+## Base UI Primitives
+
+Kumo re-exports 37 primitives from `@base-ui/react`, providing accessible foundation components:
+
+```tsx
+import { Dialog } from '@cloudflare/kumo/primitives/dialog';
+import { Button } from '@cloudflare/kumo/primitives/button';
+import { Checkbox } from '@cloudflare/kumo/primitives/checkbox';
+```
+
+These primitives handle:
+- ARIA attributes
+- Keyboard interactions
+- Focus management
+- Screen reader announcements
+
+### Available Primitives
+
+Kumo exports primitives for:
+
+- **Dialogs**: Dialog, AlertDialog, Drawer
+- **Forms**: Input, Checkbox, Radio, RadioGroup, Switch, Select, Combobox, NumberField
+- **Buttons**: Button, Toggle, ToggleGroup
+- **Navigation**: Menu, Menubar, Tabs, NavigationMenu, Breadcrumbs
+- **Overlays**: Popover, Tooltip, PreviewCard
+- **Disclosure**: Accordion, Collapsible
+- **Feedback**: Toast, Progress, Meter
+- **Layout**: Separator, ScrollArea, Toolbar, Fieldset, Form
+- **Utilities**: CSPProvider, DirectionProvider
+
+View the full list:
+
+```tsx /home/daytona/workspace/source/packages/kumo/src/primitives/index.ts
+export * from './accordion';
+export * from './alert-dialog';
+export * from './autocomplete';
+export * from './avatar';
+export * from './button';
+export * from './checkbox';
+export * from './checkbox-group';
+export * from './collapsible';
+export * from './combobox';
+export * from './context-menu';
+export * from './csp-provider';
+export * from './dialog';
+export * from './direction-provider';
+export * from './drawer';
+export * from './field';
+export * from './fieldset';
+export * from './form';
+export * from './input';
+export * from './menu';
+export * from './menubar';
+export * from './meter';
+export * from './navigation-menu';
+export * from './number-field';
+export * from './popover';
+export * from './preview-card';
+export * from './progress';
+export * from './radio';
+export * from './radio-group';
+export * from './scroll-area';
+export * from './select';
+export * from './separator';
+export * from './slider';
+export * from './switch';
+export * from './tabs';
+export * from './toast';
+export * from './toggle';
+export * from './toggle-group';
+export * from './toolbar';
+export * from './tooltip';
+```
+
+## Keyboard Navigation
+
+All Kumo components support standard keyboard interactions:
+
+### Focus Management
+
+Components manage focus automatically:
+
+```tsx
+import { Dialog } from '@cloudflare/kumo/components/dialog';
+
+<Dialog.Root>
+  <Dialog.Trigger>Open Dialog</Dialog.Trigger>
+  
+  <Dialog.Portal>
+    <Dialog.Backdrop />
+    <Dialog.Popup>
+      {/* Focus automatically moves to dialog content */}
+      <input autoFocus />
+      <Dialog.Close>Close</Dialog.Close>
+    </Dialog.Popup>
+  </Dialog.Portal>
+</Dialog.Root>
+```
+
+When the dialog opens:
+1. Focus moves to the first focusable element (or `autoFocus` element)
+2. Focus is trapped within the dialog
+3. Tab cycles through focusable elements
+4. Escape key closes the dialog
+5. Focus returns to the trigger on close
+
+### Common Keyboard Patterns
+
+| Component | Keys | Behavior |
+|-----------|------|----------|
+| **Button** | `Enter`, `Space` | Activate button |
+| **Dialog** | `Escape` | Close dialog |
+| **Select** | `↑`/`↓` | Navigate options |
+|            | `Enter`, `Space` | Select option |
+|            | `Escape` | Close without selecting |
+| **Combobox** | `↑`/`↓` | Navigate suggestions |
+|              | `Enter` | Select highlighted item |
+|              | `Escape` | Close dropdown |
+| **Tabs** | `←`/`→` | Navigate tabs |
+|          | `Home`/`End` | First/last tab |
+| **Menu** | `↑`/`↓` | Navigate items |
+|          | `Enter` | Activate item |
+|          | `Escape` | Close menu |
+| **Checkbox** | `Space` | Toggle checked state |
+| **Radio** | `↑`/`↓`/`←`/`→` | Select option |
+
+## ARIA Attributes
+
+Kumo components include proper ARIA attributes:
+
+### Required Labels
+
+Icon-only buttons require `aria-label`:
+
+```tsx
+import { Button } from '@cloudflare/kumo/components/button';
+import { MagnifyingGlass } from '@phosphor-icons/react';
+
+// ❌ Missing aria-label - TypeScript error
+<Button shape="square" icon={MagnifyingGlass} />
+
+// ✅ Accessible
+<Button shape="square" icon={MagnifyingGlass} aria-label="Search" />
+```
+
+This is enforced at the type level:
+
+```tsx /home/daytona/workspace/source/packages/kumo/src/components/button/button.tsx
+type IconOnlyButtonProps = ButtonBaseProps & {
+  shape: 'square' | 'circle';
+  /** Required for icon-only buttons */
+  'aria-label': string;
+};
+```
+
+### Form Fields
+
+Use the Field component for accessible form controls:
+
+```tsx
+import { Field } from '@cloudflare/kumo/components/field';
+import { Input } from '@cloudflare/kumo/components/input';
+
+<Field.Root>
+  <Field.Label>Email address</Field.Label>
+  <Input type="email" />
+  <Field.Description>We'll never share your email</Field.Description>
+  <Field.Error>Please enter a valid email</Field.Error>
+</Field.Root>
+```
+
+This automatically generates:
+- `id` linkage between label and input
+- `aria-describedby` for description and error
+- `aria-invalid` when error is present
+
+### Live Regions
+
+Use Toast for announcements:
+
+```tsx
+import { Toast } from '@cloudflare/kumo/components/toast';
+
+<Toast.Provider>
+  <Toast.Root>
+    {/* Announced to screen readers */}
+    <Toast.Title>Changes saved</Toast.Title>
+    <Toast.Description>Your settings have been updated</Toast.Description>
+  </Toast.Root>
+</Toast.Provider>
+```
+
+## Focus Indicators
+
+All interactive components have visible focus indicators using the `ring-kumo-ring` token:
+
+```tsx
+import { Button } from '@cloudflare/kumo/components/button';
+
+// Focus ring is built-in
+<Button>Click me</Button>
+
+// Custom focus styles
+<button className="focus-visible:ring-1 focus-visible:ring-kumo-ring outline-none">
+  Custom Button
+</button>
+```
+
+### Focus Visible
+
+Kumo uses `focus-visible` to show focus rings only for keyboard navigation:
+
+```css
+/* Mouse click - no ring */
+button:focus { outline: none; }
+
+/* Keyboard navigation - shows ring */
+button:focus-visible { ring: 1px solid var(--color-kumo-ring); }
+```
+
+## Screen Reader Support
+
+### Hidden Content
+
+Hide decorative elements from screen readers:
+
+```tsx
+<div aria-hidden="true">
+  {/* Decorative icon */}
+  <Icon />
+</div>
+```
+
+### Visually Hidden
+
+Provide screen-reader-only content:
+
+```tsx
+<span className="sr-only">
+  Loading...
+</span>
+<Loader aria-hidden="true" />
+```
+
+Add this utility to your CSS:
+
+```css
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+```
+
+## Loading States
+
+Indicate loading states accessibly:
+
+```tsx
+import { Button } from '@cloudflare/kumo/components/button';
+
+<Button loading aria-busy="true">
+  Saving...
+</Button>
+```
+
+The `loading` prop:
+- Shows a spinner
+- Disables the button
+- Announces loading state to screen readers
+
+## Color Contrast
+
+Kumo's semantic tokens meet WCAG AA contrast requirements:
+
+- `text-kumo-default` on `bg-kumo-base`: 4.5:1 minimum
+- `text-white` on `bg-kumo-brand`: 4.5:1 minimum
+
+### FedRAMP Theme
+
+For enhanced contrast, use the FedRAMP theme:
+
+```tsx
+<div data-theme="fedramp">
+  <App />
+</div>
+```
+
+See [Theming](/essentials/theming) for details.
+
+## Testing Accessibility
+
+### Keyboard Testing
+
+1. Tab through all interactive elements
+2. Verify focus indicators are visible
+3. Test keyboard shortcuts (Enter, Space, Escape, Arrow keys)
+4. Ensure focus doesn't get trapped unexpectedly
+
+### Screen Reader Testing
+
+Test with:
+- **macOS**: VoiceOver (Cmd+F5)
+- **Windows**: NVDA or JAWS
+- **Linux**: Orca
+
+Verify:
+- All interactive elements are announced
+- Form fields have labels
+- Errors and status messages are announced
+- Landmark regions are identified
+
+### Automated Testing
+
+Kumo includes 7 jsx-a11y ESLint rules:
+
+```bash
+pnpm --filter @cloudflare/kumo lint:eslint
+```
+
+For end-to-end testing, use:
+
+```typescript
+import { test, expect } from '@playwright/test';
+import AxeBuilder from '@axe-core/playwright';
+
+test('should not have accessibility violations', async ({ page }) => {
+  await page.goto('/my-page');
+  
+  const results = await new AxeBuilder({ page }).analyze();
+  expect(results.violations).toEqual([]);
+});
+```
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Provide text alternatives">
+    - Use `alt` text for images
+    - Provide `aria-label` for icon-only buttons
+    - Include visible labels for form fields
+  </Accordion>
+
+  <Accordion title="Ensure keyboard access">
+    - All functionality available via keyboard
+    - Logical focus order
+    - Visible focus indicators
+  </Accordion>
+
+  <Accordion title="Use semantic HTML">
+    - Use `<button>` for actions
+    - Use `<a>` for navigation
+    - Use proper heading hierarchy
+  </Accordion>
+
+  <Accordion title="Test with real users">
+    - Test with keyboard-only navigation
+    - Test with screen readers
+    - Test with high-contrast modes
+  </Accordion>
+</AccordionGroup>
+
+## Resources
+
+- [Base UI Documentation](https://base-ui.com/)
+- [WAI-ARIA Authoring Practices](https://www.w3.org/WAI/ARIA/apg/)
+- [WebAIM Keyboard Testing](https://webaim.org/articles/keyboard/)
+- [WCAG 2.1 Guidelines](https://www.w3.org/WAI/WCAG21/quickref/)

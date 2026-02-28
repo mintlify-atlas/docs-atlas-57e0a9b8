@@ -1,0 +1,49 @@
+---
+title: "Combobox"
+description: "Unstyled combobox primitive combining input and select"
+---
+
+## Overview
+
+The Combobox primitive provides an accessible, unstyled combobox component that combines a text input with a dropdown list.
+
+## Import
+
+```tsx
+import { Combobox } from '@cloudflare/kumo/primitives/combobox';
+```
+
+## About
+
+This is a re-export of the Base UI Combobox primitive. It handles:
+- Keyboard navigation and selection
+- ARIA attributes for accessibility
+- Filtering and search
+- Controlled and uncontrolled modes
+
+## Usage
+
+```tsx
+import { Combobox } from '@cloudflare/kumo/primitives/combobox';
+
+function MyCombobox() {
+  const options = ['JavaScript', 'TypeScript', 'Python'];
+  
+  return (
+    <Combobox.Root>
+      <Combobox.Input placeholder="Select language..." />
+      <Combobox.Listbox>
+        {options.map((option) => (
+          <Combobox.Option key={option} value={option}>
+            {option}
+          </Combobox.Option>
+        ))}
+      </Combobox.Listbox>
+    </Combobox.Root>
+  );
+}
+```
+
+## Documentation
+
+For the complete API reference, props, and examples, see the [Base UI Combobox documentation](https://base-ui.com/react/components/combobox/).

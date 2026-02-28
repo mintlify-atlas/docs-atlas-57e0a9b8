@@ -1,0 +1,318 @@
+---
+title: Combobox
+description: Autocomplete input with filterable dropdown list for single or multiple selections.
+---
+
+## Description
+
+Combobox — autocomplete input with filterable dropdown list. Supports single and multiple selections, custom item rendering, grouped items, and empty states.
+
+Compound component: `Combobox` (Root), `.TriggerInput`, `.TriggerValue`, `.TriggerMultipleWithInput`, `.Content`, `.Item`, `.Chip`, `.Input`, `.Empty`, `.GroupLabel`, `.Group`, `.List`, `.Collection`.
+
+## Import
+
+```tsx
+import { Combobox } from "@cloudflare/kumo";
+```
+
+## Props
+
+<ParamField path="items" type="T[]" required>
+  Array of items to display in the dropdown
+</ParamField>
+
+<ParamField path="value" type="T | T[]" optional>
+  Currently selected value(s)
+</ParamField>
+
+<ParamField path="onValueChange" type="(value: T | T[]) => void">
+  Callback when selection changes
+</ParamField>
+
+<ParamField path="multiple" type="boolean">
+  Allow multiple selections
+</ParamField>
+
+<ParamField path="inputSide" type="enum" default="right" optional>
+  Position of the text input relative to chips in multi-select mode.
+  
+  - `right` — Input inline to the right of chips
+  - `top` — Input above chips
+</ParamField>
+
+<ParamField path="label" type="ReactNode" optional>
+  Label content for the combobox (enables Field wrapper) - can be a string or any React node
+</ParamField>
+
+<ParamField path="labelTooltip" type="ReactNode" optional>
+  Tooltip content to display next to the label via an info icon
+</ParamField>
+
+<ParamField path="description" type="ReactNode" optional>
+  Helper text displayed below the combobox
+</ParamField>
+
+<ParamField path="error" type="string | object" optional>
+  Error message or validation error object
+</ParamField>
+
+<ParamField path="required" type="boolean" optional>
+  Whether the combobox is required
+</ParamField>
+
+<ParamField path="isItemEqualToValue" type="(item: T, value: T) => boolean">
+  Custom equality function for comparing items
+</ParamField>
+
+<ParamField path="className" type="string" optional>
+  Additional CSS classes
+</ParamField>
+
+<ParamField path="children" type="ReactNode" optional>
+  Combobox content (trigger, content, items)
+</ParamField>
+
+## Examples
+
+### Single Select with Input
+
+```tsx
+<Combobox
+  value={value}
+  onValueChange={(v) => setValue(v as string | null)}
+  items={fruits}
+>
+  <Combobox.TriggerInput placeholder="Please select" />
+  <Combobox.Content>
+    <Combobox.Empty />
+    <Combobox.List>
+      {(item: string) => (
+        <Combobox.Item key={item} value={item}>
+          {item}
+        </Combobox.Item>
+      )}
+    </Combobox.List>
+  </Combobox.Content>
+</Combobox>
+```
+
+### Single Select with Value Trigger
+
+```tsx
+<Combobox
+  value={value}
+  onValueChange={(v) => setValue(v as Language)}
+  items={languages}
+>
+  <Combobox.TriggerValue className="w-[200px]" />
+  <Combobox.Content>
+    <Combobox.Input placeholder="Search languages" />
+    <Combobox.Empty />
+    <Combobox.List>
+      {(item: Language) => (
+        <Combobox.Item key={item.value} value={item}>
+          {item.emoji} {item.label}
+        </Combobox.Item>
+      )}
+    </Combobox.List>
+  </Combobox.Content>
+</Combobox>
+```
+
+### Grouped Items
+
+```tsx
+<Combobox
+  value={value}
+  onValueChange={(v) => setValue(v as ServerLocation | null)}
+  items={servers}
+>
+  <Combobox.TriggerInput
+    className="w-[200px]"
+    placeholder="Select server"
+  />
+  <Combobox.Content>
+    <Combobox.Empty />
+    <Combobox.List>
+      {(group: ServerLocationGroup) => (
+        <Combobox.Group key={group.value} items={group.items}>
+          <Combobox.GroupLabel>{group.value}</Combobox.GroupLabel>
+          <Combobox.Collection>
+            {(item: ServerLocation) => (
+              <Combobox.Item key={item.value} value={item}>
+                {item.label}
+              </Combobox.Item>
+            )}
+          </Combobox.Collection>
+        </Combobox.Group>
+      )}
+    </Combobox.List>
+  </Combobox.Content>
+</Combobox>
+```
+
+### Multiple Selection
+
+```tsx
+<Combobox
+  value={value}
+  onValueChange={setValue}
+  items={bots}
+  isItemEqualToValue={(bot: BotItem, selected: BotItem) =>
+    bot.value === selected.value
+  }
+  multiple
+>
+  <Combobox.TriggerMultipleWithInput
+    className="w-[400px]"
+    placeholder="Select bots"
+    renderItem={(selected: BotItem) => (
+      <Combobox.Chip key={selected.value}>{selected.label}</Combobox.Chip>
+    )}
+    inputSide="right"
+  />
+  <Combobox.Content className="max-h-[200px] min-w-auto overflow-y-auto">
+    <Combobox.Empty />
+    <Combobox.List>
+      {(item: BotItem) => (
+        <Combobox.Item key={item.value} value={item}>
+          <div className="flex gap-2">
+            <Text>{item.label}</Text>
+            <Text variant="secondary">{item.author}</Text>
+          </div>
+        </Combobox.Item>
+      )}
+    </Combobox.List>
+  </Combobox.Content>
+</Combobox>
+```
+
+### With Label and Description
+
+```tsx
+<Combobox
+  items={databases}
+  value={value}
+  onValueChange={setValue}
+  label="Database"
+  description="Select your preferred database"
+>
+  <Combobox.TriggerInput placeholder="Select database" />
+  <Combobox.Content>
+    <Combobox.Empty />
+    <Combobox.List>
+      {(item: DatabaseItem) => (
+        <Combobox.Item key={item.value} value={item}>
+          {item.label}
+        </Combobox.Item>
+      )}
+    </Combobox.List>
+  </Combobox.Content>
+</Combobox>
+```
+
+### With Error
+
+```tsx
+<Combobox
+  items={databases}
+  value={value}
+  onValueChange={setValue}
+  label="Database"
+  error={{ message: "Please select a database", match: true }}
+>
+  <Combobox.TriggerInput placeholder="Select database" />
+  <Combobox.Content>
+    <Combobox.Empty />
+    <Combobox.List>
+      {(item: DatabaseItem) => (
+        <Combobox.Item key={item.value} value={item}>
+          {item.label}
+        </Combobox.Item>
+      )}
+    </Combobox.List>
+  </Combobox.Content>
+</Combobox>
+```
+
+## Sub-components
+
+### Combobox.TriggerInput
+
+Input field that opens the dropdown on focus and filters items as you type.
+
+### Combobox.TriggerValue
+
+Button-like trigger that displays the selected value. Opens dropdown on click.
+
+### Combobox.TriggerMultipleWithInput
+
+Multi-select trigger that displays selected items as chips with an inline input field.
+
+<ParamField path="renderItem" type="(item: T) => ReactNode" required>
+  Function to render each selected item as a chip
+</ParamField>
+
+<ParamField path="inputSide" type="'right' | 'top'" default="right">
+  Position of the input field relative to chips
+</ParamField>
+
+### Combobox.Content
+
+Dropdown container for the list of items.
+
+<ParamField path="align" type="'start' | 'center' | 'end'" optional>
+  Alignment of the dropdown relative to the trigger
+</ParamField>
+
+<ParamField path="side" type="'top' | 'bottom' | 'left' | 'right'" optional>
+  Which side of the trigger to position the dropdown
+</ParamField>
+
+### Combobox.Input
+
+Searchable input within the dropdown (used with TriggerValue).
+
+### Combobox.List
+
+Container for items. Renders filtered results.
+
+<ParamField path="children" type="(item: T, index: number) => ReactNode" required>
+  Function that receives each item and returns a ReactNode
+</ParamField>
+
+### Combobox.Item
+
+Individual selectable option.
+
+<ParamField path="value" type="T" required>
+  The value this item represents
+</ParamField>
+
+### Combobox.Empty
+
+Message displayed when no items match the filter.
+
+### Combobox.Chip
+
+Chip component for displaying selected items in multi-select mode.
+
+### Combobox.Group
+
+Container for grouped items.
+
+<ParamField path="items" type="T[]" required>
+  Array of items in this group
+</ParamField>
+
+### Combobox.GroupLabel
+
+Label for a group of items.
+
+### Combobox.Collection
+
+Renders filtered list items within a group.
+
+<ParamField path="children" type="(item: T, index: number) => ReactNode" required>
+  Function that receives each filtered item and returns a node
+</ParamField>

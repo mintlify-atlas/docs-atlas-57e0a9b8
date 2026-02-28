@@ -1,0 +1,166 @@
+---
+title: Code
+description: Simple code component without syntax highlighting, and bordered CodeBlock variant.
+---
+
+<ComponentDemo name="code-demo" />
+
+## Installation
+
+```bash
+npx @cloudflare/kumo add code
+```
+
+## Import
+
+```tsx
+import { Code, CodeBlock } from "@cloudflare/kumo";
+```
+
+## Usage
+
+### Code (inline)
+
+```tsx
+<Code code="const x = 1;" lang="ts" />
+```
+
+### CodeBlock (bordered)
+
+```tsx
+<CodeBlock lang="tsx" code={`const greeting = "Hello!";`} />
+```
+
+## Props
+
+### Code
+
+<ParamField path="code" type="string" required>
+  The code string to display.
+</ParamField>
+
+<ParamField path="lang" type="enum" default="ts">
+  Language hint for the code content.
+  
+  - `"ts"` — TypeScript code
+  - `"tsx"` — TypeScript JSX code
+  - `"jsonc"` — JSON with comments
+  - `"bash"` — Shell/Bash commands
+  - `"css"` — CSS styles
+</ParamField>
+
+<ParamField path="values" type="Record<string, { value: string; highlight?: boolean }>">
+  Template values for `{{key}}` interpolation. Values with `highlight: true` are visually emphasized.
+</ParamField>
+
+<ParamField path="className" type="string">
+  Additional CSS classes merged via `cn()`.
+</ParamField>
+
+<ParamField path="style" type="CSSProperties">
+  Inline styles.
+</ParamField>
+
+### CodeBlock
+
+<ParamField path="code" type="string" required>
+  The code string to display.
+</ParamField>
+
+<ParamField path="lang" type="CodeLang" default="ts">
+  Language hint for the code content (same values as Code).
+</ParamField>
+
+## Examples
+
+### TypeScript Code Block
+
+```tsx
+<CodeBlock
+  lang="tsx"
+  code={`const greeting = "Hello, World!";
+console.log(greeting);`}
+/>
+```
+
+### Interface Definition
+
+```tsx
+<CodeBlock
+  lang="tsx"
+  code={`interface User {
+  id: string;
+  name: string;
+  email: string;
+}
+
+const user: User = {
+  id: "1",
+  name: "John Doe",
+  email: "john@example.com"
+};`}
+/>
+```
+
+### Bash Commands
+
+```tsx
+<CodeBlock
+  lang="bash"
+  code={`npm install @cloudflare/kumo
+pnpm add @cloudflare/kumo`}
+/>
+```
+
+### JSON with Comments
+
+```tsx
+<CodeBlock
+  lang="jsonc"
+  code={`{
+  "name": "kumo",
+  "version": "1.0.0",
+  "dependencies": {
+    "react": "^19.0.0"
+  }
+}`}
+/>
+```
+
+### With Template Values
+
+Use `{{key}}` syntax with the `values` prop for dynamic interpolation:
+
+```tsx
+<Code
+  lang="bash"
+  code="export API_KEY={{apiKey}}"
+  values={{
+    apiKey: { value: "sk_live_123", highlight: true },
+  }}
+/>
+```
+
+## Compound Component
+
+`Code.Block` is an alias for `CodeBlock`:
+
+```tsx
+<Code.Block lang="tsx" code={`const x = 1;`} />
+```
+
+## Styling
+
+### Code (Inline)
+
+- **Typography**: `font-mono text-sm leading-[20px]`
+- **Color**: `text-kumo-strong`
+- **Background**: `bg-transparent`
+- **No borders or padding**
+
+### CodeBlock (Container)
+
+- **Container**: `min-w-0 rounded-md border border-kumo-fill bg-kumo-base`
+- **Inner padding**: `p-2.5` (10px)
+- **Border radius**: `rounded-md` (6px)
+- **Tokens**: `bg-kumo-base`, `border-kumo-fill`

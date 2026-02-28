@@ -1,0 +1,298 @@
+---
+title: Select
+description: Dropdown select component for single or multiple selections from a list of options.
+---
+
+## Description
+
+Dropdown select component for choosing one or more options from a list. Supports custom value rendering, loading states, labels, descriptions, and error validation.
+
+## Import
+
+```tsx
+import { Select } from "@cloudflare/kumo";
+```
+
+## Props
+
+<ParamField path="value" type="string | string[]" optional>
+  Currently selected value (controlled mode). Array for multiple selection.
+</ParamField>
+
+<ParamField path="defaultValue" type="string" optional>
+  Initial value for uncontrolled mode
+</ParamField>
+
+<ParamField path="onValueChange" type="(value: string) => void">
+  Callback when selection changes
+</ParamField>
+
+<ParamField path="multiple" type="boolean" optional>
+  Allow multiple selections
+</ParamField>
+
+<ParamField path="placeholder" type="string" optional>
+  Placeholder text shown when no value is selected.
+</ParamField>
+
+<ParamField path="label" type="ReactNode" optional>
+  Label content for the select (enables Field wrapper) — can be a string or any React node.
+</ParamField>
+
+<ParamField path="hideLabel" type="boolean" optional>
+  Visually hide the label while keeping it accessible to screen readers. Set to `false` to show a visible label above the select via the Field wrapper.
+</ParamField>
+
+<ParamField path="labelTooltip" type="ReactNode" optional>
+  Tooltip content displayed next to the label via an info icon.
+</ParamField>
+
+<ParamField path="description" type="ReactNode" optional>
+  Helper text displayed below the select.
+</ParamField>
+
+<ParamField path="error" type="string | object" optional>
+  Error message string or validation error object with `match` key.
+</ParamField>
+
+<ParamField path="loading" type="boolean" optional>
+  When `true`, shows a skeleton loader in place of the selected value.
+</ParamField>
+
+<ParamField path="disabled" type="boolean" optional>
+  Whether the select is disabled.
+</ParamField>
+
+<ParamField path="required" type="boolean" optional>
+  Whether the select is required. When `false`, shows "(optional)" text.
+</ParamField>
+
+<ParamField path="renderValue" type="(value: T) => ReactNode" optional>
+  Custom function to render the selected value in the trigger
+</ParamField>
+
+<ParamField path="isItemEqualToValue" type="(item: T, value: T) => boolean" optional>
+  Custom equality function for comparing items (useful for object values)
+</ParamField>
+
+<ParamField path="className" type="string" optional>
+  Additional CSS classes merged via `cn()`.
+</ParamField>
+
+<ParamField path="children" type="ReactNode" optional>
+  `Select.Option` elements to render in the dropdown.
+</ParamField>
+
+## Examples
+
+### Basic Select
+
+```tsx
+<Select
+  className="w-[200px]"
+  value={value}
+  onValueChange={(v) => setValue(v ?? "apple")}
+>
+  <Select.Option value="apple">Apple</Select.Option>
+  <Select.Option value="banana">Banana</Select.Option>
+  <Select.Option value="cherry">Cherry</Select.Option>
+</Select>
+```
+
+### With Placeholder
+
+```tsx
+<Select
+  className="w-[200px]"
+  value={value}
+  onValueChange={(v) => setValue(v as string)}
+  placeholder="Select a fruit..."
+>
+  <Select.Option value="bug">Bug</Select.Option>
+  <Select.Option value="documentation">Documentation</Select.Option>
+  <Select.Option value="feature">Feature</Select.Option>
+</Select>
+```
+
+### Custom Value Rendering
+
+```tsx
+<Select
+  className="w-[200px]"
+  renderValue={(v) => (
+    <span>
+      {v.emoji} {v.label}
+    </span>
+  )}
+  value={value}
+  onValueChange={(v) => setValue(v as Language)}
+>
+  {languages.map((language) => (
+    <Select.Option key={language.value} value={language}>
+      {language.emoji} {language.label}
+    </Select.Option>
+  ))}
+</Select>
+```
+
+### Loading State
+
+```tsx
+<Select className="w-[200px]" loading />
+```
+
+### Loading with Data
+
+```tsx
+<Select
+  className="w-[200px]"
+  loading={loading}
+  value={value}
+  onValueChange={(v) => setValue(v as string | null)}
+  placeholder="Please select"
+>
+  {data?.map((item) => (
+    <Select.Option key={item} value={item}>
+      {item}
+    </Select.Option>
+  ))}
+</Select>
+```
+
+### Multiple Selection
+
+```tsx
+<Select
+  className="w-[250px]"
+  multiple
+  renderValue={(value) => {
+    if (value.length > 3) {
+      return (
+        <span className="line-clamp-1">
+          {value.slice(0, 2).join(", ") + ` and ${value.length - 2} more`}
+        </span>
+      );
+    }
+    return <span>{value.join(", ")}</span>;
+  }}
+  value={value}
+  onValueChange={(v) => setValue(v as string[])}
+>
+  <Select.Option value="Name">Name</Select.Option>
+  <Select.Option value="Location">Location</Select.Option>
+  <Select.Option value="Size">Size</Select.Option>
+  <Select.Option value="Read">Read</Select.Option>
+  <Select.Option value="Write">Write</Select.Option>
+  <Select.Option value="CreatedAt">Created At</Select.Option>
+</Select>
+```
+
+### Object Values with Custom Equality
+
+```tsx
+<Select
+  className="w-[200px]"
+  onValueChange={(v) => setValue(v as Author | null)}
+  value={value}
+  isItemEqualToValue={(item, value) => item?.id === value?.id}
+  renderValue={(author) => {
+    return author?.name ?? "Please select author";
+  }}
+>
+  {authors.map((author) => (
+    <Select.Option key={author.id} value={author}>
+      <div className="flex w-[300px] items-center justify-between gap-2">
+        <Text>{author.name}</Text>
+        <Text variant="secondary">{author.title}</Text>
+      </div>
+    </Select.Option>
+  ))}
+</Select>
+```
+
+### With Label and Description
+
+```tsx
+<Select
+  className="w-[200px]"
+  label="Country"
+  description="Select your country of residence"
+  value={value}
+  onValueChange={setValue}
+>
+  <Select.Option value="us">United States</Select.Option>
+  <Select.Option value="uk">United Kingdom</Select.Option>
+  <Select.Option value="ca">Canada</Select.Option>
+</Select>
+```
+
+### With Error
+
+```tsx
+<Select
+  className="w-[200px]"
+  label="Region"
+  value={value}
+  onValueChange={setValue}
+  error="Please select a region"
+>
+  <Select.Option value="us-west">US West</Select.Option>
+  <Select.Option value="us-east">US East</Select.Option>
+  <Select.Option value="eu">Europe</Select.Option>
+</Select>
+```
+
+## Styling
+
+Select uses semantic Kumo tokens:
+
+- **Trigger background**: `bg-kumo-control`
+- **Trigger text**: `text-kumo-default`
+- **Trigger ring**: `ring-kumo-line` (default), `ring-kumo-ring` (focus)
+- **Dropdown background**: `bg-kumo-overlay`
+- **Option hover**: `bg-kumo-fill-hover`
+
+### Dimensions
+
+- **Trigger height**: 36px
+- **Trigger padding**: 12px horizontal
+- **Border radius**: 8px
+- **Font size**: 16px
+
+### Icons
+
+- **Caret icon**: ph-caret-up-down (20px)
+- **Check icon**: ph-check (20px, shown on selected option)
+
+## Accessibility
+
+- Built on Base UI Select primitives
+- Keyboard navigation: Arrow keys, Space/Enter to select, Escape to close
+- Proper ARIA roles and attributes
+- Screen reader support for selected value and options
+- Focus management
+
+## When to Use
+
+### Use Select when:
+- User must choose from a predefined list of options
+- You have 5+ options (use Radio for fewer)
+- Space is limited
+- Options don't need to be searchable
+
+### Use Combobox instead when:
+- Options need to be searchable/filterable
+- Users might type custom values
+- Large lists that benefit from search
+
+### Use Radio instead when:
+- You have 2-7 options
+- All options should be visible at once
+- You want to emphasize the available choices
+
+## Related Components
+
+- **Combobox** — Searchable select with filtering
+- **Radio** — Radio button group for visible options
+- **Input** — Text input
+- **Field** — Standalone field wrapper

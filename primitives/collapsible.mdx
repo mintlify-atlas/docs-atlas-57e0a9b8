@@ -1,0 +1,42 @@
+---
+title: "Collapsible"
+description: "Unstyled collapsible primitive for expandable content"
+---
+
+## Overview
+
+The Collapsible primitive provides an accessible, unstyled collapsible component for showing and hiding content.
+
+## Import
+
+```tsx
+import { Collapsible } from '@cloudflare/kumo/primitives/collapsible';
+```
+
+## About
+
+This is a re-export of the Base UI Collapsible primitive. It handles:
+- Smooth expand/collapse animations
+- ARIA attributes for accessibility
+- Controlled and uncontrolled modes
+
+## Usage
+
+```tsx
+import { Collapsible } from '@cloudflare/kumo/primitives/collapsible';
+
+function MyCollapsible() {
+  return (
+    <Collapsible.Root>
+      <Collapsible.Trigger>Show More</Collapsible.Trigger>
+      <Collapsible.Panel>
+        Hidden content that can be revealed
+      </Collapsible.Panel>
+    </Collapsible.Root>
+  );
+}
+```
+
+## Documentation
+
+For the complete API reference, props, and examples, see the [Base UI Collapsible documentation](https://base-ui.com/react/components/collapsible/).

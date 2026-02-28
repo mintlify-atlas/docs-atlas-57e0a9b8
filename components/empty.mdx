@@ -1,0 +1,136 @@
+---
+title: Empty
+description: Placeholder shown when a list, table, or page has no content to display.
+---
+
+<ComponentDemo name="empty-demo" />
+
+## Installation
+
+```bash
+npx @cloudflare/kumo add empty
+```
+
+## Import
+
+```tsx
+import { Empty } from "@cloudflare/kumo";
+```
+
+## Usage
+
+```tsx
+<Empty title="No results found" description="Try adjusting your search." />
+```
+
+## Props
+
+<ParamField path="title" type="string" required>
+  Primary heading text for the empty state.
+</ParamField>
+
+<ParamField path="description" type="string">
+  Secondary description text displayed below the title.
+</ParamField>
+
+<ParamField path="icon" type="ReactNode">
+  Decorative icon displayed above the title (e.g. from `@phosphor-icons/react`).
+</ParamField>
+
+<ParamField path="commandLine" type="string">
+  Shell command displayed in a copyable code block.
+</ParamField>
+
+<ParamField path="contents" type="ReactNode">
+  Additional content (buttons, links) rendered below the description.
+</ParamField>
+
+<ParamField path="size" type="enum" default="base">
+  Size of the empty state container.
+  
+  - `"sm"` — Compact empty state for smaller containers
+  - `"base"` — Default empty state size
+  - `"lg"` — Large empty state for prominent placement
+</ParamField>
+
+<ParamField path="className" type="string">
+  Additional CSS classes merged via `cn()`.
+</ParamField>
+
+## Examples
+
+### Basic Empty State
+
+```tsx
+<Empty title="No packages found" description="Get started by installing your first package." />
+```
+
+### With Icon
+
+```tsx
+import { Package } from "@phosphor-icons/react";
+
+<Empty
+  icon={<Package size={48} />}
+  title="No packages found"
+  description="Get started by installing your first package."
+/>
+```
+
+### With Command Line
+
+```tsx
+import { Package } from "@phosphor-icons/react";
+
+<Empty
+  icon={<Package size={48} />}
+  title="No packages found"
+  description="Get started by installing your first package."
+  commandLine="npm install @cloudflare/kumo"
+/>
+```
+
+The command line includes a built-in copy button with visual feedback.
+
+### With Action Buttons
+
+```tsx
+import { Package, Plus } from "@phosphor-icons/react";
+import { Button } from "@cloudflare/kumo";
+
+<Empty
+  icon={<Package size={48} />}
+  title="No projects yet"
+  description="Create your first project to get started."
+  contents={
+    <Button variant="primary" icon={<Plus />}>
+      Create Project
+    </Button>
+  }
+/>
+```
+
+### Size Variants
+
+```tsx
+<Empty size="sm" title="No items" description="Small compact variant" />
+
+<Empty size="base" title="No items" description="Default size" />
+
+<Empty size="lg" title="No items" description="Large prominent variant" />
+```
+
+## Size Dimensions
+
+- **Small**: `px-6 py-8 gap-4`
+- **Base**: `px-10 py-16 gap-6`
+- **Large**: `px-12 py-20 gap-8`
+
+## Styling
+
+Empty uses semantic tokens:
+
+- **Container**: `rounded-xl border border-kumo-fill bg-kumo-control text-kumo-default`
+- **Title**: `text-2xl font-semibold`
+- **Description**: `max-w-140 text-center text-kumo-strong`
+- **Command line**: Styled code block with `bg-kumo-overlay`, `border-kumo-fill`, and copy button

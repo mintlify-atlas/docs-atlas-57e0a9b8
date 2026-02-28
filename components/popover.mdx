@@ -1,0 +1,306 @@
+---
+title: Popover
+description: Accessible popup content anchored to a trigger element with title, description, and interactive content support
+---
+
+Accessible popup content anchored to a trigger element. Supports titles, descriptions, and fully interactive content unlike tooltips.
+
+## Import
+
+```tsx
+import { Popover } from "@cloudflare/kumo";
+```
+
+## Usage
+
+<CodeGroup>
+```tsx Basic Popover
+<Popover>
+  <Popover.Trigger asChild>
+    <Button>Open Popover</Button>
+  </Popover.Trigger>
+  <Popover.Content>
+    <Popover.Title>Notifications</Popover.Title>
+    <Popover.Description>
+      You are all caught up. Good job!
+    </Popover.Description>
+  </Popover.Content>
+</Popover>
+```
+
+```tsx With Close Button
+<Popover>
+  <Popover.Trigger asChild>
+    <Button>Settings</Button>
+  </Popover.Trigger>
+  <Popover.Content>
+    <Popover.Title>Settings</Popover.Title>
+    <Popover.Description>
+      Configure your preferences below.
+    </Popover.Description>
+    <div className="mt-3">
+      <Popover.Close asChild>
+        <Button variant="secondary" size="sm">
+          Close
+        </Button>
+      </Popover.Close>
+    </div>
+  </Popover.Content>
+</Popover>
+```
+</CodeGroup>
+
+## Props
+
+### Popover (Root)
+
+<ParamField path="open" type="boolean">
+  Controlled open state.
+</ParamField>
+
+<ParamField path="defaultOpen" type="boolean">
+  Default open state (uncontrolled).
+</ParamField>
+
+<ParamField path="onOpenChange" type="(open: boolean) => void">
+  Callback when open state changes.
+</ParamField>
+
+### Popover.Trigger
+
+<ParamField path="asChild" type="boolean">
+  When true, merges props with the child element instead of wrapping it.
+</ParamField>
+
+<ParamField path="className" type="string">
+  Additional CSS classes.
+</ParamField>
+
+### Popover.Content
+
+<ParamField path="side" type="'top' | 'right' | 'bottom' | 'left'" default="'bottom'">
+  Which side of the trigger to position the popover:
+  - `"top"` — Above the trigger
+  - `"bottom"` — Below the trigger
+  - `"left"` — Left of the trigger
+  - `"right"` — Right of the trigger
+</ParamField>
+
+<ParamField path="align" type="'start' | 'center' | 'end'" default="'center'">
+  Alignment relative to the trigger:
+  - `"start"` — Align to start edge
+  - `"center"` — Center aligned
+  - `"end"` — Align to end edge
+</ParamField>
+
+<ParamField path="sideOffset" type="number" default="8">
+  Distance in pixels between the trigger and popover.
+</ParamField>
+
+<ParamField path="alignOffset" type="number" default="0">
+  Additional offset along the alignment axis in pixels.
+</ParamField>
+
+<ParamField path="positionMethod" type="'absolute' | 'fixed'" default="'absolute'">
+  CSS positioning strategy. Use `"fixed"` when the popover needs to escape stacking contexts (e.g., inside sticky headers).
+</ParamField>
+
+<ParamField path="className" type="string">
+  Additional CSS classes merged via `cn()`.
+</ParamField>
+
+### Popover.Title
+
+<ParamField path="className" type="string">
+  Additional CSS classes.
+</ParamField>
+
+Accepts all standard heading element props.
+
+### Popover.Description
+
+<ParamField path="className" type="string">
+  Additional CSS classes.
+</ParamField>
+
+Accepts all standard paragraph element props.
+
+### Popover.Close
+
+<ParamField path="asChild" type="boolean">
+  When true, merges props with the child element.
+</ParamField>
+
+## Variants
+
+### Positioning
+
+<CodeGroup>
+```tsx Top
+<Popover>
+  <Popover.Trigger asChild>
+    <Button>Top</Button>
+  </Popover.Trigger>
+  <Popover.Content side="top">
+    <Popover.Title>Top Positioned</Popover.Title>
+    <Popover.Description>Appears above the trigger.</Popover.Description>
+  </Popover.Content>
+</Popover>
+```
+
+```tsx Left
+<Popover>
+  <Popover.Trigger asChild>
+    <Button>Left</Button>
+  </Popover.Trigger>
+  <Popover.Content side="left">
+    <Popover.Title>Left Positioned</Popover.Title>
+    <Popover.Description>Appears to the left.</Popover.Description>
+  </Popover.Content>
+</Popover>
+```
+
+```tsx Right
+<Popover>
+  <Popover.Trigger asChild>
+    <Button>Right</Button>
+  </Popover.Trigger>
+  <Popover.Content side="right">
+    <Popover.Title>Right Positioned</Popover.Title>
+    <Popover.Description>Appears to the right.</Popover.Description>
+  </Popover.Content>
+</Popover>
+```
+</CodeGroup>
+
+## Examples
+
+### Icon Button Trigger
+
+```tsx
+<Popover>
+  <Popover.Trigger asChild>
+    <Button shape="square" icon={BellIcon} aria-label="Notifications" />
+  </Popover.Trigger>
+  <Popover.Content>
+    <Popover.Title>Notifications</Popover.Title>
+    <Popover.Description>
+      You have 3 unread notifications.
+    </Popover.Description>
+  </Popover.Content>
+</Popover>
+```
+
+### With Custom Content
+
+```tsx
+<Popover>
+  <Popover.Trigger asChild>
+    <Button>User Profile</Button>
+  </Popover.Trigger>
+  <Popover.Content className="w-64">
+    <div className="flex items-center gap-3">
+      <div className="size-10 rounded-full bg-kumo-recessed" />
+      <div>
+        <Popover.Title>Jane Doe</Popover.Title>
+        <p className="text-sm text-kumo-subtle">jane@example.com</p>
+      </div>
+    </div>
+    <div className="mt-3 flex gap-2 border-t border-kumo-line pt-3">
+      <Button variant="secondary" size="sm" className="flex-1">
+        Profile
+      </Button>
+      <Popover.Close asChild>
+        <Button variant="ghost" size="sm" className="flex-1">
+          Sign Out
+        </Button>
+      </Popover.Close>
+    </div>
+  </Popover.Content>
+</Popover>
+```
+
+### Hover Triggered
+
+```tsx
+<Popover>
+  <Popover.Trigger openOnHover delay={200} asChild>
+    <Button variant="secondary">Hover Me</Button>
+  </Popover.Trigger>
+  <Popover.Content>
+    <Popover.Title>Hover Triggered</Popover.Title>
+    <Popover.Description>
+      This popover opens on hover with a 200ms delay. It can still contain
+      interactive content like buttons and links.
+    </Popover.Description>
+    <div className="mt-3">
+      <Popover.Close asChild>
+        <Button variant="secondary" size="sm">
+          Got it
+        </Button>
+      </Popover.Close>
+    </div>
+  </Popover.Content>
+</Popover>
+```
+
+### Form in Popover
+
+```tsx
+<Popover>
+  <Popover.Trigger asChild>
+    <Button icon={FilterIcon}>Filter</Button>
+  </Popover.Trigger>
+  <Popover.Content className="w-80">
+    <Popover.Title>Filter Results</Popover.Title>
+    <Popover.Description className="mb-4">
+      Narrow down your search results.
+    </Popover.Description>
+    <div className="space-y-3">
+      <Select className="w-full" placeholder="Status">
+        <Select.Option value="active">Active</Select.Option>
+        <Select.Option value="inactive">Inactive</Select.Option>
+      </Select>
+      <Input placeholder="Search by name" />
+      <div className="flex justify-end gap-2">
+        <Popover.Close asChild>
+          <Button variant="secondary" size="sm">
+            Cancel
+          </Button>
+        </Popover.Close>
+        <Button variant="primary" size="sm">
+          Apply
+        </Button>
+      </div>
+    </div>
+  </Popover.Content>
+</Popover>
+```
+
+## Popover vs Tooltip
+
+| Feature | Popover | Tooltip |
+|---------|---------|----------|
+| **Trigger** | Click/hover | Hover/focus only |
+| **Interactive Content** | Yes (buttons, forms) | No (text only) |
+| **Title & Description** | Yes | No (content only) |
+| **Close Button** | Optional | Not applicable |
+| **Use Case** | Rich content, forms, menus | Short helpful text |
+
+## Accessibility
+
+- Keyboard navigation support
+- Focus management
+- Closes on Escape key
+- ARIA dialog role with proper labeling
+- Arrow keys navigate within interactive content
+- Built on `@base-ui/react/popover`
+
+## Notes
+
+- Always use `asChild` on triggers to avoid wrapper elements
+- Use `Popover.Title` for accessibility even if styling makes it invisible
+- Popovers can contain interactive content unlike tooltips
+- The arrow automatically adjusts based on positioning
+- Use `positionMethod="fixed"` when inside sticky/fixed positioned containers
+- Content animates with scale and fade transitions

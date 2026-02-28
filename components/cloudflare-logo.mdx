@@ -1,0 +1,268 @@
+---
+title: CloudflareLogo
+description: Cloudflare logo component with glyph and full variants in multiple color schemes.
+---
+
+<Note>
+This component includes both `CloudflareLogo` (logo mark) and `PoweredByCloudflare` (badge component).
+</Note>
+
+## Import
+
+```tsx
+import { CloudflareLogo, PoweredByCloudflare } from "@cloudflare/kumo";
+```
+
+## Usage
+
+```tsx
+<CloudflareLogo className="w-72" />
+```
+
+## Examples
+
+### Glyph Only (Cloud Icon)
+
+```tsx
+<CloudflareLogo variant="glyph" className="w-24" />
+```
+
+### Full Logo with Wordmark
+
+```tsx
+<CloudflareLogo variant="full" className="w-40" />
+```
+
+### Color Variants
+
+```tsx
+<div className="flex flex-wrap items-center gap-8">
+  <CloudflareLogo className="w-28" color="color" />
+  <div className="rounded-lg bg-white p-4">
+    <CloudflareLogo className="w-28" color="black" />
+  </div>
+  <div className="rounded-lg bg-black p-4">
+    <CloudflareLogo className="w-28" color="white" />
+  </div>
+</div>
+```
+
+### Glyph Color Variants
+
+```tsx
+<div className="flex flex-wrap items-center gap-8">
+  <CloudflareLogo variant="glyph" className="w-12" color="color" />
+  <div className="rounded-lg bg-white p-4">
+    <CloudflareLogo variant="glyph" className="w-12" color="black" />
+  </div>
+  <div className="rounded-lg bg-black p-4">
+    <CloudflareLogo variant="glyph" className="w-12" color="white" />
+  </div>
+</div>
+```
+
+### Size Examples
+
+```tsx
+<div className="flex flex-wrap items-end gap-6">
+  <CloudflareLogo className="w-20" />
+  <CloudflareLogo className="w-28" />
+  <CloudflareLogo className="w-44" />
+</div>
+```
+
+## CloudflareLogo Props
+
+<ParamField path="variant" type="'glyph' | 'full'" default="full">
+Logo variant:
+- `glyph` — Cloud icon only (logomark)
+- `full` — Full logo with cloud glyph and wordmark
+</ParamField>
+
+<ParamField path="color" type="'color' | 'black' | 'white'" default="color">
+Color scheme:
+- `color` — Brand colors (orange/yellow cloud, dark gray wordmark)
+- `black` — Solid black
+- `white` — Solid white (for dark backgrounds)
+</ParamField>
+
+<ParamField path="className" type="string">
+Additional CSS classes merged via `cn()`.
+</ParamField>
+
+<ParamField path="...props" type="SVGAttributes<SVGSVGElement>">
+All standard SVG element attributes (width, height, aria-label, etc.).
+</ParamField>
+
+## PoweredByCloudflare
+
+### Usage
+
+```tsx
+<PoweredByCloudflare />
+```
+
+### Examples
+
+#### Basic Badge
+
+```tsx
+<PoweredByCloudflare />
+```
+
+#### Color Variants
+
+```tsx
+<div className="flex flex-wrap items-center gap-4">
+  <PoweredByCloudflare />
+  <PoweredByCloudflare color="black" />
+  <div className="rounded-lg bg-black p-3">
+    <PoweredByCloudflare color="white" />
+  </div>
+</div>
+```
+
+#### Footer Usage
+
+```tsx
+<footer className="flex w-full items-center justify-between rounded-lg border border-kumo-line bg-kumo-elevated px-6 py-4">
+  <span className="text-sm text-kumo-subtle">
+    &copy; 2026 Your Company. All rights reserved.
+  </span>
+  <PoweredByCloudflare />
+</footer>
+```
+
+### PoweredByCloudflare Props
+
+<ParamField path="color" type="'color' | 'black' | 'white'" default="color">
+Color scheme for the logo and text.
+</ParamField>
+
+<ParamField path="href" type="string" default="https://www.cloudflare.com">
+Destination URL for the badge link.
+</ParamField>
+
+<ParamField path="className" type="string">
+Additional CSS classes.
+</ParamField>
+
+<ParamField path="...props" type="AnchorHTMLAttributes<HTMLAnchorElement>">
+All standard anchor element attributes.
+</ParamField>
+
+## Variants
+
+### CloudflareLogo Variants
+
+#### Glyph
+
+```tsx
+<CloudflareLogo variant="glyph" className="w-12" />
+```
+
+- ViewBox: `0 0 49 22`
+- Contains: Cloud icon only (orange and yellow gradient)
+
+#### Full (default)
+
+```tsx
+<CloudflareLogo variant="full" className="w-40" />
+```
+
+- ViewBox: `0 0 101.4 33.5`
+- Contains: Cloud icon + "CLOUDFLARE" wordmark
+
+### Color Schemes
+
+#### Color (default)
+
+```tsx
+<CloudflareLogo color="color" />
+```
+
+- Cloud: Orange (`#F48120`) and yellow (`#FAAD3F`) gradient
+- Wordmark: Dark gray (`#404041`) in color mode, respects theme in dark mode via `text-kumo-default`
+
+#### Black
+
+```tsx
+<CloudflareLogo color="black" />
+```
+
+- All elements: `currentColor` with `text-black` class
+
+#### White
+
+```tsx
+<CloudflareLogo color="white" />
+```
+
+- All elements: `currentColor` with `text-white` class
+
+## PoweredByCloudflare Styling
+
+### Badge Styles
+
+- Display: `inline-flex items-center gap-2`
+- Padding: `py-2 pl-2.5 pr-3`
+- Border: `ring-1 ring-inset`
+- Border radius: `rounded-lg`
+- Typography: `text-sm font-medium`
+- Transition: `transition-all hover:shadow-sm`
+
+### Color Variants
+
+| Color | Background | Text | Ring |
+|-------|-----------|------|------|
+| `color` | `bg-kumo-base` | `text-kumo-default` | `ring-kumo-line` |
+| `black` | `bg-white` | `text-black` | `ring-black/20` |
+| `white` | `bg-black` | `text-white` | `ring-white/20` |
+
+## SVG Generation Helper
+
+Generate SVG markup string for copying to clipboard or embedding:
+
+```tsx
+import { generateCloudflareLogoSvg } from "@cloudflare/kumo";
+
+// Copy glyph SVG to clipboard
+const svg = generateCloudflareLogoSvg({ variant: "glyph" });
+await navigator.clipboard.writeText(svg);
+
+// Generate full logo in black
+const blackSvg = generateCloudflareLogoSvg({ variant: "full", color: "black" });
+```
+
+### Options
+
+```tsx
+interface GenerateCloudflareLogoSvgOptions {
+  variant?: "glyph" | "full"; // default: "full"
+  color?: "color" | "black" | "white"; // default: "color"
+}
+```
+
+## Accessibility
+
+- Both components use semantic SVG with `role="img"`
+- Includes `aria-label="Cloudflare logo"`
+- PoweredByCloudflare is a link with `target="_blank" rel="noopener noreferrer"`
+- All components support standard ARIA attributes
+
+## Brand Guidelines
+
+- Use `color` variant on light backgrounds for maximum brand recognition
+- Use `white` variant on dark backgrounds
+- Use `black` variant when color printing is not available
+- Maintain aspect ratio by setting only `width` or `height` with `className`
+- Ensure adequate padding around the logo (minimum 0.5x logo height)
+- For full brand guidelines, visit [cloudflare.com/brand-assets/](https://www.cloudflare.com/brand-assets/)
+
+## Notes
+
+- Logo colors are hard-coded brand colors when `color="color"`
+- In `color` mode, wordmark uses `text-kumo-default` to respect dark mode
+- SVG uses `currentColor` for `black` and `white` variants
+- PoweredByCloudflare always opens link in new tab
+- Component uses `forwardRef` for ref forwarding

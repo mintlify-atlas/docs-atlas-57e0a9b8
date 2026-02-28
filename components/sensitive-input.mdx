@@ -1,0 +1,232 @@
+---
+title: SensitiveInput
+description: Password/secret input that masks its value with built-in reveal and copy functionality.
+---
+
+## Description
+
+Password/secret input that masks its value by default and reveals on click. Includes a built-in copy-to-clipboard button on hover.
+
+Perfect for API keys, tokens, passwords, and other sensitive data that needs to be obscured but occasionally revealed or copied.
+
+## Import
+
+```tsx
+import { SensitiveInput } from "@cloudflare/kumo";
+```
+
+## Props
+
+<ParamField path="value" type="string" optional>
+  Controlled value
+</ParamField>
+
+<ParamField path="defaultValue" type="string" optional>
+  Uncontrolled default value
+</ParamField>
+
+<ParamField path="onValueChange" type="(value: string) => void" optional>
+  Callback when value changes
+</ParamField>
+
+<ParamField path="label" type="ReactNode" optional>
+  Label content for the input (enables Field wrapper and sets masked state label) - can be a string or any React node
+</ParamField>
+
+<ParamField path="labelTooltip" type="ReactNode" optional>
+  Tooltip content to display next to the label via an info icon
+</ParamField>
+
+<ParamField path="description" type="ReactNode" optional>
+  Helper text displayed below the input
+</ParamField>
+
+<ParamField path="error" type="string | object" optional>
+  Error message or validation error object
+</ParamField>
+
+<ParamField path="size" type="enum" default="base" optional>
+  Size of the input.
+  
+  - `xs` — Extra small for compact UIs
+  - `sm` — Small for secondary fields
+  - `base` — Default input size
+  - `lg` — Large for prominent fields
+</ParamField>
+
+<ParamField path="variant" type="enum" default="default" optional>
+  Style variant of the input.
+  
+  - `default` — Default input appearance
+  - `error` — Error state for validation failures
+</ParamField>
+
+<ParamField path="placeholder" type="string" optional>
+  Placeholder text
+</ParamField>
+
+<ParamField path="disabled" type="boolean" optional>
+  Whether the input is disabled
+</ParamField>
+
+<ParamField path="readOnly" type="boolean" optional>
+  Whether the input is read-only
+</ParamField>
+
+<ParamField path="required" type="boolean" optional>
+  Whether the field is required
+</ParamField>
+
+<ParamField path="name" type="string" optional>
+  Name for form submission
+</ParamField>
+
+<ParamField path="autoComplete" type="string" optional>
+  HTML autocomplete attribute
+</ParamField>
+
+<ParamField path="className" type="string" optional>
+  Additional CSS classes
+</ParamField>
+
+## Examples
+
+### Basic Usage
+
+```tsx
+<SensitiveInput label="API Key" defaultValue="sk_live_abc123xyz789" />
+```
+
+### Sizes
+
+```tsx
+<div className="flex flex-col gap-4">
+  <SensitiveInput
+    label="xs size"
+    size="xs"
+    defaultValue="secret-api-key-123"
+  />
+  <SensitiveInput
+    label="sm size"
+    size="sm"
+    defaultValue="secret-api-key-123"
+  />
+  <SensitiveInput
+    label="base size"
+    size="base"
+    defaultValue="secret-api-key-123"
+  />
+  <SensitiveInput
+    label="lg size"
+    size="lg"
+    defaultValue="secret-api-key-123"
+  />
+</div>
+```
+
+### Controlled
+
+```tsx
+<div className="flex w-80 flex-col gap-4">
+  <SensitiveInput
+    label="Controlled Secret"
+    value={value}
+    onValueChange={setValue}
+  />
+  <div className="text-sm text-kumo-subtle">
+    Current value: <code className="text-kumo-default">{value}</code>
+  </div>
+  <div className="flex gap-2">
+    <Button
+      onClick={() => setValue("new-secret-" + Date.now())}
+      variant="primary"
+      size="sm"
+    >
+      Change value
+    </Button>
+    <Button onClick={() => setValue("")} variant="secondary" size="sm">
+      Clear
+    </Button>
+  </div>
+</div>
+```
+
+### States
+
+```tsx
+<div className="flex w-80 flex-col gap-4">
+  <SensitiveInput
+    label="Error State"
+    variant="error"
+    defaultValue="invalid-key"
+    error="This API key is not valid"
+  />
+  <SensitiveInput label="Disabled" defaultValue="cannot-edit" disabled />
+  <SensitiveInput
+    label="Read-only"
+    defaultValue="view-only-secret-key"
+    readOnly
+  />
+  <SensitiveInput
+    label="With Description"
+    defaultValue="my-secret-value"
+    description="Keep this value secure and don't share it"
+  />
+</div>
+```
+
+## Features
+
+### Masking
+
+- Value is masked by default with bullet characters (`•••••••`)
+- Click the eye icon to toggle visibility
+- Masked state label shows when label prop is provided
+
+### Copy to Clipboard
+
+- Hover over the input to reveal the copy button
+- Click to copy the value to clipboard
+- Visual feedback when copied
+
+### Security
+
+- Input uses `type="password"` when masked for browser security
+- Switches to `type="text"` when revealed
+- No value leaking in browser autocomplete
+
+## Styling
+
+SensitiveInput uses semantic Kumo tokens:
+
+- **Background**: `bg-kumo-control`
+- **Text**: `text-kumo-default`
+- **Placeholder**: `text-kumo-subtle`
+- **Button**: `bg-kumo-brand` (copy button)
+- **Ring**: `outline-kumo-ring`
+
+## Accessibility
+
+- Proper label association via Field wrapper
+- Aria labels for icon buttons (reveal/hide, copy)
+- Keyboard accessible
+- Screen reader friendly
+
+## When to Use
+
+### Use SensitiveInput for:
+- API keys and tokens
+- Passwords (in settings/profile pages, not login forms)
+- Secret keys and credentials
+- Any value that should be obscured but needs occasional reveal/copy
+
+### Use regular Input with `type="password"` for:
+- Login forms
+- Password creation/confirmation forms
+- Any password field that shouldn't have a reveal button
+
+## Related Components
+
+- **Input** — Standard text input
+- **ClipboardText** — Read-only text with copy button
+- **Field** — Standalone field wrapper

@@ -1,0 +1,173 @@
+---
+title: CLI Overview
+description: Learn about the Kumo CLI for managing components, blocks, and migrations
+icon: 'terminal'
+---
+
+The Kumo CLI provides command-line tools for working with Kumo components and blocks. It helps you discover components, access documentation, and install pre-built blocks into your project.
+
+## Purpose and Capabilities
+
+The Kumo CLI serves three main purposes:
+
+### Component Registry Access
+
+Query and explore the Kumo component library from your terminal:
+- List all available components with categories
+- View detailed documentation for specific components
+- Access component props, variants, and examples
+- Export complete documentation for all components
+
+### Blocks Distribution
+
+Install pre-built, production-ready UI blocks:
+- Browse available blocks (PageHeader, DeleteResource, ResourceList)
+- Install blocks directly into your project source
+- Automatic dependency detection and reporting
+- Import path transformation for seamless integration
+
+### Migration Tools
+
+Handle breaking changes when upgrading Kumo versions:
+- Export token rename maps for automated codemod
+- Class-level mappings for find-and-replace workflows
+- Bidirectional migrations (old-to-new and new-to-old)
+
+## Installation
+
+The CLI is included with the `@cloudflare/kumo` package:
+
+```bash
+pnpm add @cloudflare/kumo
+```
+
+The `kumo` command is available after installation via:
+
+```bash
+npx kumo [command]
+```
+
+Or add it to your `package.json` scripts:
+
+```json
+{
+  "scripts": {
+    "kumo": "kumo"
+  }
+}
+```
+
+## Quick Start
+
+### Initialize Configuration
+
+Before using blocks, initialize a `kumo.json` configuration file:
+
+```bash
+npx kumo init
+```
+
+This creates a configuration file specifying where blocks should be installed (default: `src/blocks/`).
+
+### List Components
+
+View all available components grouped by category:
+
+```bash
+npx kumo ls
+```
+
+Example output:
+
+```
+Kumo Components (35 total)
+
+Buttons:
+  Button - Clickable button element with multiple variants
+  IconButton - Button with icon-only display
+
+Data Display:
+  Badge - Status indicator with color variants
+  Table - Data table with sorting and pagination
+  ...
+```
+
+### View Component Documentation
+
+Get detailed documentation for a specific component:
+
+```bash
+npx kumo doc Button
+```
+
+This outputs:
+- Component description
+- Import path
+- Category
+- All props with types and descriptions
+- Variant options with descriptions
+- Code examples
+- Semantic tokens used
+
+### Install a Block
+
+Add a pre-built block to your project:
+
+```bash
+npx kumo add PageHeader
+```
+
+The CLI will:
+1. Copy the block files to your configured blocks directory
+2. Transform imports to use your installed `@cloudflare/kumo` package
+3. Report any component dependencies
+4. Show you the import path to use
+
+## Architecture
+
+The CLI is built using Node.js ESM and bundled with the library:
+
+```
+@cloudflare/kumo/
+├── dist/
+│   ├── command-line/
+│   │   └── cli.js           # Bundled CLI executable
+│   └── index.js             # Library exports
+├── ai/
+│   ├── component-registry.json  # Component metadata
+│   └── USAGE.md                 # AI usage guide
+└── src/
+    └── blocks/                  # Block source files
+```
+
+Key files:
+- `cli.ts:1` - Main CLI entry point and command router
+- `ai/component-registry.json` - Auto-generated component metadata
+- `src/blocks/` - Source code for installable blocks
+
+## Configuration File
+
+The `kumo.json` file is created by `kumo init` and configures CLI behavior:
+
+```json
+{
+  "blocksDir": "src/blocks",
+  "version": "1.0.0"
+}
+```
+
+### Options
+
+- `blocksDir` - Directory where blocks are installed (relative to project root)
+- `version` - Configuration schema version
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Command Reference" icon="list" href="/cli/commands">
+    Detailed documentation for all CLI commands
+  </Card>
+  <Card title="Blocks System" icon="cube" href="/cli/blocks">
+    Learn about installable blocks and how to use them
+  </Card>
+</CardGroup>

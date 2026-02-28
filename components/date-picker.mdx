@@ -1,0 +1,226 @@
+---
+title: DatePicker
+description: Date selection calendar with single, multiple, and range selection modes.
+---
+
+## Description
+
+DatePicker — a date selection calendar built on [react-day-picker](https://daypicker.dev) with Kumo styling. Supports three selection modes: single, multiple, and range.
+
+**Note:** `DateRangePicker` is deprecated. Use `DatePicker` with `mode="range"` instead.
+
+## Import
+
+```tsx
+import { DatePicker } from "@cloudflare/kumo";
+```
+
+## Props
+
+<ParamField path="mode" type="'single' | 'multiple' | 'range'" required>
+  Selection mode for the date picker
+</ParamField>
+
+<ParamField path="selected" type="Date | Date[] | { from: Date; to?: Date }" optional>
+  Currently selected date(s) based on mode
+</ParamField>
+
+<ParamField path="onChange" type="(date: Date | Date[] | { from: Date; to?: Date }) => void">
+  Callback when date selection changes
+</ParamField>
+
+<ParamField path="numberOfMonths" type="number" optional>
+  Number of months to display side-by-side (useful for range mode)
+</ParamField>
+
+<ParamField path="min" type="number" optional>
+  Minimum number of dates that must be selected (for multiple/range modes)
+</ParamField>
+
+<ParamField path="max" type="number" optional>
+  Maximum number of dates that can be selected (for multiple/range modes)
+</ParamField>
+
+<ParamField path="disabled" type="Date | Date[] | (date: Date) => boolean" optional>
+  Dates that cannot be selected
+</ParamField>
+
+<ParamField path="month" type="Date" optional>
+  Currently displayed month (controlled)
+</ParamField>
+
+<ParamField path="onMonthChange" type="(month: Date) => void" optional>
+  Callback when displayed month changes
+</ParamField>
+
+<ParamField path="fixedWeeks" type="boolean" optional>
+  Always show 6 weeks in the calendar for consistent height
+</ParamField>
+
+<ParamField path="footer" type="ReactNode" optional>
+  Footer content displayed below the calendar
+</ParamField>
+
+<ParamField path="className" type="string" optional>
+  Additional CSS classes
+</ParamField>
+
+<ParamField path="children" type="ReactNode" optional>
+  Child elements
+</ParamField>
+
+## Examples
+
+### Single Date Selection
+
+```tsx
+<DatePicker mode="single" selected={date} onChange={d => {
+  if (d) {
+    setDate(d);
+  }
+}} />
+```
+
+### Multiple Date Selection
+
+```tsx
+<DatePicker
+  mode="multiple"
+  selected={dates}
+  onChange={setDates}
+  max={5}
+/>
+```
+
+### Date Range Selection
+
+```tsx
+<DatePicker
+  mode="range"
+  selected={range}
+  onChange={setRange}
+  numberOfMonths={2}
+/>
+```
+
+### With Min/Max Constraints
+
+```tsx
+<DatePicker
+  mode="range"
+  selected={range}
+  onChange={setRange}
+  min={3}
+  max={7}
+  footer={
+    <span className="text-xs text-kumo-subtle">Select 3-7 nights</span>
+  }
+/>
+```
+
+### In a Popover (Single Date)
+
+```tsx
+<Popover>
+  <Popover.Trigger asChild>
+    <Button variant="outline" icon={CalendarDotsIcon}>
+      {date ? date.toLocaleDateString() : "Pick a date"}
+    </Button>
+  </Popover.Trigger>
+  <Popover.Content className="p-3">
+    <DatePicker mode="single" selected={date} onChange={setDate} />
+  </Popover.Content>
+</Popover>
+```
+
+### In a Popover (Date Range)
+
+```tsx
+<Popover>
+  <Popover.Trigger asChild>
+    <Button variant="outline" icon={CalendarDotsIcon}>
+      {formatRange()}
+    </Button>
+  </Popover.Trigger>
+  <Popover.Content className="p-3">
+    <DatePicker
+      mode="range"
+      selected={range}
+      onChange={setRange}
+      numberOfMonths={2}
+    />
+  </Popover.Content>
+</Popover>
+```
+
+### With Presets
+
+```tsx
+<Popover>
+  <Popover.Trigger asChild>
+    <Button variant="outline" icon={CalendarDotsIcon}>
+      {formatRange()}
+    </Button>
+  </Popover.Trigger>
+  <Popover.Content className="p-0">
+    <div className="flex">
+      <div className="flex flex-col gap-1 border-r border-kumo-line p-2 text-sm">
+        {presets.map((preset) => {
+          const isActive = isPresetActive(preset);
+          return (
+            <button
+              key={preset.label}
+              type="button"
+              onClick={() => handlePresetClick(preset)}
+              className={`rounded-md px-3 py-1.5 text-left whitespace-nowrap ${isActive
+                ? "bg-kumo-bg-inverse text-kumo-text-inverse"
+                : "text-kumo-strong hover:bg-kumo-control"
+                }`}
+            >
+              {preset.label}
+            </button>
+          );
+        })}
+      </div>
+      <div className="p-3">
+        <DatePicker
+          mode="range"
+          selected={range}
+          onChange={setRange}
+          month={month}
+          onMonthChange={setMonth}
+          numberOfMonths={2}
+        />
+      </div>
+    </div>
+  </Popover.Content>
+</Popover>
+```
+
+### With Disabled Dates
+
+```tsx
+<DatePicker
+  mode="multiple"
+  selected={dates}
+  onChange={setDates}
+  max={maxDays}
+  disabled={unavailableDates}
+  fixedWeeks
+  footer={
+    <p className="text-xs text-kumo-subtle pt-2 w-full">
+      {selectedCount}/{maxDays} days selected. Grayed dates are unavailable.
+    </p>
+  }
+/>
+```
+
+## Styling
+
+DatePicker uses semantic Kumo tokens and inherits from the Base UI calendar primitives.
+
+## Related Components
+
+- **Popover** — Use to display DatePicker in a dropdown
+- **Button** — Common trigger for date pickers
+- **DateRangePicker** — Deprecated standalone component (use DatePicker with `mode="range"` instead)

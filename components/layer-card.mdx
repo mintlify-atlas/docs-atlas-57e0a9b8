@@ -1,0 +1,156 @@
+---
+title: LayerCard
+description: Elevated card with primary/secondary content layers for dashboard widgets.
+---
+
+<ComponentDemo name="layer-card-demo" />
+
+## Installation
+
+```bash
+npx @cloudflare/kumo add layer-card
+```
+
+## Import
+
+```tsx
+import { LayerCard } from "@cloudflare/kumo";
+```
+
+## Usage
+
+```tsx
+<LayerCard>
+  <LayerCard.Secondary>Getting Started</LayerCard.Secondary>
+  <LayerCard.Primary>Quick start guide</LayerCard.Primary>
+</LayerCard>
+```
+
+## Props
+
+### LayerCard (Root)
+
+<ParamField path="children" type="ReactNode">
+  Child components (typically LayerCard.Secondary and LayerCard.Primary).
+</ParamField>
+
+<ParamField path="className" type="string">
+  Additional CSS classes merged via `cn()`.
+</ParamField>
+
+### LayerCard.Secondary
+
+<ParamField path="children" type="ReactNode">
+  Content for the secondary (header) layer.
+</ParamField>
+
+<ParamField path="className" type="string">
+  Additional CSS classes.
+</ParamField>
+
+### LayerCard.Primary
+
+<ParamField path="children" type="ReactNode">
+  Content for the primary (body) layer.
+</ParamField>
+
+<ParamField path="className" type="string">
+  Additional CSS classes.
+</ParamField>
+
+## Sub-components
+
+- **LayerCard.Secondary** — Header section with elevated background (`bg-kumo-elevated`)
+- **LayerCard.Primary** — Main content area with base background (`bg-kumo-base`)
+
+## Examples
+
+### Basic LayerCard
+
+```tsx
+<LayerCard className="w-[250px]">
+  <LayerCard.Secondary>Getting Started</LayerCard.Secondary>
+  <LayerCard.Primary>
+    <p className="text-sm text-kumo-subtle">
+      Quick start guide for new users
+    </p>
+  </LayerCard.Primary>
+</LayerCard>
+```
+
+### With Action Button
+
+```tsx
+import { ArrowRight } from "@phosphor-icons/react";
+import { Button } from "@cloudflare/kumo";
+
+<LayerCard>
+  <LayerCard.Secondary className="flex items-center justify-between">
+    <div>Next Steps</div>
+    <Button
+      variant="ghost"
+      size="sm"
+      shape="square"
+      aria-label="Go to next steps"
+    >
+      <ArrowRight size={16} />
+    </Button>
+  </LayerCard.Secondary>
+  <LayerCard.Primary>Get started with Kumo</LayerCard.Primary>
+</LayerCard>
+```
+
+### Multiple Cards
+
+```tsx
+<div className="flex gap-4">
+  <LayerCard className="w-[200px]">
+    <LayerCard.Secondary>Components</LayerCard.Secondary>
+    <LayerCard.Primary>
+      <p className="text-sm">Browse all components</p>
+    </LayerCard.Primary>
+  </LayerCard>
+  <LayerCard className="w-[200px]">
+    <LayerCard.Secondary>Examples</LayerCard.Secondary>
+    <LayerCard.Primary>
+      <p className="text-sm">View code examples</p>
+    </LayerCard.Primary>
+  </LayerCard>
+</div>
+```
+
+## Structure
+
+LayerCard creates a two-tier visual hierarchy:
+
+1. **Outer container** (`LayerCard`):
+   - `bg-kumo-elevated` — Elevated surface
+   - `ring ring-kumo-line` — Subtle border
+   - `rounded-lg` — 8px border radius
+
+2. **Secondary layer** (`LayerCard.Secondary`):
+   - Compact header area
+   - `p-2 gap-2` — 8px padding
+   - `text-base font-medium text-kumo-strong`
+
+3. **Primary layer** (`LayerCard.Primary`):
+   - Main content area
+   - `bg-kumo-base` — Base surface (recessed from container)
+   - `p-4 pr-3 gap-2` — 16px padding (12px right)
+   - `ring ring-kumo-fill` — Inner border
+   - `rounded-lg` — 8px border radius
+
+## Styling
+
+LayerCard uses semantic tokens:
+
+- **Container**: `bg-kumo-elevated ring-kumo-line`
+- **Secondary**: `text-kumo-strong`
+- **Primary**: `bg-kumo-base ring-kumo-fill`
+
+### Dimensions
+
+- **Default width**: 280px (via Figma metadata)
+- **Secondary padding**: 8px (all sides)
+- **Primary padding**: 16px (12px right)
+- **Border radius**: 8px

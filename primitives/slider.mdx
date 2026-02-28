@@ -1,0 +1,46 @@
+---
+title: "Slider"
+description: "Unstyled slider primitive for selecting values from a range"
+---
+
+## Overview
+
+The Slider primitive provides an accessible, unstyled slider component for selecting numeric values or ranges.
+
+## Import
+
+```tsx
+import { Slider } from '@cloudflare/kumo/primitives/slider';
+```
+
+## About
+
+This is a re-export of the Base UI Slider primitive. It handles:
+- Keyboard interaction (Arrow keys, Page Up/Down, Home, End)
+- ARIA attributes for accessibility
+- Single and range sliders
+- Controlled and uncontrolled modes
+
+## Usage
+
+```tsx
+import { Slider } from '@cloudflare/kumo/primitives/slider';
+import { useState } from 'react';
+
+function MySlider() {
+  const [value, setValue] = useState(50);
+  
+  return (
+    <Slider.Root value={value} onValueChange={setValue} min={0} max={100}>
+      <Slider.Track>
+        <Slider.Range />
+        <Slider.Thumb />
+      </Slider.Track>
+    </Slider.Root>
+  );
+}
+```
+
+## Documentation
+
+For the complete API reference, props, and examples, see the [Base UI Slider documentation](https://base-ui.com/react/components/slider/).

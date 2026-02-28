@@ -1,0 +1,43 @@
+---
+title: "Field"
+description: "Unstyled field primitive for form inputs with labels and validation"
+---
+
+## Overview
+
+The Field primitive provides an accessible, unstyled form field component that connects labels, inputs, and validation messages.
+
+## Import
+
+```tsx
+import { Field } from '@cloudflare/kumo/primitives/field';
+```
+
+## About
+
+This is a re-export of the Base UI Field primitive. It handles:
+- Label-input association
+- ARIA attributes for accessibility
+- Error and validation states
+- Required and optional indicators
+
+## Usage
+
+```tsx
+import { Field } from '@cloudflare/kumo/primitives/field';
+
+function MyField() {
+  return (
+    <Field.Root>
+      <Field.Label>Email</Field.Label>
+      <Field.Control type="email" placeholder="you@example.com" />
+      <Field.Description>We'll never share your email.</Field.Description>
+      <Field.Error>Please enter a valid email</Field.Error>
+    </Field.Root>
+  );
+}
+```
+
+## Documentation
+
+For the complete API reference, props, and examples, see the [Base UI Field documentation](https://base-ui.com/react/components/field/).

@@ -1,0 +1,200 @@
+---
+title: Surface
+description: Polymorphic container with consistent background, shadow, and border styling.
+group: Layout
+---
+
+## Import
+
+```tsx
+import { Surface } from '@cloudflare/kumo';
+```
+
+## Description
+
+The Surface component is a polymorphic container that provides consistent background, shadow, and border styling. It serves as a foundational building block for creating cards, panels, and other elevated UI elements. Surface supports rendering as different HTML elements via the `as` prop while maintaining consistent styling.
+
+## Props
+
+<ParamField path="as" type="React.ElementType" default="div">
+  The HTML element type to render as (e.g. `"div"`, `"section"`, `"article"`, `"aside"`).
+</ParamField>
+
+<ParamField path="className" type="string">
+  Additional CSS classes merged via `cn()`.
+</ParamField>
+
+<ParamField path="children" type="ReactNode">
+  Content rendered inside the surface.
+</ParamField>
+
+## Base Styling
+
+The Surface component applies the following base styles:
+
+- **Background**: `bg-kumo-base` — Base surface background color
+- **Shadow**: `shadow-xs` — Subtle shadow for depth
+- **Border**: `ring ring-kumo-line` — Subtle border ring
+
+These styles create a consistent elevated surface appearance that adapts to the current theme (light/dark mode).
+
+## Examples
+
+### Basic Surface
+
+```tsx
+<Surface className="rounded-lg p-6">
+  <Text size="lg" bold>
+    Surface Component
+  </Text>
+  <div className="mt-2">
+    <Text variant="secondary">
+      A container with consistent elevation and border styling.
+    </Text>
+  </div>
+</Surface>
+```
+
+### Semantic HTML Elements
+
+Use the `as` prop to render Surface as different semantic HTML elements:
+
+```tsx
+<div className="flex flex-col gap-4">
+  <Surface as="section" className="rounded-lg p-4">
+    <Text bold>As section element</Text>
+  </Surface>
+  
+  <Surface as="article" className="rounded-lg p-4">
+    <Text bold>As article element</Text>
+  </Surface>
+  
+  <Surface as="aside" className="rounded-lg p-4">
+    <Text bold>As aside element</Text>
+  </Surface>
+</div>
+```
+
+### Nested Surfaces
+
+Surfaces can be nested to create layered elevation effects. Use `bg-kumo-elevated` on the nested surface:
+
+```tsx
+<Surface className="rounded-lg p-6">
+  <Text bold>Outer Surface</Text>
+  <Surface className="mt-4 rounded-md bg-kumo-elevated p-4">
+    <Text variant="secondary">Nested Surface</Text>
+  </Surface>
+</Surface>
+```
+
+### Card Layout
+
+Combine Surface with Grid for card-based layouts:
+
+```tsx
+<Grid variant="3up" gap="base">
+  <GridItem>
+    <Surface className="rounded-lg p-6">
+      <Text bold>Card 1</Text>
+      <div className="mt-2">
+        <Text variant="secondary">Card content here</Text>
+      </div>
+    </Surface>
+  </GridItem>
+  <GridItem>
+    <Surface className="rounded-lg p-6">
+      <Text bold>Card 2</Text>
+      <div className="mt-2">
+        <Text variant="secondary">Card content here</Text>
+      </div>
+    </Surface>
+  </GridItem>
+  <GridItem>
+    <Surface className="rounded-lg p-6">
+      <Text bold>Card 3</Text>
+      <div className="mt-2">
+        <Text variant="secondary">Card content here</Text>
+      </div>
+    </Surface>
+  </GridItem>
+</Grid>
+```
+
+### Custom Styling
+
+The `className` prop allows you to customize the surface appearance:
+
+```tsx
+<div className="flex flex-col gap-4">
+  {/* Rounded corners */}
+  <Surface className="rounded-lg p-4">
+    <Text>Rounded surface</Text>
+  </Surface>
+  
+  {/* Extra padding */}
+  <Surface className="rounded-lg p-8">
+    <Text>Extra padding</Text>
+  </Surface>
+  
+  {/* Custom border */}
+  <Surface className="rounded-lg border-2 border-kumo-brand p-4">
+    <Text>Custom border color</Text>
+  </Surface>
+  
+  {/* Hover effects */}
+  <Surface className="rounded-lg p-4 transition-all hover:shadow-md">
+    <Text>Hover for shadow</Text>
+  </Surface>
+</div>
+```
+
+## Surface Hierarchy
+
+Kumo provides semantic tokens for creating surface hierarchy:
+
+- `bg-kumo-base` — Primary surface (default for Surface component)
+- `bg-kumo-elevated` — Elevated surface (use for nested surfaces or floating elements)
+- `bg-kumo-recessed` — Recessed surface (use for inset areas)
+
+```tsx
+<div className="flex flex-col gap-4">
+  <Surface className="rounded-lg p-4 bg-kumo-recessed">
+    <Text>Recessed surface</Text>
+  </Surface>
+  
+  <Surface className="rounded-lg p-4">
+    <Text>Base surface (default)</Text>
+  </Surface>
+  
+  <Surface className="rounded-lg p-4 bg-kumo-elevated">
+    <Text>Elevated surface</Text>
+  </Surface>
+</div>
+```
+
+## Colors Used
+
+- `bg-kumo-base` — Base surface background color
+- `ring-kumo-line` — Border ring color
+
+## Implementation Details
+
+### Polymorphic Component
+
+Surface is implemented as a polymorphic component using TypeScript generics, allowing it to render as any valid HTML element while maintaining type safety for that element's props.
+
+### Forwarded Ref
+
+The component forwards refs using `React.forwardRef`, enabling direct access to the underlying DOM element.
+
+## Accessibility
+
+When using the `as` prop to render semantic HTML elements:
+
+- Use `<Surface as="section">` for thematic sections
+- Use `<Surface as="article">` for self-contained content
+- Use `<Surface as="aside">` for tangentially related content
+- Use `<Surface as="main">` for primary page content
+
+This improves document structure and screen reader navigation.

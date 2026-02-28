@@ -1,0 +1,49 @@
+---
+title: "Autocomplete"
+description: "Unstyled autocomplete primitive for text input with suggestions"
+---
+
+## Overview
+
+The Autocomplete primitive provides an accessible, unstyled autocomplete component that displays suggestions as users type.
+
+## Import
+
+```tsx
+import { Autocomplete } from '@cloudflare/kumo/primitives/autocomplete';
+```
+
+## About
+
+This is a re-export of the Base UI Autocomplete primitive. It handles:
+- Keyboard navigation through suggestions
+- ARIA attributes for accessibility
+- Filtering and highlighting
+- Controlled and uncontrolled modes
+
+## Usage
+
+```tsx
+import { Autocomplete } from '@cloudflare/kumo/primitives/autocomplete';
+
+function MyAutocomplete() {
+  const options = ['Apple', 'Banana', 'Orange'];
+  
+  return (
+    <Autocomplete.Root>
+      <Autocomplete.Input placeholder="Search fruits..." />
+      <Autocomplete.Listbox>
+        {options.map((option) => (
+          <Autocomplete.Option key={option} value={option}>
+            {option}
+          </Autocomplete.Option>
+        ))}
+      </Autocomplete.Listbox>
+    </Autocomplete.Root>
+  );
+}
+```
+
+## Documentation
+
+For the complete API reference, props, and examples, see the [Base UI Autocomplete documentation](https://base-ui.com/react/components/autocomplete/).

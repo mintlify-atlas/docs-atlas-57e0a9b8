@@ -1,0 +1,172 @@
+---
+title: Field
+description: Form field wrapper that provides label, description, and error display for form controls.
+---
+
+## Description
+
+Form field wrapper that provides a label, optional description, and error display around any form control. Built on Base UI Field primitives.
+
+Most input components (Input, Select, Checkbox, etc.) have built-in Field support via their `label` prop. Use the standalone `Field` component when you need more control over the structure or when wrapping custom form controls.
+
+## Import
+
+```tsx
+import { Field } from "@cloudflare/kumo";
+```
+
+## Props
+
+<ParamField path="label" type="ReactNode" optional>
+  The label content — can be a string or any React node.
+</ParamField>
+
+<ParamField path="children" type="ReactNode" optional>
+  The form control element(s) to wrap (Input, Select, Checkbox, etc.).
+</ParamField>
+
+<ParamField path="required" type="boolean" optional>
+  When explicitly `false`, shows gray "(optional)" text after the label. When `true` or `undefined`, no indicator is shown.
+</ParamField>
+
+<ParamField path="labelTooltip" type="ReactNode" optional>
+  Tooltip content displayed next to the label via an info icon.
+</ParamField>
+
+<ParamField path="description" type="ReactNode" optional>
+  Helper text displayed below the control (hidden when `error` is present).
+</ParamField>
+
+<ParamField path="error" type="object" optional>
+  Validation error with a message and a browser `ValidityState` match key.
+  
+  Example: `{ message: "Email is required", match: "valueMissing" }`
+</ParamField>
+
+<ParamField path="controlFirst" type="boolean" optional>
+  When `true`, places the control before the label (for checkbox/switch layouts).
+</ParamField>
+
+## Examples
+
+### Basic Usage
+
+Most components have built-in Field support:
+
+```tsx
+<Input
+  label="Email"
+  description="We'll never share your email"
+  placeholder="you@example.com"
+/>
+```
+
+### Standalone Field
+
+When you need more control:
+
+```tsx
+<Field
+  label="Custom Control"
+  description="Helper text for this field"
+>
+  <div className="custom-control">
+    {/* Your custom form control */}
+  </div>
+</Field>
+```
+
+### Optional Field
+
+```tsx
+<Field
+  label="Phone Number"
+  required={false}
+>
+  <Input placeholder="+1 (555) 000-0000" />
+</Field>
+```
+
+### With Tooltip
+
+```tsx
+<Field
+  label="API Key"
+  labelTooltip="Find this in your dashboard under Settings > API Keys"
+>
+  <Input placeholder="sk_live_..." />
+</Field>
+```
+
+### With Error
+
+```tsx
+<Field
+  label="Email"
+  error={{ message: "Please enter a valid email", match: "typeMismatch" }}
+>
+  <Input type="email" value="invalid" />
+</Field>
+```
+
+### Control First (Checkbox Layout)
+
+```tsx
+<Field
+  label="I agree to the terms"
+  controlFirst={true}
+>
+  <Checkbox />
+</Field>
+```
+
+### Complex Label
+
+```tsx
+<Field
+  label={
+    <span>
+      Email for <strong>billing</strong>
+    </span>
+  }
+>
+  <Input type="email" placeholder="billing@company.com" />
+</Field>
+```
+
+## Styling
+
+Field uses semantic Kumo tokens:
+
+- **Label**: `text-kumo-default`, `text-kumo-strong`
+- **Description**: `text-kumo-subtle`
+- **Error**: `text-kumo-danger`
+
+## Component Behavior
+
+### Label Required Indicator
+
+- When `required` is `undefined` or `true`: No indicator shown
+- When `required={false}`: Gray "(optional)" text appears after the label
+
+### Error State
+
+- When `error` is present, the description is hidden
+- Error message is displayed in red below the control
+- The error object should include a `match` property that corresponds to a ValidityState key for browser validation integration
+
+### Layout Modes
+
+- **Default** (`controlFirst={undefined}`): Label appears above control (standard form layout)
+- **Control First** (`controlFirst={true}`): Control appears before label (checkbox/switch layout)
+- **Control Last** (`controlFirst={false}`): Label appears before control (alternative checkbox layout)
+
+## Related Components
+
+- **Input** — Text input with built-in Field support
+- **Select** — Dropdown select with built-in Field support
+- **Checkbox** — Checkbox with built-in Field support
+- **Radio** — Radio group with built-in Field support
+- **Switch** — Toggle switch with built-in Field support
+- **Combobox** — Autocomplete input with built-in Field support
+- **Label** — Standalone label component

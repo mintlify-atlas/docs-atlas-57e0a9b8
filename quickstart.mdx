@@ -1,80 +1,202 @@
 ---
-title: "Quickstart"
-description: "Start building awesome documentation in minutes"
+title: Quick Start
+description: Build your first Kumo component in minutes. Learn the basics of importing and using components with working examples.
 ---
 
-## Get started in three steps
+# Quick Start
 
-Get your documentation site running locally and make your first customization.
+Get started with Kumo by building a simple example. This guide walks you through creating your first component.
 
-### Step 1: Set up your local environment
+<Steps>
 
-<AccordionGroup>
-  <Accordion icon="copy" title="Clone your docs locally">
-    During the onboarding process, you created a GitHub repository with your docs content if you didn't already have one. You can find a link to this repository in your [dashboard](https://dashboard.mintlify.com).
-    
-    To clone the repository locally so that you can make and preview changes to your docs, follow the [Cloning a repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) guide in the GitHub docs.
-  </Accordion>
-  <Accordion icon="rectangle-terminal" title="Start the preview server">
-    1. Install the Mintlify CLI: `npm i -g mint`
-    2. Navigate to your docs directory and run: `mint dev`
-    3. Open `http://localhost:3000` to see your docs live!
-    
-    <Tip>Your preview updates automatically as you edit files.</Tip>
-  </Accordion>
-</AccordionGroup>
+<Step title="Install Kumo">
 
-### Step 2: Deploy your changes
+If you haven't already, install Kumo and its dependencies:
 
-<AccordionGroup>
-  <Accordion icon="github" title="Install our GitHub app">
-    Install the Mintlify GitHub app from your [dashboard](https://dashboard.mintlify.com/settings/organization/github-app).
-    
-    Our GitHub app automatically deploys your changes to your docs site, so you don't need to manage deployments yourself.
-</Accordion>
-<Accordion icon="palette" title="Update your site name and colors">
-    For a first change, let's update the name and colors of your docs site.
+<CodeGroup>
 
-    1. Open `docs.json` in your editor.
-    2. Change the `"name"` field to your project name.
-    3. Update the `"colors"` to match your brand.
-    4. Save and see your changes instantly at `http://localhost:3000`.
+```bash npm
+npm install @cloudflare/kumo react react-dom @phosphor-icons/react
+```
 
-    <Tip>Try changing the primary color to see an immediate difference!</Tip>
-  </Accordion>
-</AccordionGroup>
+```bash yarn
+yarn add @cloudflare/kumo react react-dom @phosphor-icons/react
+```
 
-### Step 3: Go live
+```bash pnpm
+pnpm add @cloudflare/kumo react react-dom @phosphor-icons/react
+```
 
-<Accordion icon="rocket" title="Publish your docs">
-  1. Commit and push your changes.
-  2. Your docs will update and be live in moments!
-</Accordion>
+</CodeGroup>
 
-## Next steps
+Then import styles in your main CSS or JS file:
 
-Now that you have your docs running, explore these key features:
+```js
+import "@cloudflare/kumo/styles/standalone";
+```
+
+</Step>
+
+<Step title="Import components">
+
+Import components from Kumo. You can use the main package export or granular imports:
+
+```tsx
+// Main package import
+import { Button, Badge } from "@cloudflare/kumo";
+
+// Granular imports (recommended for tree-shaking)
+import { Button } from "@cloudflare/kumo/components/button";
+import { Badge } from "@cloudflare/kumo/components/badge";
+```
+
+</Step>
+
+<Step title="Use your first component">
+
+Create a simple component using Button and Badge:
+
+```tsx Example.tsx
+import { Button, Badge } from "@cloudflare/kumo";
+import { Plus } from "@phosphor-icons/react";
+
+function Example() {
+  return (
+    <div style={{ padding: "2rem" }}>
+      <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
+        <Button variant="primary" icon={Plus}>
+          Create Worker
+        </Button>
+        <Button variant="secondary">
+          View All
+        </Button>
+        <Badge variant="success">Active</Badge>
+      </div>
+    </div>
+  );
+}
+
+export default Example;
+```
+
+</Step>
+
+</Steps>
+
+## Working Example
+
+Here's a more complete example showing different component variants:
+
+```tsx App.tsx
+import { Button, Badge, Surface } from "@cloudflare/kumo";
+import { Rocket, Eye, TrashSimple } from "@phosphor-icons/react";
+
+function App() {
+  return (
+    <Surface className="p-6 max-w-2xl">
+      <div className="space-y-4">
+        <div>
+          <h1 className="text-2xl font-bold mb-2">Welcome to Kumo</h1>
+          <Badge variant="beta">Beta</Badge>
+        </div>
+        
+        <div className="flex gap-2">
+          <Button variant="primary" icon={Rocket}>
+            Deploy
+          </Button>
+          <Button variant="secondary" icon={Eye}>
+            Preview
+          </Button>
+          <Button variant="destructive" icon={TrashSimple}>
+            Delete
+          </Button>
+        </div>
+
+        <div className="flex gap-2">
+          <Badge variant="success">Active</Badge>
+          <Badge variant="primary">Production</Badge>
+          <Badge variant="secondary">v1.9.0</Badge>
+        </div>
+      </div>
+    </Surface>
+  );
+}
+
+export default App;
+```
+
+## Component Variants
+
+Most Kumo components support multiple variants. Here are the Button variants:
+
+```tsx
+// Primary action (high emphasis)
+<Button variant="primary">Save Changes</Button>
+
+// Secondary action (default)
+<Button variant="secondary">Cancel</Button>
+
+// Minimal button
+<Button variant="ghost">Learn More</Button>
+
+// Destructive action
+<Button variant="destructive">Delete</Button>
+
+// Icon-only button (requires aria-label)
+<Button variant="secondary" shape="square" icon={Plus} aria-label="Add item" />
+```
+
+## Using Icons
+
+Kumo uses icons from [@phosphor-icons/react](https://phosphoricons.com). Import and pass them to the `icon` prop:
+
+```tsx
+import { Button } from "@cloudflare/kumo";
+import { CloudArrowUp, Database, GearSix } from "@phosphor-icons/react";
+
+function IconExamples() {
+  return (
+    <>
+      <Button icon={CloudArrowUp}>Upload</Button>
+      <Button icon={Database}>View Data</Button>
+      <Button icon={GearSix} shape="square" aria-label="Settings" />
+    </>
+  );
+}
+```
+
+## Loading States
+
+Many components support loading states:
+
+```tsx
+<Button variant="primary" loading>
+  Saving...
+</Button>
+```
+
+## Explore the CLI
+
+Kumo includes a built-in CLI for quick component reference:
+
+```bash
+# List all components
+npx @cloudflare/kumo ls
+
+# Get component documentation
+npx @cloudflare/kumo doc Button
+
+# Browse installable blocks
+npx @cloudflare/kumo blocks
+```
+
+## Next Steps
 
 <CardGroup cols={2}>
-
-<Card title="Write Content" icon="pen-to-square" href="/essentials/markdown">
-  Learn MDX syntax and start writing your documentation.
-</Card>
-
-<Card title="Customize style" icon="palette" href="/essentials/settings">
-  Make your docs match your brand perfectly.
-</Card>
-
-<Card title="Add code examples" icon="square-code" href="/essentials/code">
-  Include syntax-highlighted code blocks.
-</Card>
-
-<Card title="API documentation" icon="code" href="/api-reference/introduction">
-  Auto-generate API docs from OpenAPI specs.
-</Card>
-
+  <Card title="Browse Components" icon="cube" href="/components/button">
+    Explore all 35+ components
+  </Card>
+  <Card title="Styling System" icon="palette" href="/essentials/styling">
+    Learn about semantic tokens
+  </Card>
 </CardGroup>
-
-<Note>
-  **Need help?** See our [full documentation](https://mintlify.com/docs) or join our [community](https://mintlify.com/community).
-</Note>

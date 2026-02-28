@@ -1,0 +1,55 @@
+---
+title: "Accordion"
+description: "Unstyled accordion primitive for collapsible content sections"
+---
+
+## Overview
+
+The Accordion primitive provides an accessible, unstyled accordion component that manages the expansion and collapse of content sections.
+
+## Import
+
+```tsx
+import { Accordion } from '@cloudflare/kumo/primitives/accordion';
+```
+
+## About
+
+This is a re-export of the Base UI Accordion primitive. It handles:
+- Keyboard navigation (Arrow keys, Home, End)
+- ARIA attributes for accessibility
+- Single or multiple panel expansion
+- Controlled and uncontrolled modes
+
+## Usage
+
+```tsx
+import { Accordion } from '@cloudflare/kumo/primitives/accordion';
+
+function MyAccordion() {
+  return (
+    <Accordion.Root>
+      <Accordion.Item>
+        <Accordion.Header>
+          <Accordion.Trigger>Section 1</Accordion.Trigger>
+        </Accordion.Header>
+        <Accordion.Panel>
+          Content for section 1
+        </Accordion.Panel>
+      </Accordion.Item>
+      <Accordion.Item>
+        <Accordion.Header>
+          <Accordion.Trigger>Section 2</Accordion.Trigger>
+        </Accordion.Header>
+        <Accordion.Panel>
+          Content for section 2
+        </Accordion.Panel>
+      </Accordion.Item>
+    </Accordion.Root>
+  );
+}
+```
+
+## Documentation
+
+For the complete API reference, props, and examples, see the [Base UI Accordion documentation](https://base-ui.com/react/components/accordion/).

@@ -1,0 +1,48 @@
+---
+title: "Tooltip"
+description: "Unstyled tooltip primitive for contextual information"
+---
+
+## Overview
+
+The Tooltip primitive provides an accessible, unstyled tooltip component for displaying contextual information on hover or focus.
+
+## Import
+
+```tsx
+import { Tooltip } from '@cloudflare/kumo/primitives/tooltip';
+```
+
+## About
+
+This is a re-export of the Base UI Tooltip primitive. It handles:
+- Positioning and collision detection
+- ARIA attributes for accessibility
+- Hover and focus triggers
+- Delay and duration timing
+
+## Usage
+
+```tsx
+import { Tooltip } from '@cloudflare/kumo/primitives/tooltip';
+
+function MyTooltip() {
+  return (
+    <Tooltip.Root>
+      <Tooltip.Trigger>Hover me</Tooltip.Trigger>
+      <Tooltip.Portal>
+        <Tooltip.Positioner>
+          <Tooltip.Popup>
+            <Tooltip.Arrow />
+            Helpful information
+          </Tooltip.Popup>
+        </Tooltip.Positioner>
+      </Tooltip.Portal>
+    </Tooltip.Root>
+  );
+}
+```
+
+## Documentation
+
+For the complete API reference, props, and examples, see the [Base UI Tooltip documentation](https://base-ui.com/react/components/tooltip/).

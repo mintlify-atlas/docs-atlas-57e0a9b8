@@ -1,0 +1,148 @@
+---
+title: Meter
+description: Progress bar showing a measured value within a known range (e.g. quota usage).
+---
+
+<ComponentDemo name="meter-demo" />
+
+## Installation
+
+```bash
+npx @cloudflare/kumo add meter
+```
+
+## Import
+
+```tsx
+import { Meter } from "@cloudflare/kumo";
+```
+
+## Usage
+
+```tsx
+<Meter label="Storage used" value={65} />
+```
+
+## Props
+
+<ParamField path="label" type="string" required>
+  Label text displayed above the meter track.
+</ParamField>
+
+<ParamField path="value" type="number" required>
+  Current value of the meter.
+</ParamField>
+
+<ParamField path="max" type="number" default="100">
+  Maximum value of the meter.
+</ParamField>
+
+<ParamField path="min" type="number" default="0">
+  Minimum value of the meter.
+</ParamField>
+
+<ParamField path="customValue" type="string">
+  Custom formatted value text (e.g. "750 / 1,000") displayed instead of percentage.
+</ParamField>
+
+<ParamField path="showValue" type="boolean" default="true">
+  Whether to display the percentage value next to the label.
+</ParamField>
+
+<ParamField path="trackClassName" type="string">
+  Additional CSS classes for the track (background bar).
+</ParamField>
+
+<ParamField path="indicatorClassName" type="string">
+  Additional CSS classes for the indicator (filled bar).
+</ParamField>
+
+<ParamField path="className" type="string">
+  Additional CSS classes for the root container.
+</ParamField>
+
+## Examples
+
+### Basic Meter
+
+```tsx
+<Meter label="Storage used" value={65} />
+```
+
+### With Custom Value
+
+```tsx
+<Meter label="API requests" value={75} customValue="750 / 1,000" />
+```
+
+### Without Percentage
+
+```tsx
+<Meter label="Progress" value={40} showValue={false} />
+```
+
+### Full Progress
+
+```tsx
+<Meter label="Quota reached" value={100} />
+```
+
+### Low Usage
+
+```tsx
+<Meter label="Memory usage" value={15} />
+```
+
+### Custom Indicator Color
+
+```tsx
+<Meter
+  label="Upload progress"
+  value={80}
+  indicatorClassName="from-green-500 via-green-500 to-green-500"
+/>
+```
+
+## Built on Base UI
+
+Meter is built on [`@base-ui/react/meter`](https://base-ui.com/components/meter) and uses the following sub-components internally:
+
+- `Meter.Root` — Container with value/min/max
+- `Meter.Label` — Accessible label
+- `Meter.Value` — Formatted percentage display
+- `Meter.Track` — Background bar
+- `Meter.Indicator` — Filled progress bar
+
+## Accessibility
+
+- Uses semantic `<meter>` element via Base UI
+- `aria-label` provided by `Meter.Label`
+- `aria-valuenow`, `aria-valuemin`, `aria-valuemax` automatically set
+- Percentage displayed visually and announced to screen readers
+
+## Styling
+
+Meter uses semantic tokens:
+
+- **Label**: `text-xs text-kumo-strong`
+- **Value**: `text-sm font-medium text-kumo-default tabular-nums`
+- **Track**: `h-2 w-full rounded-full bg-kumo-fill`
+- **Indicator**: `rounded-full bg-linear-to-r from-kumo-brand via-kumo-brand to-kumo-brand`
+- **Transition**: `transition-[width] duration-300 ease-out`
+
+### Structure
+
+```tsx
+<div className="flex w-full flex-col gap-2">
+  {/* Label + Value row */}
+  <div className="flex items-center justify-between gap-4">
+    <label>Storage used</label>
+    <span>65%</span>
+  </div>
+  
+  {/* Track + Indicator */}
+  <div className="h-2 w-full rounded-full bg-kumo-fill">
+    <div className="h-2 rounded-full bg-kumo-brand" style={{ width: '65%' }} />
+  </div>
+</div>
+```

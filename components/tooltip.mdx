@@ -1,0 +1,242 @@
+---
+title: Tooltip
+description: Accessible popup that displays helpful text on hover or focus
+---
+
+Accessible popup that shows additional information on hover or focus. Wrap your app or section with `<TooltipProvider>` to enable delay grouping.
+
+## Import
+
+```tsx
+import { Tooltip, TooltipProvider } from "@cloudflare/kumo";
+```
+
+## Usage
+
+<CodeGroup>
+```tsx Basic Tooltip
+<TooltipProvider>
+  <Tooltip content="Add new item" asChild>
+    <Button shape="square" icon={PlusIcon} aria-label="Add new item" />
+  </Tooltip>
+</TooltipProvider>
+```
+
+```tsx With Text Button
+<TooltipProvider>
+  <Tooltip content="Save your changes" asChild>
+    <Button variant="primary">Save</Button>
+  </Tooltip>
+</TooltipProvider>
+```
+</CodeGroup>
+
+## Props
+
+### TooltipProvider
+
+<ParamField path="delay" type="number" default="700">
+  Delay in milliseconds before showing tooltip on first hover.
+</ParamField>
+
+<ParamField path="closeDelay" type="number" default="300">
+  Delay in milliseconds before hiding tooltip after mouse leaves.
+</ParamField>
+
+<ParamField path="timeout" type="number" default="300">
+  Grace period for grouping tooltips. When moving between tooltips within this time, they show immediately.
+</ParamField>
+
+### Tooltip
+
+<ParamField path="content" type="ReactNode" required>
+  Content to display in the tooltip popup.
+</ParamField>
+
+<ParamField path="side" type="'top' | 'right' | 'bottom' | 'left'" default="'top'">
+  Preferred side of the trigger to render the tooltip:
+  - `"top"` — Above the trigger
+  - `"bottom"` — Below the trigger
+  - `"left"` — Left of the trigger
+  - `"right"` — Right of the trigger
+</ParamField>
+
+<ParamField path="align" type="'start' | 'center' | 'end'">
+  Alignment on the axis perpendicular to `side`:
+  - `"start"` — Align to start edge
+  - `"center"` — Center aligned
+  - `"end"` — Align to end edge
+</ParamField>
+
+<ParamField path="asChild" type="boolean">
+  When true, the trigger wraps the child element instead of adding a wrapper.
+</ParamField>
+
+<ParamField path="className" type="string">
+  Additional CSS classes merged via `cn()`.
+</ParamField>
+
+<ParamField path="open" type="boolean">
+  Controlled open state.
+</ParamField>
+
+<ParamField path="defaultOpen" type="boolean">
+  Default open state (uncontrolled).
+</ParamField>
+
+<ParamField path="onOpenChange" type="(open: boolean) => void">
+  Callback when open state changes.
+</ParamField>
+
+## Variants
+
+### Positioning
+
+<CodeGroup>
+```tsx Top (Default)
+<TooltipProvider>
+  <Tooltip content="Top tooltip" side="top" asChild>
+    <Button>Top</Button>
+  </Tooltip>
+</TooltipProvider>
+```
+
+```tsx Bottom
+<TooltipProvider>
+  <Tooltip content="Bottom tooltip" side="bottom" asChild>
+    <Button>Bottom</Button>
+  </Tooltip>
+</TooltipProvider>
+```
+
+```tsx Left
+<TooltipProvider>
+  <Tooltip content="Left tooltip" side="left" asChild>
+    <Button>Left</Button>
+  </Tooltip>
+</TooltipProvider>
+```
+
+```tsx Right
+<TooltipProvider>
+  <Tooltip content="Right tooltip" side="right" asChild>
+    <Button>Right</Button>
+  </Tooltip>
+</TooltipProvider>
+```
+</CodeGroup>
+
+## Examples
+
+### Icon Buttons
+
+```tsx
+<TooltipProvider>
+  <div className="flex gap-2">
+    <Tooltip content="Add" asChild>
+      <Button shape="square" icon={PlusIcon} aria-label="Add" />
+    </Tooltip>
+    <Tooltip content="Edit" asChild>
+      <Button shape="square" icon={PencilIcon} aria-label="Edit" />
+    </Tooltip>
+    <Tooltip content="Delete" asChild>
+      <Button shape="square" icon={TrashIcon} aria-label="Delete" />
+    </Tooltip>
+  </div>
+</TooltipProvider>
+```
+
+### Grouped Tooltips
+
+```tsx
+<TooltipProvider>
+  <div className="flex gap-2">
+    <Tooltip content="Copy to clipboard" asChild>
+      <Button shape="square" icon={CopyIcon} aria-label="Copy" />
+    </Tooltip>
+    <Tooltip content="Share link" asChild>
+      <Button shape="square" icon={ShareIcon} aria-label="Share" />
+    </Tooltip>
+    <Tooltip content="Download file" asChild>
+      <Button shape="square" icon={DownloadIcon} aria-label="Download" />
+    </Tooltip>
+  </div>
+</TooltipProvider>
+```
+
+When `TooltipProvider` wraps multiple tooltips, hovering between them shows subsequent tooltips immediately without delay.
+
+### With Alignment
+
+```tsx
+<TooltipProvider>
+  <div className="flex gap-4">
+    <Tooltip content="Start aligned" side="bottom" align="start" asChild>
+      <Button>Start</Button>
+    </Tooltip>
+    <Tooltip content="Center aligned" side="bottom" align="center" asChild>
+      <Button>Center</Button>
+    </Tooltip>
+    <Tooltip content="End aligned" side="bottom" align="end" asChild>
+      <Button>End</Button>
+    </Tooltip>
+  </div>
+</TooltipProvider>
+```
+
+### Disabled Elements
+
+```tsx
+<TooltipProvider>
+  <Tooltip content="This action is disabled" asChild>
+    {/* Wrap disabled elements in a span for tooltip to work */}
+    <span>
+      <Button disabled>Disabled Button</Button>
+    </span>
+  </Tooltip>
+</TooltipProvider>
+```
+
+### Long Text Content
+
+```tsx
+<TooltipProvider>
+  <Tooltip
+    content="This is a longer tooltip that provides additional context about the action. It will wrap to multiple lines if needed."
+    asChild
+  >
+    <Button shape="square" icon={InfoIcon} aria-label="Information" />
+  </Tooltip>
+</TooltipProvider>
+```
+
+## Tooltip vs Popover
+
+| Feature | Tooltip | Popover |
+|---------|---------|----------|
+| **Trigger** | Hover/focus only | Click/hover |
+| **Interactive Content** | No (text only) | Yes (buttons, forms) |
+| **Persistence** | Hides on mouse leave | Stays open until dismissed |
+| **Close Button** | Not applicable | Optional |
+| **Use Case** | Short helpful text | Rich content, forms, actions |
+
+## Accessibility
+
+- ARIA tooltip role with proper labeling
+- Keyboard accessible (shows on focus)
+- Automatically positioned to stay in viewport
+- Always provide `aria-label` on icon-only buttons
+- Closes when trigger loses focus or mouse leaves
+- Built on `@base-ui/react/tooltip`
+
+## Notes
+
+- Always wrap tooltips in `<TooltipProvider>` for proper functionality
+- Use `asChild` to avoid unnecessary wrapper elements
+- Keep tooltip content brief and descriptive
+- For interactive content, use `Popover` instead
+- Tooltips cannot contain buttons, links, or other interactive elements
+- The arrow automatically adjusts based on positioning
+- Default delay is 700ms on first hover, instant for grouped tooltips
+- Tooltips animate with scale and fade transitions
+- Always provide `aria-label` when using tooltips with icon-only buttons

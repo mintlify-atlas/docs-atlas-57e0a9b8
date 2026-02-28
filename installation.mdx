@@ -1,0 +1,154 @@
+---
+title: Installation
+description: Install Kumo and configure your project with npm, yarn, or pnpm. Set up styles for Tailwind CSS or standalone usage.
+---
+
+# Installation
+
+Install Kumo and its required peer dependencies to get started.
+
+## Install the Package
+
+Choose your preferred package manager:
+
+<CodeGroup>
+
+```bash npm
+npm install @cloudflare/kumo react react-dom @phosphor-icons/react
+```
+
+```bash yarn
+yarn add @cloudflare/kumo react react-dom @phosphor-icons/react
+```
+
+```bash pnpm
+pnpm add @cloudflare/kumo react react-dom @phosphor-icons/react
+```
+
+</CodeGroup>
+
+## Peer Dependencies
+
+Kumo requires these peer dependencies:
+
+- `react` — ^18.0.0 or ^19.0.0
+- `react-dom` — ^18.0.0 or ^19.0.0
+- `@phosphor-icons/react` — ^2.1.10 (for component icons)
+- `zod` — ^4.0.0 (optional, only if using form validation)
+
+## Style Configuration
+
+Kumo offers two ways to include styles, depending on whether you use Tailwind CSS.
+
+### Option 1: With Tailwind CSS
+
+If your project uses Tailwind CSS v4, add these imports to your main CSS file:
+
+```css app.css
+@source "../node_modules/@cloudflare/kumo/dist/**/*.{js,jsx,ts,tsx}";
+@import "@cloudflare/kumo/styles/tailwind";
+@import "tailwindcss";
+```
+
+<Warning>
+**Import order matters** — Import Kumo styles **before** `@import "tailwindcss"` so theme tokens are registered first.
+</Warning>
+
+<Note>
+The `@source` directive tells Tailwind v4 to scan Kumo's component files for utility classes. Adjust the path based on your CSS file location (e.g., if your CSS is in `src/styles/`, use `../../node_modules/@cloudflare/kumo/dist/**/*.{js,jsx,ts,tsx}`).
+</Note>
+
+### Option 2: Standalone (No Tailwind)
+
+If you don't use Tailwind CSS, import the pre-compiled standalone build:
+
+```js
+import "@cloudflare/kumo/styles/standalone";
+```
+
+The standalone build includes:
+
+- All Tailwind utilities used by Kumo components
+- Kumo component styles
+- Dark mode support (via `data-mode="dark"` attribute)
+- All animations and responsive utilities
+
+<Note>
+The standalone CSS is larger than the Tailwind version since it includes all utilities. Use Tailwind CSS for better tree-shaking if possible.
+</Note>
+
+## Verify Installation
+
+Create a simple test component to verify everything works:
+
+```tsx App.tsx
+import { Button } from "@cloudflare/kumo";
+import "@cloudflare/kumo/styles/standalone";
+
+function App() {
+  return (
+    <div>
+      <Button variant="primary">Hello Kumo</Button>
+    </div>
+  );
+}
+
+export default App;
+```
+
+<Steps>
+
+<Step title="Start your dev server">
+Run your development server and navigate to your app.
+</Step>
+
+<Step title="Check the button">
+You should see a styled primary button with "Hello Kumo" text.
+</Step>
+
+<Step title="Test dark mode">
+Add `data-mode="dark"` to a parent element to test dark mode:
+
+```tsx
+<div data-mode="dark">
+  <Button variant="primary">Hello Kumo</Button>
+</div>
+```
+</Step>
+
+</Steps>
+
+## Dark Mode Setup
+
+Kumo supports light and dark modes automatically. Set the `data-mode` attribute on a parent element:
+
+```tsx
+<div data-mode="light">
+  {/* Light mode components */}
+</div>
+
+<div data-mode="dark">
+  {/* Dark mode components */}
+</div>
+```
+
+## Theme Variants
+
+Kumo includes a FedRAMP-compliant theme. Enable it with the `data-theme` attribute:
+
+```tsx
+<div data-theme="fedramp">
+  {/* FedRAMP themed components */}
+</div>
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Quick Start Guide" icon="rocket" href="/quickstart">
+    Build your first component
+  </Card>
+  <Card title="Browse Components" icon="cube" href="/components/button">
+    Explore the full component library
+  </Card>
+</CardGroup>

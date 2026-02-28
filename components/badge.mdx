@@ -1,0 +1,131 @@
+---
+title: Badge
+description: Small status label for categorizing or highlighting content.
+---
+
+<ComponentDemo name="badge-demo" />
+
+## Installation
+
+```bash
+npx @cloudflare/kumo add badge
+```
+
+## Import
+
+```tsx
+import { Badge } from "@cloudflare/kumo";
+```
+
+## Usage
+
+```tsx
+<Badge variant="primary">Active</Badge>
+```
+
+## Props
+
+<ParamField path="variant" type="enum" default="primary">
+  Visual style of the badge.
+  
+  - `"primary"` — High-emphasis badge for important labels
+  - `"secondary"` — Subtle badge for secondary information
+  - `"destructive"` — Error or danger state indicator
+  - `"success"` — Success or positive state indicator
+  - `"outline"` — Bordered badge with transparent background
+  - `"beta"` — Dashed-border badge for beta/experimental features
+</ParamField>
+
+<ParamField path="className" type="string">
+  Additional CSS classes merged via `cn()`.
+</ParamField>
+
+<ParamField path="children" type="ReactNode" required>
+  Content rendered inside the badge.
+</ParamField>
+
+## Variants
+
+### Primary
+
+Default high-emphasis badge for important labels.
+
+```tsx
+<Badge variant="primary">Primary</Badge>
+```
+
+### Secondary
+
+Subtle badge for secondary information.
+
+```tsx
+<Badge variant="secondary">Secondary</Badge>
+```
+
+### Destructive
+
+Error or danger state indicator.
+
+```tsx
+<Badge variant="destructive">Destructive</Badge>
+```
+
+### Success
+
+Success or positive state indicator.
+
+```tsx
+<Badge variant="success">Success</Badge>
+```
+
+### Outline
+
+Bordered badge with transparent background.
+
+```tsx
+<Badge variant="outline">Outline</Badge>
+```
+
+### Beta
+
+Indicates beta or experimental features.
+
+```tsx
+<Badge variant="beta">Beta</Badge>
+```
+
+## Examples
+
+### All Variants
+
+```tsx
+<div className="flex flex-wrap items-center gap-2">
+  <Badge variant="primary">Primary</Badge>
+  <Badge variant="secondary">Secondary</Badge>
+  <Badge variant="destructive">Destructive</Badge>
+  <Badge variant="success">Success</Badge>
+  <Badge variant="outline">Outline</Badge>
+  <Badge variant="beta">Beta</Badge>
+</div>
+```
+
+### With Text
+
+```tsx
+<p className="flex items-center gap-2">
+  Workers
+  <Badge variant="beta">Beta</Badge>
+</p>
+```
+
+## Styling
+
+Badge uses semantic tokens for theming:
+
+- **Base styles**: `inline-flex w-fit flex-none shrink-0 items-center justify-self-start rounded-full px-2 py-0.5 text-xs font-medium whitespace-nowrap`
+- **Primary**: `bg-kumo-contrast text-kumo-inverse`
+- **Secondary**: `bg-kumo-fill text-kumo-default`
+- **Destructive**: `bg-kumo-danger text-white`
+- **Success**: `bg-kumo-success text-white`
+- **Outline**: `border border-kumo-fill bg-transparent text-kumo-default`
+- **Beta**: `border border-dashed border-kumo-brand bg-transparent text-kumo-link`

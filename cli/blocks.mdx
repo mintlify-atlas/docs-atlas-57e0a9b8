@@ -1,0 +1,481 @@
+---
+title: Blocks System
+description: Install pre-built UI blocks directly into your project source
+icon: 'cube'
+---
+
+Blocks are pre-built, production-ready UI patterns that you install directly into your project source code. Unlike library components that you import, blocks become part of your codebase, giving you full ownership and customization freedom.
+
+## What Are Blocks?
+
+Blocks are complete UI patterns that solve common use cases:
+
+- **Not library exports**: Blocks are not exported from `@cloudflare/kumo`
+- **Installed via CLI**: Use `kumo add` to copy blocks into your project
+- **Full ownership**: Once installed, you own the code and can modify it freely
+- **Composable**: Blocks use Kumo components internally for consistency
+- **Production-ready**: Battle-tested patterns from Cloudflare's dashboard
+
+### Blocks vs Components
+
+| Aspect | Components | Blocks |
+|--------|-----------|--------|
+| Installation | `import { Button } from "@cloudflare/kumo"` | `kumo add PageHeader` |
+| Location | node_modules | Your src directory |
+| Ownership | Library-maintained | You own the code |
+| Updates | Automatic with npm | Manual copy-paste |
+| Customization | Via props | Direct code edits |
+| Use case | Generic UI primitives | Specific patterns |
+
+## Available Blocks
+
+### PageHeader
+
+**Category:** Layouts
+
+**Description:** Page header with breadcrumbs, title, description, tabs, and action buttons.
+
+**Files:**
+- `page-header/index.ts` - Exports
+- `page-header/page-header.tsx` - Implementation
+
+**Dependencies:**
+- `Tabs` from `@cloudflare/kumo`
+
+**Features:**
+- Breadcrumb navigation
+- Page title and description
+- Tab navigation integration
+- Action button area (via children)
+- Spacing variants (compact, base, relaxed)
+
+**Installation:**
+
+```bash
+kumo add PageHeader
+```
+
+**Usage example:**
+
+```tsx
+import { PageHeader } from "src/blocks/page-header";
+import { Breadcrumbs } from "@cloudflare/kumo";
+
+function WorkersPage() {
+  return (
+    <PageHeader
+      breadcrumbs={
+        <Breadcrumbs>
+          <Breadcrumbs.Item href="/introduction">Home</Breadcrumbs.Item>
+          <Breadcrumbs.Item>Workers</Breadcrumbs.Item>
+        </Breadcrumbs>
+      }
+      title="Workers & Pages"
+      description="Deploy serverless functions and static sites"
+      tabs={[
+        { label: "Overview", value: "overview" },
+        { label: "Analytics", value: "analytics" },
+        { label: "Settings", value: "settings" },
+      ]}
+      defaultTab="overview"
+    >
+      <Button>Create Worker</Button>
+    </PageHeader>
+  );
+}
+```
+
+**Implementation:** `page-header.tsx:1`
+
+### DeleteResource
+
+**Category:** Patterns
+
+**Description:** Confirmation dialog for resource deletion with name confirmation.
+
+**Files:**
+- `delete-resource/index.ts` - Exports
+- `delete-resource/delete-resource.tsx` - Implementation
+
+**Dependencies:**
+- `Dialog`, `DialogRoot`, `DialogTitle`, `DialogClose` from `@cloudflare/kumo`
+- `Input` from `@cloudflare/kumo`
+- `Button` from `@cloudflare/kumo`
+- `Banner` from `@cloudflare/kumo`
+- `@phosphor-icons/react` (CheckIcon, CopyIcon, WarningCircleIcon, XIcon)
+
+**Features:**
+- Type-to-confirm deletion pattern
+- Copy-to-clipboard for resource name
+- Loading state during deletion
+- Error message display
+- Case-sensitive or case-insensitive confirmation
+- Custom delete button text
+
+**Installation:**
+
+```bash
+kumo add DeleteResource
+```
+
+**Usage example:**
+
+```tsx
+import { DeleteResource } from "src/blocks/delete-resource";
+import { useState } from "react";
+
+function WorkerActions({ worker }) {
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleDelete = async () => {
+    setIsDeleting(true);
+    setError("");
+    try {
+      await api.deleteWorker(worker.id);
+      setDeleteOpen(false);
+    } catch (err) {
+      setError("Failed to delete worker. Please try again.");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  return (
+    <>
+      <Button variant="destructive" onClick={() => setDeleteOpen(true)}>
+        Delete
+      </Button>
+
+      <DeleteResource
+        open={deleteOpen}
+        onOpenChange={setDeleteOpen}
+        resourceType="Worker"
+        resourceName={worker.name}
+        onDelete={handleDelete}
+        isDeleting={isDeleting}
+        errorMessage={error}
+      />
+    </>
+  );
+}
+```
+
+**Props:**
+
+- `open: boolean` - Whether the dialog is open
+- `onOpenChange: (open: boolean) => void` - Callback when open state changes
+- `resourceType: string` - Type of resource (e.g., "Zone", "Worker")
+- `resourceName: string` - Name of the specific resource being deleted
+- `onDelete: () => void | Promise<void>` - Callback when delete is confirmed
+- `isDeleting?: boolean` - Whether the delete action is in progress
+- `caseSensitive?: boolean` - Whether confirmation is case-sensitive (default: true)
+- `deleteButtonText?: string` - Custom delete button text
+- `errorMessage?: string` - Error message to display
+
+**Implementation:** `delete-resource.tsx:1`
+
+### ResourceListPage
+
+**Category:** Layouts
+
+**Description:** Full-page layout for resource list pages with sidebar support.
+
+**Files:**
+- `resource-list/index.ts` - Exports
+- `resource-list/resource-list.tsx` - Implementation
+
+**Dependencies:**
+- None (uses only Kumo's `cn()` utility)
+
+**Features:**
+- Responsive layout with max-width container
+- Title with optional icon
+- Description text
+- Main content area
+- Optional usage/documentation sidebar
+- Optional additional content area
+- Mobile-optimized layout
+
+**Installation:**
+
+```bash
+kumo add ResourceListPage
+```
+
+**Usage example:**
+
+```tsx
+import { ResourceListPage } from "src/blocks/resource-list";
+import { Cube } from "@phosphor-icons/react";
+import { DataTable } from "@cloudflare/kumo";
+
+function WorkersListPage() {
+  return (
+    <ResourceListPage
+      icon={<Cube size={32} />}
+      title="Workers"
+      description="Serverless functions running on Cloudflare's global network"
+      usage={
+        <div className="rounded-lg bg-kumo-base p-4">
+          <h3 className="font-semibold">Getting Started</h3>
+          <p>Deploy your first Worker in minutes...</p>
+        </div>
+      }
+      additionalContent={
+        <div>
+          <h3>Documentation</h3>
+          <a href="/introduction">Read the docs</a>
+        </div>
+      }
+    >
+      <DataTable data={workers} columns={columns} />
+    </ResourceListPage>
+  );
+}
+```
+
+**Props:**
+
+- `title?: string` - Page title
+- `description?: string` - Page description
+- `icon?: ReactNode` - Icon next to title
+- `usage?: ReactNode` - Usage guide sidebar content
+- `additionalContent?: ReactNode` - Additional sidebar content
+- `children: ReactNode` - Main content area
+- `className?: string` - Additional CSS classes
+
+**Layout structure:**
+
+- Full-screen background (`bg-kumo-overlay`)
+- Max-width container (1400px)
+- Responsive padding and gaps
+- Sticky sidebar on desktop (380px width)
+- Column-reverse on mobile for better UX
+
+**Implementation:** `resource-list.tsx:1`
+
+## Using Blocks
+
+### Installation Workflow
+
+1. **Initialize configuration** (first time only):
+
+```bash
+kumo init
+```
+
+This creates `kumo.json` in your project root:
+
+```json
+{
+  "blocksDir": "src/blocks",
+  "version": "1.0.0"
+}
+```
+
+2. **Browse available blocks**:
+
+```bash
+kumo blocks
+```
+
+3. **Install a block**:
+
+```bash
+kumo add PageHeader
+```
+
+4. **Import and use**:
+
+```tsx
+import { PageHeader } from "src/blocks/page-header";
+```
+
+### Customizing Blocks
+
+Blocks are designed to be customized after installation:
+
+**Add new props:**
+
+```tsx
+// src/blocks/page-header/page-header.tsx
+export interface PageHeaderProps extends KumoPageHeaderVariantsProps {
+  breadcrumbs: ReactNode;
+  title?: string;
+  description?: string;
+  tabs?: TabsItem[];
+  // Add your custom prop
+  showLastUpdated?: boolean;
+  lastUpdated?: Date;
+}
+```
+
+**Modify layout:**
+
+```tsx
+export function PageHeader({
+  breadcrumbs,
+  title,
+  description,
+  showLastUpdated,
+  lastUpdated,
+  // ... other props
+}: PageHeaderProps) {
+  return (
+    <div className={cn(pageHeaderVariants({ spacing }), className)}>
+      {/* Your custom layout changes */}
+      {showLastUpdated && lastUpdated && (
+        <div className="text-sm text-kumo-subtle">
+          Last updated: {lastUpdated.toLocaleDateString()}
+        </div>
+      )}
+    </div>
+  );
+}
+```
+
+**Change styling:**
+
+Blocks use Kumo's semantic tokens, so they:
+- Adapt to light/dark mode automatically
+- Respect theme variants (default, FedRAMP)
+- Follow Kumo's design system
+
+You can override any styles while maintaining token-based theming:
+
+```tsx
+<div className={cn(
+  "flex flex-col gap-2 py-3 pl-3",
+  "border-l-4 border-kumo-brand" // Add custom styling
+)}>
+```
+
+### Updating Blocks
+
+Blocks are not automatically updated when you upgrade `@cloudflare/kumo`. To update a block:
+
+1. Re-run `kumo add <block>` and choose to overwrite
+2. Or manually copy changes from the source if you've customized it
+3. Or treat it as a starting point and maintain your version independently
+
+**Strategy options:**
+
+- **Fork and own**: Customize heavily, never update from upstream
+- **Minimal changes**: Keep close to source, easier to update
+- **Hybrid**: Track customizations in version control, manually merge updates
+
+## Import Transformation
+
+When you install a block, the CLI automatically transforms imports:
+
+**Original (in package):**
+
+```tsx
+import { Tabs } from "../../components/tabs";
+import { cn } from "../../utils/cn";
+```
+
+**Transformed (in your project):**
+
+```tsx
+import { Tabs } from "@cloudflare/kumo";
+import { cn } from "@cloudflare/kumo";
+```
+
+This ensures blocks work seamlessly with your installed Kumo package.
+
+**Implementation:** `add.ts:223` (transformImports function)
+
+## Block Development
+
+For Kumo maintainers adding new blocks:
+
+1. **Create block in `src/blocks/`**:
+
+```
+src/blocks/
+└── my-block/
+    ├── index.ts           # Exports
+    ├── my-block.tsx       # Implementation
+    └── my-block.test.tsx  # Optional tests
+```
+
+2. **Follow component conventions**:
+
+- Export variant constants: `KUMO_MY_BLOCK_VARIANTS`
+- Export default variants: `KUMO_MY_BLOCK_DEFAULT_VARIANTS`
+- Use `forwardRef` if wrapping DOM elements
+- Set `displayName` on the component
+- Use `cn()` for className composition
+- Use only semantic tokens for styling
+
+3. **Register in component registry**:
+
+Blocks are auto-discovered by the registry codegen script. Add block metadata to `scripts/component-registry/metadata.ts` if needed.
+
+4. **Test installation**:
+
+```bash
+pnpm build
+pnpm --filter @cloudflare/kumo-docs-astro dev
+# In another terminal
+cd /tmp/test-project
+npx /path/to/kumo init
+npx /path/to/kumo add MyBlock
+```
+
+## Security
+
+The `kumo add` command includes path traversal protection:
+
+- Validates source paths are within the package blocks directory
+- Validates target paths are within your configured blocks directory
+- Rejects paths with `..` or absolute paths
+- Uses `path.resolve()` and `path.relative()` for safe path handling
+
+**Implementation:** `add.ts:186-212`
+
+## Best Practices
+
+### When to Use Blocks
+
+Use blocks when:
+- You need a complete pattern, not a primitive component
+- You want to customize the implementation for your specific use case
+- The pattern is too opinionated to be a generic library component
+- You're prototyping and want a starting point
+
+### When to Use Components
+
+Use components when:
+- You need a generic UI primitive (Button, Input, Dialog)
+- You want automatic updates from the library
+- The component API is sufficient for your needs
+- You're building something new that doesn't match a block pattern
+
+### Styling Guidelines
+
+When customizing blocks:
+
+- **ONLY use semantic tokens**: `bg-kumo-base`, `text-kumo-default`, etc.
+- **NEVER use raw Tailwind colors**: `bg-blue-500`, `text-gray-900`
+- **NEVER use `dark:` variant**: Dark mode is automatic via tokens
+- **Exceptions allowed**: `bg-white`, `bg-black`, `text-white`, `text-black`, `transparent`
+
+This ensures your customized blocks:
+- Support light/dark mode automatically
+- Respect theme variants (FedRAMP, etc.)
+- Stay consistent with the design system
+
+## Related Documentation
+
+<CardGroup cols={2}>
+  <Card title="CLI Overview" icon="terminal" href="/cli/overview">
+    Learn about CLI installation and capabilities
+  </Card>
+  <Card title="Command Reference" icon="list-check" href="/cli/commands">
+    Complete reference for all CLI commands
+  </Card>
+</CardGroup>

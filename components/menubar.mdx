@@ -1,0 +1,186 @@
+---
+title: MenuBar
+description: Horizontal icon-button toolbar with keyboard arrow-key navigation
+importPath: "@cloudflare/kumo"
+category: Navigation
+---
+
+## Description
+
+MenuBar — horizontal icon-button toolbar with keyboard arrow-key navigation.
+
+Each option renders as a `<button>` with a Tooltip. The active option is visually highlighted with an elevated background.
+
+## Import
+
+```tsx
+import { MenuBar, useMenuNavigation } from "@cloudflare/kumo";
+```
+
+## Props
+
+<ParamField path="isActive" type="number | boolean | string">
+  The currently active option value — matched against option index or `id`.
+</ParamField>
+
+<ParamField path="options" type="MenuOptionProps[]" required>
+  Array of menu option configurations.
+</ParamField>
+
+<ParamField path="optionIds" type="boolean" default="false">
+  When true, each option's `id` field is used for matching instead of its array index.
+</ParamField>
+
+<ParamField path="className" type="string">
+  Additional CSS classes merged via `cn()`.
+</ParamField>
+
+### MenuOptionProps
+
+<ParamField path="icon" type="React.ReactNode" required>
+  Icon element (typically from `@phosphor-icons/react`) rendered at 18px
+</ParamField>
+
+<ParamField path="id" type="number | string">
+  Unique identifier for the option (used when `optionIds` is true)
+</ParamField>
+
+<ParamField path="tooltip" type="string" required>
+  Tooltip text shown on hover
+</ParamField>
+
+<ParamField path="onClick" type="() => void" required>
+  Callback when this option is clicked
+</ParamField>
+
+## useMenuNavigation Hook
+
+The `useMenuNavigation` hook enables keyboard navigation for custom menu bars.
+
+### Props
+
+<ParamField path="menuRef" type="React.RefObject<HTMLElement | null>" required>
+  Ref to the menu container element
+</ParamField>
+
+<ParamField path="direction" type="'horizontal' | 'vertical'" default="horizontal">
+  Direction of keyboard navigation
+</ParamField>
+
+## Examples
+
+### Basic usage
+
+```tsx
+<MenuBar
+  isActive="bold"
+  optionIds
+  options={[
+    {
+      icon: <TextBolderIcon />,
+      id: "bold",
+      tooltip: "Bold",
+      onClick: () => {},
+    },
+    {
+      icon: <TextItalicIcon />,
+      id: "italic",
+      tooltip: "Italic",
+      onClick: () => {},
+    },
+  ]}
+/>
+```
+
+### With active state
+
+```tsx
+<MenuBar
+  isActive="bold"
+  optionIds
+  options={[
+    {
+      icon: <TextBolderIcon />,
+      id: "bold",
+      tooltip: "Bold",
+      onClick: () => {},
+    },
+    {
+      icon: <TextItalicIcon />,
+      id: "italic",
+      tooltip: "Italic",
+      onClick: () => {},
+    },
+  ]}
+/>
+```
+
+### Without active state
+
+```tsx
+<MenuBar
+  isActive=""
+  optionIds
+  options={[
+    {
+      icon: <TextBolderIcon />,
+      id: "bold",
+      tooltip: "Bold",
+      onClick: () => {},
+    },
+    {
+      icon: <TextItalicIcon />,
+      id: "italic",
+      tooltip: "Italic",
+      onClick: () => {},
+    },
+  ]}
+/>
+```
+
+### Using the hook for custom menus
+
+```tsx
+function CustomMenu() {
+  const menuRef = useRef<HTMLElement | null>(null);
+
+  useMenuNavigation({ menuRef, direction: "horizontal" });
+
+  return (
+    <nav ref={menuRef}>
+      <button>Item 1</button>
+      <button>Item 2</button>
+      <button>Item 3</button>
+    </nav>
+  );
+}
+```
+
+## Keyboard Navigation
+
+- **Arrow Right** (horizontal) / **Arrow Down** (vertical) - Move focus to next item
+- **Arrow Left** (horizontal) / **Arrow Up** (vertical) - Move focus to previous item
+- Focus wraps around at the start and end of the list
+
+## Styling
+
+The MenuBar uses the following design tokens:
+
+### Container
+- Height: 32px
+- Border radius: 8px
+- Padding: 2px
+- Gap: 2px
+
+### Button
+- Width: 36px
+- Border radius: 6px
+- Icon size: 18px
+
+## Colors
+
+The component uses the following semantic tokens:
+
+- `bg-kumo-base`
+- `bg-kumo-fill`
+- `border-kumo-fill`

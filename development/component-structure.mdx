@@ -1,0 +1,386 @@
+---
+title: Component Structure
+description: Learn Kumo's component architecture including file patterns, variants, forwardRef, and displayName conventions
+---
+
+# Component Structure
+
+Kumo components follow strict conventions to ensure consistency, maintainability, and automatic registry generation. Every component in `packages/kumo/src/components/` adheres to these patterns.
+
+## File Organization
+
+Each component lives in its own directory with a standard structure:
+
+```
+src/components/button/
+├── button.tsx          # Component implementation
+├── index.ts            # Re-exports for clean imports
+└── button.test.tsx     # Unit tests (optional)
+```
+
+### Scaffolding New Components
+
+<Warning>
+  **Never create component files manually.** Use the scaffolding tool to ensure all integrations are set up correctly.
+</Warning>
+
+```bash
+pnpm --filter @cloudflare/kumo new:component
+```
+
+This tool:
+- Creates the component directory and files
+- Adds exports to `src/index.ts` (at `PLOP_INJECT_EXPORT` marker)
+- Updates `vite.config.ts` with build entry (at `PLOP_INJECT_COMPONENT_ENTRY` marker)
+- Updates `package.json` with export paths
+
+## Variants System
+
+Kumo uses a **machine-readable variants system** enforced by custom lint rules. Every component must export `KUMO_{NAME}_VARIANTS` and `KUMO_{NAME}_DEFAULT_VARIANTS`.
+
+### Defining Variants
+
+Variants are defined as a const object with descriptive metadata:
+
+```tsx title="src/components/button/button.tsx"
+export const KUMO_BUTTON_VARIANTS = {
+  variant: {
+    primary: {
+      classes: "bg-kumo-brand !text-white hover:bg-kumo-brand-hover",
+      description: "High-emphasis button for primary actions",
+    },
+    secondary: {
+      classes: "bg-kumo-control ring ring-kumo-line",
+      description: "Default button style for most actions",
+    },
+    ghost: {
+      classes: "text-kumo-default hover:bg-kumo-tint shadow-none",
+      description: "Minimal button with no background",
+    },
+  },
+  size: {
+    sm: {
+      classes: "h-6.5 gap-1 rounded-md px-2 text-xs",
+      description: "Small button for secondary actions",
+    },
+    base: {
+      classes: "h-9 gap-1.5 rounded-lg px-3 text-base",
+      description: "Default button size",
+    },
+    lg: {
+      classes: "h-10 gap-2 rounded-lg px-4 text-base",
+      description: "Large button for primary CTAs",
+    },
+  },
+} as const;
+
+export const KUMO_BUTTON_DEFAULT_VARIANTS = {
+  variant: "secondary",
+  size: "base",
+} as const;
+```
+
+### Why This Pattern?
+
+1. **Registry codegen**: The registry generator extracts variants automatically
+2. **Lint enforcement**: Custom oxlint rules validate variant structure
+3. **Type safety**: TypeScript derives types from the const object
+4. **Documentation**: Descriptions appear in generated docs and AI tools
+
+### Variant Helper Functions
+
+Create a helper function to compute className strings based on variant props:
+
+```tsx
+import { cn } from "../../utils/cn";
+
+export function buttonVariants({
+  variant = KUMO_BUTTON_DEFAULT_VARIANTS.variant,
+  size = KUMO_BUTTON_DEFAULT_VARIANTS.size,
+}: {
+  variant?: keyof typeof KUMO_BUTTON_VARIANTS.variant;
+  size?: keyof typeof KUMO_BUTTON_VARIANTS.size;
+} = {}) {
+  return cn(
+    // Base styles
+    "group flex w-max shrink-0 items-center font-medium select-none",
+    "border-0 shadow-xs cursor-pointer",
+    "disabled:cursor-not-allowed disabled:text-kumo-subtle",
+    // Apply variant-specific classes
+    KUMO_BUTTON_VARIANTS.variant[variant].classes,
+    KUMO_BUTTON_VARIANTS.size[size].classes,
+  );
+}
+```
+
+## forwardRef Pattern
+
+Components that render DOM elements **must** use `React.forwardRef` to allow ref forwarding:
+
+```tsx
+import React from "react";
+import { cn } from "../../utils/cn";
+
+export interface ButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: "primary" | "secondary" | "ghost";
+  size?: "sm" | "base" | "lg";
+  icon?: React.ReactNode;
+  loading?: boolean;
+}
+
+export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  (
+    {
+      children,
+      className,
+      variant = "secondary",
+      size = "base",
+      loading,
+      disabled,
+      ...props
+    },
+    ref,
+  ) => {
+    return (
+      <button
+        ref={ref}
+        className={cn(
+          buttonVariants({ variant, size }),
+          className,
+        )}
+        disabled={loading || disabled}
+        {...props}
+      >
+        {children}
+      </button>
+    );
+  },
+);
+
+Button.displayName = "Button";
+```
+
+### Why forwardRef?
+
+- **DOM access**: Consumers can access the underlying DOM element via ref
+- **Base UI integration**: Base UI primitives require refs for positioning and focus management
+- **Testing**: Refs are often needed in tests for DOM queries
+- **Accessibility**: ARIA patterns frequently require refs for announcements
+
+## displayName Convention
+
+<Warning>
+  All forwardRef components **must** set a `displayName` property.
+</Warning>
+
+```tsx
+Button.displayName = "Button";
+```
+
+Without `displayName`, React DevTools shows `ForwardRef(Unknown)` instead of the component name, making debugging difficult.
+
+## Base UI Primitives
+
+Kumo components use [Base UI](https://base-ui.com/) from MUI for interactive behavior. Base UI provides unstyled, accessible primitives that we style with Tailwind.
+
+### Using Base UI
+
+Import primitives from the auto-generated `src/primitives/` directory:
+
+```tsx
+import * as Dialog from "../../primitives/dialog";
+import { cn } from "../../utils/cn";
+
+export const Modal = ({
+  open,
+  onOpenChange,
+  children,
+}: {
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  children: React.ReactNode;
+}) => {
+  return (
+    <Dialog.Root open={open} onOpenChange={onOpenChange}>
+      <Dialog.Portal>
+        <Dialog.Backdrop className="fixed inset-0 bg-black/50" />
+        <Dialog.Popup
+          className={cn(
+            "fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2",
+            "bg-kumo-base rounded-lg shadow-xl p-6",
+          )}
+        >
+          {children}
+        </Dialog.Popup>
+      </Dialog.Portal>
+    </Dialog.Root>
+  );
+};
+```
+
+<Note>
+  **Never edit files in `src/primitives/`** — they are auto-generated from Base UI. Run `pnpm codegen:primitives` to regenerate.
+</Note>
+
+## Styling Guidelines
+
+### Only Use Semantic Tokens
+
+Kumo enforces semantic token usage through custom lint rules:
+
+```tsx
+// ✅ Good
+className="bg-kumo-base text-kumo-default border-kumo-line"
+
+// ❌ Bad - fails lint
+className="bg-gray-100 text-gray-900 border-gray-300"
+```
+
+**Allowed non-semantic colors:**
+- `bg-white`, `bg-black`
+- `text-white`, `text-black`
+- `transparent`
+
+### Never Use dark: Variants
+
+Dark mode is handled automatically via CSS `light-dark()` in custom properties:
+
+```tsx
+// ✅ Good
+className="bg-kumo-elevated"
+
+// ❌ Bad - redundant, fails lint
+className="bg-kumo-elevated dark:bg-gray-800"
+```
+
+### Always Use cn() Utility
+
+The `cn()` utility from `src/utils/cn.ts` combines `clsx` and `tailwind-merge` for safe className composition:
+
+```tsx
+import { cn } from "../../utils/cn";
+
+const buttonClass = cn(
+  "px-3 py-2 rounded-lg",           // Base styles
+  variant === "primary" && "bg-kumo-brand",  // Conditional
+  disabled && "opacity-50 cursor-not-allowed",
+  className,                         // Allow consumer overrides
+);
+```
+
+## Compound Components
+
+For complex components with multiple parts, use compound component patterns with context:
+
+```tsx
+import React, { createContext, useContext } from "react";
+
+interface SelectContextValue {
+  value: string;
+  onChange: (value: string) => void;
+}
+
+const SelectContext = createContext<SelectContextValue | null>(null);
+
+function useSelectContext() {
+  const context = useContext(SelectContext);
+  if (!context) {
+    throw new Error("Select compound components must be used within Select.Root");
+  }
+  return context;
+}
+
+export const Select = {
+  Root: ({ value, onChange, children }: {
+    value: string;
+    onChange: (value: string) => void;
+    children: React.ReactNode;
+  }) => (
+    <SelectContext.Provider value={{ value, onChange }}>
+      {children}
+    </SelectContext.Provider>
+  ),
+  
+  Trigger: React.forwardRef<HTMLButtonElement>((props, ref) => {
+    const { value } = useSelectContext();
+    return <button ref={ref} {...props}>{value}</button>;
+  }),
+  
+  Option: ({ value, children }: { value: string; children: React.ReactNode }) => {
+    const { onChange } = useSelectContext();
+    return <button onClick={() => onChange(value)}>{children}</button>;
+  },
+};
+
+Select.Trigger.displayName = "Select.Trigger";
+Select.Option.displayName = "Select.Option";
+```
+
+**Examples in Kumo:**
+- `CommandPalette` (14 sub-components)
+- `Dialog`
+- `Select`
+- `Table`
+
+## Testing Components
+
+While component tests are sparse in Kumo (only 3/35 components have unit tests), structural tests validate all exports and imports.
+
+### Basic Component Test
+
+```tsx
+import { describe, it, expect } from "vitest";
+import { createElement } from "react";
+import { Button, KUMO_BUTTON_VARIANTS } from "./button";
+
+describe("Button", () => {
+  it("should render with default props", () => {
+    expect(() => 
+      createElement(Button, { children: "Click me" })
+    ).not.toThrow();
+  });
+
+  it("should apply primary variant classes", () => {
+    expect(KUMO_BUTTON_VARIANTS.variant.primary.classes)
+      .toContain("bg-kumo-brand");
+  });
+
+  it("should accept className prop", () => {
+    expect(() =>
+      createElement(Button, { 
+        className: "custom-class",
+        children: "Button" 
+      })
+    ).not.toThrow();
+  });
+});
+```
+
+See the [Testing Guide](/development/testing) for more details.
+
+## Component Checklist
+
+Before submitting a PR with a new component, ensure:
+
+- [ ] Component scaffolded with `pnpm new:component` (not created manually)
+- [ ] Exports `KUMO_{NAME}_VARIANTS` with `classes` and `description` for each variant
+- [ ] Exports `KUMO_{NAME}_DEFAULT_VARIANTS` with default values
+- [ ] Uses `React.forwardRef` if wrapping a DOM element
+- [ ] Sets `displayName` on forwardRef component
+- [ ] Uses `cn()` for all className composition
+- [ ] Only uses semantic tokens (`bg-kumo-*`, `text-kumo-*`, etc.)
+- [ ] Never uses `dark:` variants
+- [ ] Uses Base UI primitives from `src/primitives/` for interactive behavior
+- [ ] Includes JSDoc comments on exported types and components
+- [ ] Has at least basic tests or examples
+
+## Registry Generation
+
+After creating or modifying components, regenerate the registry:
+
+```bash
+pnpm --filter @cloudflare/kumo codegen:registry
+```
+
+This extracts TypeScript types, variants, and examples into `ai/component-registry.json` — the source of truth for component APIs.

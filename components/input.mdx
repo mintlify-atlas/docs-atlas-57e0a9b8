@@ -1,0 +1,288 @@
+---
+title: Input
+description: Text input component with label, validation, and multiple size variants.
+---
+
+## Description
+
+Text input component for single-line text entry. Supports labels, descriptions, error states, and multiple sizes. Built with semantic HTML and accessibility in mind.
+
+**Note:** For multi-line text input, use `<Input as="textarea" />` or the `InputArea` component.
+
+## Import
+
+```tsx
+import { Input } from "@cloudflare/kumo";
+```
+
+## Props
+
+<ParamField path="label" type="ReactNode" optional>
+  Label content for the input (enables Field wrapper) - can be a string or any React node
+</ParamField>
+
+<ParamField path="labelTooltip" type="ReactNode" optional>
+  Tooltip content to display next to the label via an info icon
+</ParamField>
+
+<ParamField path="description" type="ReactNode" optional>
+  Helper text displayed below the input
+</ParamField>
+
+<ParamField path="error" type="string | object" optional>
+  Error message or validation error object
+</ParamField>
+
+<ParamField path="size" type="enum" default="base" optional>
+  Input size.
+  
+  - `xs` — Extra small for compact UIs (20px height)
+  - `sm` — Small for secondary fields (26px height)
+  - `base` — Default size (36px height)
+  - `lg` — Large for prominent fields (40px height)
+</ParamField>
+
+<ParamField path="variant" type="enum" default="default" optional>
+  Visual variant.
+  
+  - `default` — Standard input
+  - `error` — Error state for validation failures
+</ParamField>
+
+<ParamField path="type" type="string" default="text" optional>
+  HTML input type (text, email, password, number, tel, url, etc.)
+</ParamField>
+
+<ParamField path="placeholder" type="string" optional>
+  Placeholder text
+</ParamField>
+
+<ParamField path="value" type="string" optional>
+  Controlled value
+</ParamField>
+
+<ParamField path="defaultValue" type="string" optional>
+  Uncontrolled default value
+</ParamField>
+
+<ParamField path="disabled" type="boolean" optional>
+  Whether the input is disabled
+</ParamField>
+
+<ParamField path="required" type="boolean" optional>
+  Whether the field is required. When `false`, shows "(optional)" text.
+</ParamField>
+
+<ParamField path="minLength" type="number" optional>
+  Minimum length for validation
+</ParamField>
+
+<ParamField path="maxLength" type="number" optional>
+  Maximum length for validation
+</ParamField>
+
+<ParamField path="pattern" type="string" optional>
+  Regex pattern for validation
+</ParamField>
+
+<ParamField path="autoComplete" type="string" optional>
+  HTML autocomplete attribute
+</ParamField>
+
+<ParamField path="name" type="string" optional>
+  Name for form submission
+</ParamField>
+
+<ParamField path="id" type="string" optional>
+  HTML id attribute
+</ParamField>
+
+<ParamField path="className" type="string" optional>
+  Additional CSS classes
+</ParamField>
+
+## Examples
+
+### Basic Input
+
+```tsx
+<Input
+  label="Email"
+  placeholder="you@example.com"
+  description="We'll never share your email"
+/>
+```
+
+### With Description
+
+```tsx
+<Input
+  label="Username"
+  placeholder="Choose a username"
+  description="3-20 characters, alphanumeric only"
+/>
+```
+
+### Error State
+
+```tsx
+<Input
+  label="Email"
+  placeholder="you@example.com"
+  value="invalid-email"
+  variant="error"
+  error="Please enter a valid email address"
+/>
+```
+
+### Validation Error Object
+
+```tsx
+<Input
+  label="Password"
+  type="password"
+  value="short"
+  variant="error"
+  error={{
+    message: "Password must be at least 8 characters",
+    match: "tooShort",
+  }}
+  minLength={8}
+/>
+```
+
+### Sizes
+
+```tsx
+<div className="flex flex-col gap-4">
+  <Input size="xs" label="Extra Small" placeholder="Extra small input" />
+  <Input size="sm" label="Small" placeholder="Small input" />
+  <Input label="Base" placeholder="Base input (default)" />
+  <Input size="lg" label="Large" placeholder="Large input" />
+</div>
+```
+
+### Disabled
+
+```tsx
+<Input label="Disabled field" placeholder="Cannot edit" disabled />
+```
+
+### Without Label
+
+```tsx
+<Input placeholder="Search..." aria-label="Search products" />
+```
+
+### Input Types
+
+```tsx
+<div className="flex flex-col gap-4">
+  <Input type="email" label="Email" placeholder="you@example.com" />
+  <Input type="password" label="Password" placeholder="••••••••" />
+  <Input type="number" label="Age" placeholder="18" />
+  <Input type="tel" label="Phone" placeholder="+1 (555) 000-0000" />
+</div>
+```
+
+### Optional Field
+
+```tsx
+<Input
+  label="Phone Number"
+  required={false}
+  placeholder="+1 (555) 000-0000"
+/>
+```
+
+### With Tooltip
+
+```tsx
+<Input
+  label="API Key"
+  labelTooltip="Find this in your dashboard under Settings > API Keys"
+  placeholder="sk_live_..."
+/>
+```
+
+### Custom Label
+
+```tsx
+<Input
+  label={
+    <span>
+      Email for <strong>billing</strong>
+    </span>
+  }
+  required
+  placeholder="billing@company.com"
+  type="email"
+/>
+```
+
+## Textarea / InputArea
+
+For multi-line text input, use the `as` prop:
+
+```tsx
+<Input
+  as="textarea"
+  label="Description"
+  placeholder="Enter a description..."
+  rows={4}
+/>
+```
+
+Or use the `InputArea` component (synthetic helper that uses Input with textarea-specific dimensions):
+
+```tsx
+import { InputArea } from "@cloudflare/kumo";
+
+<InputArea
+  label="Comments"
+  placeholder="Enter your comments..."
+/>
+```
+
+### InputArea Sizes
+
+- **xs**: 60px min-height, 200px width
+- **sm**: 72px min-height, 240px width
+- **base**: 88px min-height, 320px width
+- **lg**: 100px min-height, 360px width
+
+## Styling
+
+Input uses semantic Kumo tokens:
+
+- **Background**: `bg-kumo-control`
+- **Text**: `text-kumo-default`
+- **Placeholder**: `text-kumo-subtle`
+- **Ring (default)**: `ring-kumo-line`
+- **Ring (focus)**: `ring-kumo-ring`
+- **Ring (error)**: `ring-kumo-danger`
+
+### Size Dimensions
+
+- **xs**: 20px height, 6px padding, 12px font, 2px border-radius
+- **sm**: 26px height, 8px padding, 12px font, 6px border-radius
+- **base**: 36px height, 12px padding, 16px font, 8px border-radius
+- **lg**: 40px height, 16px padding, 16px font, 8px border-radius
+
+## Accessibility
+
+- Always provide a `label` or `aria-label` for screen readers
+- Use `description` for additional context
+- Error messages are automatically associated with the input
+- The `required` prop adds proper ARIA attributes
+- Validation errors should include both visual and textual indicators
+
+## Related Components
+
+- **Field** — Standalone field wrapper
+- **SensitiveInput** — Password/secret input with masking
+- **Select** — Dropdown select
+- **Combobox** — Autocomplete input
+- **Checkbox** — Checkbox input
+- **Radio** — Radio button group
+- **Switch** — Toggle switch

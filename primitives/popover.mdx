@@ -1,0 +1,48 @@
+---
+title: "Popover"
+description: "Unstyled popover primitive for floating content"
+---
+
+## Overview
+
+The Popover primitive provides an accessible, unstyled popover component for displaying floating content anchored to a trigger element.
+
+## Import
+
+```tsx
+import { Popover } from '@cloudflare/kumo/primitives/popover';
+```
+
+## About
+
+This is a re-export of the Base UI Popover primitive. It handles:
+- Positioning and collision detection
+- ARIA attributes for accessibility
+- Focus management
+- Controlled and uncontrolled modes
+
+## Usage
+
+```tsx
+import { Popover } from '@cloudflare/kumo/primitives/popover';
+
+function MyPopover() {
+  return (
+    <Popover.Root>
+      <Popover.Trigger>Show Info</Popover.Trigger>
+      <Popover.Portal>
+        <Popover.Positioner>
+          <Popover.Popup>
+            <Popover.Arrow />
+            Additional information appears here
+          </Popover.Popup>
+        </Popover.Positioner>
+      </Popover.Portal>
+    </Popover.Root>
+  );
+}
+```
+
+## Documentation
+
+For the complete API reference, props, and examples, see the [Base UI Popover documentation](https://base-ui.com/react/components/popover/).

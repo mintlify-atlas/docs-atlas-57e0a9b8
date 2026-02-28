@@ -1,0 +1,322 @@
+---
+title: Tree-Shaking
+description: Optimize bundle size with granular imports and tree-shaking
+icon: tree-structure
+---
+
+Kumo is designed for aggressive tree-shaking, allowing you to import only the components you use. The package uses ESM-only exports with granular entry points.
+
+## Granular Imports
+
+Instead of importing from the main barrel export, import components directly from their subpaths:
+
+```tsx
+// ❌ Barrel import - includes all components in bundle
+import { Button, Dialog, Input } from '@cloudflare/kumo';
+
+// ✅ Granular imports - only bundles what you use
+import { Button } from '@cloudflare/kumo/components/button';
+import { Dialog } from '@cloudflare/kumo/components/dialog';
+import { Input } from '@cloudflare/kumo/components/input';
+```
+
+## Available Import Paths
+
+Kumo exports components, primitives, and utilities through dedicated paths:
+
+### Components
+
+All 35 UI components are available as individual imports:
+
+```tsx
+import { Badge } from '@cloudflare/kumo/components/badge';
+import { Banner } from '@cloudflare/kumo/components/banner';
+import { Breadcrumbs } from '@cloudflare/kumo/components/breadcrumbs';
+import { Button } from '@cloudflare/kumo/components/button';
+import { Checkbox } from '@cloudflare/kumo/components/checkbox';
+import { ClipboardText } from '@cloudflare/kumo/components/clipboard-text';
+import { CloudflareLogo } from '@cloudflare/kumo/components/cloudflare-logo';
+import { Code } from '@cloudflare/kumo/components/code';
+import { Collapsible } from '@cloudflare/kumo/components/collapsible';
+import { Combobox } from '@cloudflare/kumo/components/combobox';
+import { CommandPalette } from '@cloudflare/kumo/components/command-palette';
+import { DatePicker } from '@cloudflare/kumo/components/date-picker';
+import { DateRangePicker } from '@cloudflare/kumo/components/date-range-picker';
+import { Dialog } from '@cloudflare/kumo/components/dialog';
+import { Dropdown } from '@cloudflare/kumo/components/dropdown';
+import { Empty } from '@cloudflare/kumo/components/empty';
+import { Field } from '@cloudflare/kumo/components/field';
+import { Flow } from '@cloudflare/kumo/components/flow';
+import { Grid } from '@cloudflare/kumo/components/grid';
+import { Input } from '@cloudflare/kumo/components/input';
+import { Label } from '@cloudflare/kumo/components/label';
+import { LayerCard } from '@cloudflare/kumo/components/layer-card';
+import { Link } from '@cloudflare/kumo/components/link';
+import { Loader } from '@cloudflare/kumo/components/loader';
+import { Menubar } from '@cloudflare/kumo/components/menubar';
+import { Meter } from '@cloudflare/kumo/components/meter';
+import { Pagination } from '@cloudflare/kumo/components/pagination';
+import { Popover } from '@cloudflare/kumo/components/popover';
+import { Radio } from '@cloudflare/kumo/components/radio';
+import { Select } from '@cloudflare/kumo/components/select';
+import { SensitiveInput } from '@cloudflare/kumo/components/sensitive-input';
+import { Surface } from '@cloudflare/kumo/components/surface';
+import { Switch } from '@cloudflare/kumo/components/switch';
+import { Table } from '@cloudflare/kumo/components/table';
+import { Tabs } from '@cloudflare/kumo/components/tabs';
+import { Text } from '@cloudflare/kumo/components/text';
+import { Toast } from '@cloudflare/kumo/components/toast';
+import { Tooltip } from '@cloudflare/kumo/components/tooltip';
+```
+
+### Primitives
+
+Access Base UI primitives individually:
+
+```tsx
+import { Dialog } from '@cloudflare/kumo/primitives/dialog';
+import { Button } from '@cloudflare/kumo/primitives/button';
+import { Checkbox } from '@cloudflare/kumo/primitives/checkbox';
+// ... 37 total primitives
+```
+
+Or import all primitives:
+
+```tsx
+import * as Primitives from '@cloudflare/kumo/primitives';
+```
+
+### Utilities
+
+```tsx
+import { cn } from '@cloudflare/kumo/utils';
+```
+
+### Styles
+
+```tsx
+// Tailwind-integrated styles
+import '@cloudflare/kumo/styles/tailwind';
+
+// Standalone CSS (without Tailwind)
+import '@cloudflare/kumo/styles/standalone';
+
+// Individual theme files
+import '@cloudflare/kumo/styles/theme-kumo.css';
+import '@cloudflare/kumo/styles/theme-fedramp.css';
+```
+
+## Package Exports Map
+
+Kumo's `package.json` defines explicit export paths:
+
+```json /home/daytona/workspace/source/packages/kumo/package.json
+{
+  "exports": {
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./components/button": {
+      "types": "./dist/src/components/button/index.d.ts",
+      "import": "./dist/components/button.js"
+    },
+    "./components/dialog": {
+      "types": "./dist/src/components/dialog/index.d.ts",
+      "import": "./dist/components/dialog.js"
+    },
+    "./primitives/button": {
+      "types": "./dist/src/primitives/button.d.ts",
+      "import": "./dist/primitives/button.js"
+    },
+    "./utils": {
+      "types": "./dist/src/utils/index.d.ts",
+      "import": "./dist/utils.js"
+    }
+  }
+}
+```
+
+This ensures bundlers can statically analyze imports and eliminate unused code.
+
+## Side Effects Configuration
+
+Kumo marks only CSS files as having side effects:
+
+```json /home/daytona/workspace/source/packages/kumo/package.json
+{
+  "sideEffects": [
+    "*.css",
+    "dist/styles/*.css"
+  ]
+}
+```
+
+This tells bundlers that:
+- All JavaScript modules are pure (can be safely removed if unused)
+- CSS imports should always be preserved
+
+## Bundle Optimization
+
+Kumo's build process creates optimized chunks:
+
+### Vendor Chunks
+
+Shared dependencies are split into separate chunks:
+
+- `vendor-base-ui` - Base UI primitives
+- `vendor-styling` - clsx and tailwind-merge
+- `vendor-floating-ui` - Popover positioning
+- `vendor-utils` - Shared utilities
+
+When multiple components share dependencies, bundlers can deduplicate them.
+
+### Bundled Dependencies
+
+These dependencies are bundled (not external):
+
+- `@base-ui/react`
+- `clsx`
+- `tailwind-merge`
+- `react-day-picker`
+- `motion`
+
+### External Peer Dependencies
+
+These are marked as external (provided by your app):
+
+- `react`
+- `react-dom`
+- `@phosphor-icons/react`
+
+## Measuring Bundle Size
+
+Use your bundler's analysis tools to verify tree-shaking:
+
+### Vite
+
+```bash
+pnpm vite-bundle-visualizer
+```
+
+### Webpack
+
+```bash
+pnpm webpack-bundle-analyzer
+```
+
+### Next.js
+
+```bash
+ANALYZE=true pnpm build
+```
+
+## Example Bundle Sizes
+
+Typical component bundle sizes (gzipped, production):
+
+| Import | Size | Includes |
+|--------|------|----------|
+| `Button` | ~3 KB | Button component only |
+| `Dialog` | ~8 KB | Dialog + Base UI Dialog primitive |
+| `Select` | ~12 KB | Select + Popover + Base UI Select |
+| `DateRangePicker` | ~45 KB | DateRangePicker + react-day-picker |
+| All components | ~120 KB | Entire library (not recommended) |
+
+## Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Use Granular Imports" icon="boxes-stacked">
+    Import from specific paths like `@cloudflare/kumo/components/button` instead of the barrel export.
+  </Card>
+
+  <Card title="Import Utilities Separately" icon="wrench">
+    Import `cn()` from `@cloudflare/kumo/utils` instead of the main export.
+  </Card>
+
+  <Card title="Lazy Load Heavy Components" icon="hourglass">
+    Use `React.lazy()` for large components like `DateRangePicker` that aren't needed immediately.
+  </Card>
+
+  <Card title="Analyze Bundle Size" icon="chart-line">
+    Regularly check your bundle with analysis tools to catch regressions.
+  </Card>
+</CardGroup>
+
+### Lazy Loading Example
+
+```tsx
+import { lazy, Suspense } from 'react';
+import { Loader } from '@cloudflare/kumo/components/loader';
+
+// Lazy load heavy component
+const DateRangePicker = lazy(() => 
+  import('@cloudflare/kumo/components/date-range-picker').then(m => ({ 
+    default: m.DateRangePicker 
+  }))
+);
+
+function MyApp() {
+  return (
+    <Suspense fallback={<Loader />}>
+      <DateRangePicker />
+    </Suspense>
+  );
+}
+```
+
+## TypeScript Support
+
+All granular imports include TypeScript definitions:
+
+```tsx
+import type { ButtonProps } from '@cloudflare/kumo/components/button';
+import type { DialogProps } from '@cloudflare/kumo/components/dialog';
+```
+
+Types are co-located with exports, ensuring tree-shaking works for type-only imports too.
+
+## ESM Only
+
+Kumo is ESM-only (no CommonJS):
+
+```json /home/daytona/workspace/source/packages/kumo/package.json
+{
+  "type": "module"
+}
+```
+
+This enables:
+- Better tree-shaking
+- Faster module loading
+- Smaller bundle sizes
+- Modern JavaScript features
+
+If you need CommonJS, use a bundler that can transform ESM to CJS.
+
+## Verifying Tree-Shaking
+
+Create a minimal test to verify tree-shaking works:
+
+```tsx
+// test.tsx
+import { Button } from '@cloudflare/kumo/components/button';
+
+export default function App() {
+  return <Button>Click me</Button>;
+}
+```
+
+Build and check the output:
+
+```bash
+vite build
+```
+
+The bundle should only include:
+- Button component code
+- Base UI Button primitive
+- clsx and tailwind-merge
+- React runtime
+
+It should NOT include other components like Dialog, Select, etc.

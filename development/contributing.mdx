@@ -1,0 +1,282 @@
+---
+title: Contributing
+description: Learn how to contribute to Kumo with development setup, commands, and changeset workflow
+---
+
+# Contributing
+
+Kumo is an open-source project and we welcome contributions from you. Thank you!
+
+## Development Setup
+
+### Prerequisites
+
+Kumo is built on the Node.js runtime and uses pnpm for package management:
+
+- **Node.js**: Install the latest LTS version (^24.12.0) — we recommend using a version manager like [nvm](https://github.com/nvm-sh/nvm)
+- **pnpm**: Install globally with `npm install -g pnpm` (>=10.21.0 required)
+- **Code Editor**: We recommend [VS Code](https://code.visualstudio.com/) with the workspace-recommended extensions
+- **git**: [Install git](https://git-scm.com/) for version control
+
+### Clone the Repository
+
+**For external contributors:**
+
+```bash
+# Fork the repository on GitHub, then clone your fork
+git clone https://github.com/<your-username>/kumo
+cd kumo
+
+# Add upstream remote to stay in sync
+git remote add upstream https://github.com/cloudflare/kumo
+```
+
+**For Cloudflare employees:**
+
+```bash
+# Clone the main repository directly
+git clone https://github.com/cloudflare/kumo.git
+cd kumo
+```
+
+### Install Dependencies
+
+Kumo uses pnpm workspaces to manage the monorepo:
+
+```bash
+pnpm install
+```
+
+This installs dependencies for all packages in the monorepo.
+
+## Development Commands
+
+### Build and Development
+
+```bash
+# Build everything (components + docs + Figma plugin)
+pnpm build:all
+
+# Build just the component library
+pnpm --filter @cloudflare/kumo build
+
+# Watch mode: rebuilds on file changes
+pnpm dev
+
+# Generate primitives and registry metadata
+pnpm codegen
+```
+
+### Code Quality
+
+```bash
+# Run all linting checks (oxlint + ESLint)
+pnpm lint
+
+# Format code with Prettier
+pnpm format
+
+# Type check all packages
+pnpm typecheck
+```
+
+### Testing
+
+```bash
+# Run all tests in the component library
+pnpm test
+
+# Run tests in watch mode
+pnpm test:watch
+
+# Run tests with coverage
+pnpm --filter @cloudflare/kumo test:coverage
+
+# Run tests with UI
+pnpm --filter @cloudflare/kumo test:ui
+```
+
+See the [Testing Guide](/development/testing) for detailed information about testing in Kumo.
+
+### Package-Specific Commands
+
+Run commands in a specific package using the `--filter` flag:
+
+```bash
+pnpm --filter @cloudflare/kumo <command>
+pnpm --filter @cloudflare/kumo-docs-astro <command>
+pnpm --filter @cloudflare/kumo-figma <command>
+```
+
+## Making Changes
+
+### Create a Branch
+
+Always create a new branch for your changes:
+
+```bash
+# Update your main branch
+git switch main
+git pull upstream main
+
+# Create a new branch
+git checkout -b my-feature-name main
+```
+
+### Make Your Changes
+
+1. Make your code changes
+2. Add tests if applicable
+3. Run `pnpm lint` and `pnpm typecheck` to catch errors
+4. Test your changes locally with `pnpm dev`
+
+### Stage and Commit
+
+```bash
+# Stage your changes
+git add <files>
+
+# Commit with a descriptive message
+git commit -m "feat: add new component variant"
+```
+
+## Changeset Workflow
+
+<Warning>
+  Every non-trivial change to the `@cloudflare/kumo` package **requires** a changeset. A pre-push hook enforces this requirement.
+</Warning>
+
+Changesets capture information about your changes for the changelog and semantic versioning.
+
+### Creating a Changeset
+
+After making your changes and before pushing:
+
+```bash
+pnpm changeset
+```
+
+You'll be prompted to:
+
+1. **Select packages**: Choose `@cloudflare/kumo` for component library changes
+2. **Choose version bump type**:
+   - **patch** — Bug fixes and minor tweaks
+   - **minor** — New features, new components, or significant enhancements  
+   - **major** — Breaking changes to the public API
+3. **Write a summary**: Describe your changes in 1-2 sentences
+
+### Changeset Best Practices
+
+- **Focus on the "why"**, not the "what" — the diff shows what changed
+- **Be concise** — 1-2 sentences is ideal
+- **Use present tense** — "Add support for..." not "Added support for..."
+- **Reference issues** — Include issue numbers if applicable
+
+**Example changesets:**
+
+```markdown
+# Good
+Add `disabled` prop to DatePicker to prevent user interaction
+
+# Too detailed
+Added a disabled prop to the DatePicker component that accepts a boolean value and when set to true will disable all interactions and apply disabled styling to the component
+
+# Too vague  
+Update DatePicker
+```
+
+### Stage the Changeset
+
+After creating the changeset, stage the generated file:
+
+```bash
+git add .changeset/*.md
+git commit -m "chore: add changeset"
+```
+
+### When Changesets Are Required
+
+- **Required for `@cloudflare/kumo`**: All changes to the component library
+- **Optional for `kumo-docs-astro`**: Documentation changes don't need changesets
+- **Not needed for `kumo-figma`**: Figma plugin is not published to npm
+
+## Submitting a Pull Request
+
+### Push Your Branch
+
+```bash
+git push -u origin my-feature-name
+```
+
+### Create the PR
+
+1. Go to the [Kumo repository](https://github.com/cloudflare/kumo) on GitHub
+2. Click "Compare & pull request"
+3. **Title format**: `[package] description`
+   - Example: `[kumo] Add disabled state to DatePicker`
+4. **Fill out the PR template** with details about your changes
+5. Submit the PR
+
+### PR Review Process
+
+- A maintainer will review your PR
+- Address any feedback by adding new commits (don't force push after review)
+- Once approved, a maintainer will merge your PR with a squash merge
+
+## Git Best Practices
+
+### Before First Review
+
+- Keep your commit history clean and descriptive
+- Squash work-in-progress commits if needed
+- Make sure tests pass and lint checks succeed
+
+### After Review
+
+- **Don't force push** — add new commits to address feedback
+- Use `git commit --fixup` to mark commits that fix review issues
+- The final merge will squash all commits anyway
+
+### PR Title Guidelines
+
+Use conventional commit format for PR titles:
+
+- `feat: add new component`
+- `fix: resolve Button focus issue`
+- `docs: update installation guide`
+- `chore: update dependencies`
+
+## Code Style
+
+Refer to the [Kumo Style Guide](https://github.com/cloudflare/kumo/blob/main/STYLEGUIDE.md) for detailed conventions.
+
+### Key Conventions
+
+- **Only semantic tokens**: Use `bg-kumo-base`, not `bg-gray-100`
+- **Never use `dark:` variants**: Dark mode is automatic via CSS custom properties
+- **Use `cn()` for className composition**: Always use the `cn()` utility
+- **Follow component patterns**: See [Component Structure](/development/component-structure)
+
+## Getting Help
+
+- **Engage early**: For non-trivial changes, create a discussion or comment on an issue before writing code
+- **Ask questions**: Comment on the issue or PR if you need clarification
+- **Be patient**: The team is actively developing Kumo and will respond as soon as possible
+
+## Release Process
+
+<Note>
+  Releases are handled by maintainers. **Never** run version or publish commands yourself.
+</Note>
+
+Kumo releases are typically cut on weekdays. If you need a release outside the regular cadence, reach out to the [kumo-maintainers](https://github.com/orgs/cloudflare/teams/kumo-maintainers) team.
+
+## PR Previews
+
+Every PR automatically gets pre-release builds powered by [pkg.pr.new](https://github.com/stackblitz-labs/pkg.pr.new). Links to the pre-release packages are posted as comments on your PR.
+
+You can test your changes in a real project by installing the preview build:
+
+```bash
+npm install https://pkg.pr.new/@cloudflare/kumo@<pr-number>
+```

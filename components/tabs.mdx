@@ -1,0 +1,245 @@
+---
+title: Tabs
+description: Tab navigation component with segmented or underline style
+importPath: "@cloudflare/kumo"
+category: Navigation
+---
+
+## Description
+
+Tab navigation component with segmented or underline style. Built on Base UI Tabs with animated active indicator.
+
+## Import
+
+```tsx
+import { Tabs } from "@cloudflare/kumo";
+```
+
+## Props
+
+<ParamField path="tabs" type="TabsItem[]">
+  Array of tab items to render.
+</ParamField>
+
+<ParamField path="value" type="string">
+  Controlled value. When set, component becomes controlled.
+</ParamField>
+
+<ParamField path="selectedValue" type="string">
+  Default selected value for uncontrolled mode. Ignored when `value` is set.
+</ParamField>
+
+<ParamField path="onValueChange" type="(value: string) => void">
+  Callback fired when the active tab changes.
+</ParamField>
+
+<ParamField path="activateOnFocus" type="boolean" default="false">
+  When `true`, tabs are activated immediately upon receiving focus via arrow keys. When `false` (default), tabs receive focus but require Enter/Space to activate.
+</ParamField>
+
+<ParamField path="variant" type="'segmented' | 'underline'" default="segmented">
+  Tab style.
+  - `segmented` — Pill-shaped indicator on a filled track
+  - `underline` — Underline indicator below tab text
+</ParamField>
+
+<ParamField path="className" type="string">
+  Additional CSS classes for the root element.
+</ParamField>
+
+<ParamField path="listClassName" type="string">
+  Additional CSS classes for the tab list element.
+</ParamField>
+
+<ParamField path="indicatorClassName" type="string">
+  Additional CSS classes for the indicator element.
+</ParamField>
+
+### TabsItem
+
+<ParamField path="value" type="string" required>
+  Unique identifier for the tab, used as the controlled value.
+</ParamField>
+
+<ParamField path="label" type="ReactNode" required>
+  Display content for the tab trigger.
+</ParamField>
+
+<ParamField path="className" type="string">
+  Additional CSS classes for this tab trigger.
+</ParamField>
+
+<ParamField path="render" type="(props: Record<string, unknown>) => React.ReactElement">
+  Custom render function to replace the tab element (e.g. for link-based tabs).
+</ParamField>
+
+## Variants
+
+<ResponseField name="segmented" default>
+  Pill-shaped indicator on a filled track
+</ResponseField>
+
+<ResponseField name="underline">
+  Underline indicator below tab text
+</ResponseField>
+
+## Examples
+
+### Segmented vs Underline
+
+```tsx
+<div className="flex flex-col gap-6">
+  <div>
+    <p className="mb-2 text-sm text-kumo-subtle">Segmented (default)</p>
+    <Tabs
+      variant="segmented"
+      tabs={[
+        { value: "tab1", label: "Tab 1" },
+        { value: "tab2", label: "Tab 2" },
+        { value: "tab3", label: "Tab 3" },
+      ]}
+      selectedValue="tab1"
+    />
+  </div>
+  <div>
+    <p className="mb-2 text-sm text-kumo-subtle">Underline</p>
+    <Tabs
+      variant="underline"
+      tabs={[
+        { value: "tab1", label: "Tab 1" },
+        { value: "tab2", label: "Tab 2" },
+        { value: "tab3", label: "Tab 3" },
+      ]}
+      selectedValue="tab1"
+    />
+  </div>
+</div>
+```
+
+### Segmented tabs
+
+```tsx
+<Tabs
+  variant="segmented"
+  tabs={[
+    { value: "tab1", label: "Tab 1" },
+    { value: "tab2", label: "Tab 2" },
+    { value: "tab3", label: "Tab 3" },
+  ]}
+  selectedValue="tab1"
+/>
+```
+
+### Underline tabs
+
+```tsx
+<Tabs
+  variant="underline"
+  tabs={[
+    { value: "tab1", label: "Tab 1" },
+    { value: "tab2", label: "Tab 2" },
+    { value: "tab3", label: "Tab 3" },
+  ]}
+  selectedValue="tab1"
+/>
+```
+
+### Controlled tabs
+
+```tsx
+<div className="space-y-4">
+  <Tabs
+    tabs={[
+      { value: "tab1", label: "Tab 1" },
+      { value: "tab2", label: "Tab 2" },
+      { value: "tab3", label: "Tab 3" },
+    ]}
+    value={activeTab}
+    onValueChange={setActiveTab}
+  />
+  <p className="text-sm text-kumo-subtle">
+    Active tab: <code className="text-sm">{activeTab}</code>
+  </p>
+</div>
+```
+
+### Many tabs
+
+```tsx
+<Tabs
+  tabs={[
+    { value: "overview", label: "Overview" },
+    { value: "analytics", label: "Analytics" },
+    { value: "reports", label: "Reports" },
+    { value: "notifications", label: "Notifications" },
+    { value: "settings", label: "Settings" },
+    { value: "billing", label: "Billing" },
+  ]}
+  selectedValue="overview"
+/>
+```
+
+### Custom render (links)
+
+```tsx
+<Tabs
+  tabs={[
+    {
+      value: "tab1",
+      label: "Regular Tab",
+    },
+    {
+      value: "tab2",
+      label: "Link Tab",
+      render: (props) => <a {...props} href="#tab2" />,
+    },
+    {
+      value: "tab3",
+      label: "Another Link",
+      render: (props) => <a {...props} href="#tab3" />,
+    },
+  ]}
+  selectedValue="tab1"
+/>
+```
+
+## Styling
+
+### Container
+
+- Height: 34px
+- Border radius: 8px
+- Background: color-accent
+- Padding: 1px
+
+### Tab
+
+- Padding X: 10px
+- Vertical margin: 1px
+- Font size: 16px
+- Font weight: 500
+- Border radius: 8px
+- Active color: text-color-surface
+- Inactive color: text-color-label
+
+### Indicator
+
+- Background: color-surface-secondary
+- Ring: color-color-2
+- Border radius: 6px
+- Shadow: shadow-sm
+
+## Colors
+
+The component uses the following semantic tokens:
+
+- `bg-kumo-brand`
+- `bg-kumo-overlay`
+- `bg-kumo-tint`
+- `border-kumo-line`
+- `border-kumo-tint`
+- `ring-kumo-fill-hover`
+- `ring-kumo-ring`
+- `text-kumo-default`
+- `text-kumo-strong`
+- `text-kumo-subtle`

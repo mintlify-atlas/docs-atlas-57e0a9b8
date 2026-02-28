@@ -1,0 +1,171 @@
+---
+title: Breadcrumbs
+description: Navigation breadcrumb trail showing the current page's location in a hierarchy.
+---
+
+<ComponentDemo name="breadcrumbs-demo" />
+
+## Installation
+
+```bash
+npx @cloudflare/kumo add breadcrumbs
+```
+
+## Import
+
+```tsx
+import { Breadcrumb } from "@cloudflare/kumo";
+```
+
+## Usage
+
+```tsx
+<Breadcrumb>
+  <Breadcrumb.Link href="#">Home</Breadcrumb.Link>
+  <Breadcrumb.Separator />
+  <Breadcrumb.Link href="#">Docs</Breadcrumb.Link>
+  <Breadcrumb.Separator />
+  <Breadcrumb.Current>Breadcrumbs</Breadcrumb.Current>
+</Breadcrumb>
+```
+
+## Props
+
+### Breadcrumb (Root)
+
+<ParamField path="size" type="enum" default="base">
+  Size of the breadcrumbs.
+  
+  - `"sm"` — Compact breadcrumbs for dense UIs
+  - `"base"` — Default breadcrumbs size
+</ParamField>
+
+<ParamField path="className" type="string">
+  Additional CSS classes merged via `cn()`.
+</ParamField>
+
+<ParamField path="children" type="ReactNode">
+  Breadcrumb items (Link, Current, Separator, Clipboard).
+</ParamField>
+
+### Breadcrumb.Link
+
+<ParamField path="href" type="string" required>
+  URL for the breadcrumb link.
+</ParamField>
+
+<ParamField path="icon" type="ReactNode">
+  Optional icon element (e.g. from `@phosphor-icons/react`).
+</ParamField>
+
+<ParamField path="children" type="ReactNode">
+  Link text content.
+</ParamField>
+
+### Breadcrumb.Current
+
+<ParamField path="loading" type="boolean">
+  Shows skeleton loader when true.
+</ParamField>
+
+<ParamField path="icon" type="ReactNode">
+  Optional icon element.
+</ParamField>
+
+<ParamField path="children" type="ReactNode">
+  Current page text.
+</ParamField>
+
+### Breadcrumb.Clipboard
+
+<ParamField path="text" type="string" required>
+  Text to copy to clipboard when clicked.
+</ParamField>
+
+## Sub-components
+
+- **Breadcrumb.Link** — Clickable breadcrumb link
+- **Breadcrumb.Current** — Non-clickable current page indicator
+- **Breadcrumb.Separator** — Visual separator between items (chevron icon)
+- **Breadcrumb.Clipboard** — Copy-to-clipboard button
+
+## Examples
+
+### Basic Breadcrumbs
+
+```tsx
+<Breadcrumb>
+  <Breadcrumb.Link href="#">Home</Breadcrumb.Link>
+  <Breadcrumb.Separator />
+  <Breadcrumb.Link href="#">Docs</Breadcrumb.Link>
+  <Breadcrumb.Separator />
+  <Breadcrumb.Current>Breadcrumbs</Breadcrumb.Current>
+</Breadcrumb>
+```
+
+### With Icon
+
+```tsx
+import { House } from "@phosphor-icons/react";
+
+<Breadcrumb>
+  <Breadcrumb.Link href="#" icon={<House size={16} />}>
+    Home
+  </Breadcrumb.Link>
+  <Breadcrumb.Separator />
+  <Breadcrumb.Link href="#">Projects</Breadcrumb.Link>
+  <Breadcrumb.Separator />
+  <Breadcrumb.Current>Current Project</Breadcrumb.Current>
+</Breadcrumb>
+```
+
+### With Loading State
+
+```tsx
+<Breadcrumb>
+  <Breadcrumb.Link href="#" icon={<House size={16} />}>
+    Home
+  </Breadcrumb.Link>
+  <Breadcrumb.Separator />
+  <Breadcrumb.Link href="#">Docs</Breadcrumb.Link>
+  <Breadcrumb.Separator />
+  <Breadcrumb.Current loading />
+</Breadcrumb>
+```
+
+### Single Item
+
+```tsx
+<Breadcrumb>
+  <Breadcrumb.Current icon={<House size={16} />}>
+    Worker Analytics
+  </Breadcrumb.Current>
+</Breadcrumb>
+```
+
+### With Clipboard
+
+```tsx
+<Breadcrumb>
+  <Breadcrumb.Link href="#">Home</Breadcrumb.Link>
+  <Breadcrumb.Separator />
+  <Breadcrumb.Current>Breadcrumbs</Breadcrumb.Current>
+  <Breadcrumb.Clipboard text="#" />
+</Breadcrumb>
+```
+
+## Responsive Behavior
+
+On mobile viewports (< 640px), breadcrumbs automatically collapse to show only the last two items with an ellipsis:
+
+- Desktop: `Home / Docs / Components / Breadcrumbs`
+- Mobile: `... / Components / Breadcrumbs`
+
+## Styling
+
+Breadcrumbs use semantic tokens:
+
+- **Text colors**: `text-kumo-subtle` (links), `text-kumo-default` (current), `text-kumo-inactive` (separator)
+- **Size variants**:
+  - `sm`: `text-sm h-10 gap-0.5`
+  - `base`: `text-base h-12 gap-1`
