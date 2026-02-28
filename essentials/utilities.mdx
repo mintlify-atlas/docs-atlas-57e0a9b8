@@ -1,0 +1,259 @@
+---
+title: Utilities
+description: Helper functions and utilities exported by Kumo for styling, IDs, and routing.
+icon: wrench
+---
+
+Kumo exports several utility functions to help with common tasks like class name merging, generating unique IDs, and integrating with routing libraries.
+
+## cn()
+
+The `cn()` utility combines class names intelligently, merging Tailwind CSS classes and handling conditional classes.
+
+### Import
+
+```tsx
+import { cn } from "@cloudflare/kumo";
+```
+
+### Usage
+
+**Basic class merging:**
+
+```tsx
+cn("px-2 py-1", "bg-blue-500", "text-white")
+// Result: "px-2 py-1 bg-blue-500 text-white"
+```
+
+**Conditional classes:**
+
+```tsx
+const isActive = true;
+const isDisabled = false;
+
+cn(
+  "base-class",
+  isActive && "active-class",
+  isDisabled && "disabled-class"
+)
+// Result: "base-class active-class"
+```
+
+**Tailwind class merging:**
+
+The `cn()` utility intelligently merges conflicting Tailwind classes:
+
+```tsx
+cn("px-2 py-1", "px-4")
+// Result: "py-1 px-4" (later px-4 overrides px-2)
+
+cn("text-red-500", "text-blue-500")
+// Result: "text-blue-500"
+```
+
+**Component prop merging:**
+
+```tsx
+function Button({ className, ...props }: { className?: string }) {
+  return (
+    <button
+      className={cn(
+        "px-4 py-2 rounded bg-blue-500 text-white",
+        className
+      )}
+      {...props}
+    />
+  );
+}
+
+// Consumer can override or extend classes
+<Button className="bg-red-500 font-bold">
+  Custom Button
+</Button>
+// Result: classes are "px-4 py-2 rounded text-white bg-red-500 font-bold"
+```
+
+### Implementation
+
+`cn()` combines two libraries:
+- **clsx** — Handles conditional classes and arrays
+- **tailwind-merge** — Intelligently merges conflicting Tailwind utilities
+
+This means you get both conditional class logic and smart Tailwind class deduplication in one function.
+
+## safeRandomId()
+
+Generates a unique random ID string that works in any JavaScript environment (browser, Node.js, Edge Runtime).
+
+### Import
+
+```tsx
+import { safeRandomId } from "@cloudflare/kumo";
+```
+
+### Usage
+
+```tsx
+const id = safeRandomId();
+// Example: "550e8400-e29b-41d4-a716-446655440000"
+
+// Use for element IDs
+<input id={safeRandomId()} />
+
+// Use for React keys
+{items.map(item => (
+  <div key={safeRandomId()}>{item.name}</div>
+))}
+```
+
+### Implementation Details
+
+`safeRandomId()` uses a fallback strategy for maximum compatibility:
+
+1. **crypto.randomUUID()** — Modern browsers and Node.js 19+
+2. **crypto.getRandomValues()** — Older browsers, generates RFC4122 v4 UUID
+3. **Math.random() fallback** — Last resort for very old environments
+
+The generated IDs are suitable for:
+- Accessibility: `aria-describedby`, `aria-labelledby`
+- Form field IDs
+- React keys (though stable keys are preferred)
+- Non-cryptographic unique identifiers
+
+<Warning>
+Do not use `safeRandomId()` for security-critical applications (tokens, passwords, etc.). It's designed for UI element identification only.
+</Warning>
+
+## LinkProvider
+
+Context provider for integrating Kumo's Link components with routing libraries like React Router, Next.js, or Remix.
+
+### Import
+
+```tsx
+import { LinkProvider } from "@cloudflare/kumo";
+```
+
+### Usage with React Router
+
+```tsx
+import { LinkProvider } from "@cloudflare/kumo";
+import { Link as RouterLink } from "react-router-dom";
+import { forwardRef } from "react";
+
+// Create wrapper component
+const CustomLink = forwardRef((props, ref) => (
+  <RouterLink ref={ref} to={props.href} {...props} />
+));
+
+function App() {
+  return (
+    <LinkProvider component={CustomLink}>
+      {/* All Kumo Link components now use React Router */}
+      <YourApp />
+    </LinkProvider>
+  );
+}
+```
+
+### Usage with Next.js
+
+```tsx
+import { LinkProvider } from "@cloudflare/kumo";
+import NextLink from "next/link";
+import { forwardRef } from "react";
+
+const NextLinkWrapper = forwardRef((props, ref) => (
+  <NextLink ref={ref} href={props.href} {...props} />
+));
+
+export default function RootLayout({ children }) {
+  return (
+    <html>
+      <body>
+        <LinkProvider component={NextLinkWrapper}>
+          {children}
+        </LinkProvider>
+      </body>
+    </html>
+  );
+}
+```
+
+### Usage with Remix
+
+```tsx
+import { LinkProvider } from "@cloudflare/kumo";
+import { Link as RemixLink } from "@remix-run/react";
+import { forwardRef } from "react";
+
+const RemixLinkWrapper = forwardRef((props, ref) => (
+  <RemixLink ref={ref} to={props.href} {...props} />
+));
+
+export default function App() {
+  return (
+    <LinkProvider component={RemixLinkWrapper}>
+      {/* Your app */}
+    </LinkProvider>
+  );
+}
+```
+
+### How It Works
+
+- **LinkProvider** wraps your app and provides a custom link component
+- All Kumo components that render links internally (Link, Breadcrumbs, LinkButton) automatically use your custom component
+- Your custom component receives `href` as a prop and can map it to `to`, `href`, or whatever your router expects
+
+### Props
+
+<ParamField path="component" type="ForwardRefExoticComponent" required>
+  A forwardRef component that accepts `href` and renders your router's link component
+</ParamField>
+
+<ParamField path="children" type="ReactNode" required>
+  Your application content
+</ParamField>
+
+### useLinkComponent()
+
+Hook that returns the current link component from context. Used internally by Kumo components.
+
+```tsx
+import { useLinkComponent } from "@cloudflare/kumo";
+
+function CustomComponent() {
+  const LinkComponent = useLinkComponent();
+  
+  return <LinkComponent href="/page">Navigate</LinkComponent>;
+}
+```
+
+## Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Use cn() in all components" icon="check">
+    Always use `cn()` to merge className props with component base styles
+  </Card>
+  <Card title="Set LinkProvider at root" icon="check">
+    Wrap your entire app with LinkProvider once, not per-component
+  </Card>
+  <Card title="Generate IDs at render" icon="x">
+    Don't generate IDs on every render—use useMemo or useState
+  </Card>
+  <Card title="Stable keys preferred" icon="check">
+    Use stable IDs from your data for React keys when possible
+  </Card>
+</CardGroup>
+
+## Type Exports
+
+```tsx
+import type { LinkComponentProps } from "@cloudflare/kumo";
+
+// LinkComponentProps type for custom link components
+type LinkComponentProps = AnchorHTMLAttributes<HTMLAnchorElement> & {
+  to?: string;
+};
+```

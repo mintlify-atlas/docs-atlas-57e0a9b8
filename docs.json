@@ -35,7 +35,8 @@
               "essentials/styling",
               "essentials/theming",
               "essentials/accessibility",
-              "essentials/tree-shaking"
+              "essentials/tree-shaking",
+              "essentials/utilities"
             ]
           },
           {
